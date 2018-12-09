@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>72cun 网址收藏</title>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+
+</head>
+
+<body>
+<div class="m-login-bg">
+    <div class="m-login">
+        <h3>72cun 网址收藏</h3>
+        <div class="m-login-warp">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-block">
+                    <input type="text" id="userName" name="userName" placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="password" name="password"  placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">验证码</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="yzm" name="yzm" placeholder="" autocomplete="off" class="layui-input" style="width: 90px">
+                </div>
+                <div class="layui-form-mid layui-word-aux" style="margin-left: -80px" id="num"></div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" id="login">登入</button>
+                    <button class="layui-btn" id="register">注册</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script>
+    layui.use(['layer'], function() {
+        var layer = layui.layer;
+
+        var num="";
+        for(var i=0;i<4;i++){
+            num+=Math.ceil(Math.random()*9);
+        }
+        $("#num").html(num);
+
+
+        $("#login").on('click',function () {
+            var userName=$("#userName").val();
+            var password=$("#password").val();
+            var yzm=$("#yzm").val();
+            if(userName ==""){
+                layer.msg('账号不能为空', {offset: '50px', anim: 0});
+                return;
+            }else if(password==""){
+                layer.msg('密码不能为空', {offset: '50px', anim: 0});
+                return;
+            }else if(yzm==""){
+                layer.msg('验证码不能为空', {offset: '50px', anim: 0});
+                return;
+            }else if(yzm!=num){
+                layer.msg('验证码不正确', {offset: '50px', anim: 0});
+                return;
+            }else{
+                $.ajax({
+                    url:"/login",
+                    type:'post',
+                    dataType:"json",
+                    data:{
+                        userName:userName,
+                        password:password
+                    },
+                    complete:function (data) {
+                        if(data.status==200){
+                            if(data.responseText!=""){
+                                document.write(data.responseText);
+                                document.close()
+                            }
+                        }else{
+
+                            layer.msg(JSON.parse(data.responseText).message, {offset: '50px', anim: 0});
+                        }
+                    }
+                })
+            }
+        })
+
+        $("#register").on('click',function () {
+            window.location.href='/register';
+        })
+
+
+    });
+</script>
+</body>
+
+</html>

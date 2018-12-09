@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyj.dao.URLDao">
+
+    <!--<resultMap id="url_map" type="com.lyj.entity.URL">-->
+        <!--<id column="id" property="id" jdbcType="INTEGER"></id>-->
+        <!--<result column="url" property="url" jdbcType="VARCHAR"></result>-->
+        <!--<result column="label" property="label" jdbcType="VARCHAR"></result>-->
+        <!--<result column="pid" property="pid" jdbcType="INTEGER"></result>-->
+        <!--<result column="userId" property="userId" jdbcType="INTEGER"></result>-->
+        <!--<result column="createTime" property="createTime" jdbcType="TIMESTAMP"></result>-->
+        <!--<result column="pidName" property="pidName" jdbcType="VARCHAR"></result>-->
+    <!--</resultMap>-->
+
+
+    <sql id="url_list">
+        u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName
+    </sql>
+
+    <update id="update">
+        UPDATE url
+        <trim prefix="set" suffixOverrides=",">
+            <if test="url!=null">
+                url=#{url},
+            </if>
+            <if test="label!=null">
+                label=#{label},
+            </if>
+            <if test="pid!=null">
+                pid=#{pid},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!-- 根据folderId查询url -->
+    <select id="getUrlsByPid">
+        <!--select <include refid="url_list"></include>-->
+        <!--from url u left join folder f on u.folderId=f.id-->
+        <!--where u.userId=#{userId} and u.folderId=#{folderId} order by u.createTime desc-->
+        select <include refid="url_list"></include>
+        from url u
+        where u.userId=#{userId} and u.pid=#{pid} order by u.createTime desc
+    </select>
+    <!-- 根据folderId查询总数 -->
+    <select id="getUrlsCountByPid" resultType="INTEGER">
+        select count(1) from url where userId=#{userId} and pid=#{pid}
+    </select>
+
+    <!-- 根据keywords查询url -->
+    <select id="getUrlsByKeywords">
+        select <include refid="url_list"></include>
+        from url u left join folder f on u.folderId=f.id
+        where u.userId=#{userId}
+        <if test="keywords!=''">
+            and u.name like CONCAT('%',#{keywords},'%')
+        </if>
+        order by u.createTime desc
+    </select>
+    <!-- 根据keywords查询总数 -->
+    <select id="getUrlsCountByKeywords" resultType="INTEGER">
+        select count(1) from url where userId=#{userId}
+        <if test="keywords!=''">
+            and name like CONCAT('%',#{keywords},'%')
+        </if>
+    </select>
+
+    <!-- 根据folderName查询url -->
+    <select id="getUrlsByPidName">
+        <!--select <include refid="url_list"></include>-->
+        <!--from url u left join folder f on u.folderId=f.id-->
+        <!--where u.userId=#{userId}-->
+        <!--<if test="keywords!=''">-->
+            <!--and f.name like CONCAT('%',#{keywords},'%')-->
+        <!--</if>-->
+        <!--order by u.createTime desc-->
+        select <include refid="url_list"></include>
+        from url u
+        where u.userId=#{userId}
+        <if test="keywords!=''">
+            and f.label like CONCAT('%',#{keywords},'%')
+        </if>
+        order by u.createTime desc
+    </select>
+    <!-- 根据folderName查询总数 -->
+    <select id="getUrlsCountByPidName" resultType="INTEGER">
+        <!--select count(1) from url u left join folder f on u.folderId=f.id-->
+        <!--where u.userId=#{userId}-->
+        <!--<if test="keywords!=''">-->
+            <!--and f.name like CONCAT('%',#{keywords},'%')-->
+        <!--</if>-->
+        select count(1) from url u
+        where u.userId=#{userId}
+        <if test="keywords!=''">
+            and f.pidName like CONCAT('%',#{keywords},'%')
+        </if>
+    </select>
+
+    <!-- 根据urlName和folderName查询url -->
+    <select id="getUrlsByLabelAndPidName">
+        <!--select <include refid="url_list"></include>-->
+        <!--from url u left join folder f on u.folderId=f.id-->
+        <!--where u.userId=#{userId}-->
+        <!--<if test="urlName!=''">-->
+            <!--and u.name like CONCAT('%',#{urlName},'%')-->
+        <!--</if>-->
+        <!--<if test="folderName!=''">-->
+            <!--and f.name like CONCAT('%',#{folderName},'%')-->
+        <!--</if>-->
+        <!--order by u.createTime desc-->
+        select <include refid="url_list"></include>
+        from url u
+        where u.userId=#{userId}
+        <if test="label!=''">
+            and u.label like CONCAT('%',#{label},'%')
+        </if>
+        <if test="pidName!=''">
+            and f.pidName like CONCAT('%',#{pidName},'%')
+        </if>
+        order by u.createTime desc
+    </select>
+    <!-- 根据urlName和folderName查询总数 -->
+    <select id="getUrlsCountByLabelAndPidName" resultType="INTEGER">
+        <!--select count(1) from url u left join folder f on u.folderId=f.id-->
+        <!--where u.userId=#{userId}-->
+        <!--<if test="urlName!=''">-->
+            <!--and u.name like CONCAT('%',#{urlName},'%')-->
+        <!--</if>-->
+        <!--<if test="folderName!=''">-->
+            <!--and f.name like CONCAT('%',#{folderName},'%')-->
+        <!--</if>-->
+        select count(1) from url u
+        where u.userId=#{userId}
+        <if test="label!=''">
+            and u.label like CONCAT('%',#{label},'%')
+        </if>
+        <if test="pidName!=''">
+            and f.pidName like CONCAT('%',#{pidName},'%')
+        </if>
+    </select>
+
+
+
+
+</mapper>

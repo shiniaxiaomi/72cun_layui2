@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+    <link rel="stylesheet" href="/css/eleTree.css" media="all">
+
+     <!--右边主体的css -->
+    <link rel="stylesheet" type="text/css" href="/css/fs.css?v=1.8.4" media="all"/>
+
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md3">
+        <div>
+            <input type="text" autocomplete="off" placeholder="输入关键字进行过滤" class="layui-input">
+            <div class="eleTree ele1" lay-filter="data1"></div>
+        </div>
+    </div>
+
+    <div class="layui-col-md9">
+
+        <div>
+            <label class="layui-form-label" style="font-size: 20px">批量操作</label>
+            <div class="layui-btn-container">
+                <button class="layui-btn">移动到</button>
+                <button class="layui-btn">删除</button>
+            </div>
+        </div>
+
+        <table id="demo" lay-filter="test"></table>
+    </div>
+
+</div>
+
+</body>
+</html>
+
+<!-- 工具栏模板： -->
+<script type="text/html" id="toolbarDemo" lay-event="tool">
+    <!--<div class="layui-btn-container">-->
+    <!--</div>-->
+    <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">编辑</button>
+    <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script src="/js/eleTree.js"></script>
+<script src="/js/util.js?v=1.8.4"></script>
+<script>
+
+    layui.use(['jquery', 'table', 'code','table'], function () {
+        var eleTree = layui.eleTree
+            ,table = layui.table
+            , $ = layui.$;
+
+
+        var el = eleTree.render({
+            elem: '.ele1',
+            url: '/data/tree.json',//请求数据的url
+            draggable:true,//是否开启拖拽
+            contextmenuList:["add","edit","remove"],//节点的操作
+            expandOnClickNode: false,//点击节点前的图标才收缩
+            defaultExpandAll:true,//默认展开所有节点
+            done: function(res){
+                return buildTree(res);//将平面数据转换成tree数据,返回给data
+            }
+        });
+
+
+        //
+        eleTree.on("nodeClick(data1)", function (d) {
+//            console.dir(d)
+//            el.remove(d.data.currentData.id);//点击删除节点
+//            节点点击事件
+//            el=el.reload([{
+//                "id": 13,
+//                "label": "姑苏区"
+//            }]);//重新请求新数据,并重新渲染
+
+//            el=el.reload();//重新请求数据
+
+//            console.dir(el.getTreeData());//获取树的全部数据
+
+
+        });
+        // 节点被拖拽事件之前
+        eleTree.on("nodeDrag(data1)", function (d) {
+            console.log(d);
+            console.log(d.current);    // 起始节点对应的dom和数据
+            console.log(d.target);   // 鼠标落点对应的dom和数据
+            console.log(this);      // 鼠标落点对应的dom
+        });
+        // 节点被拖拽事件之后
+        eleTree.on("nodeDragFinish(data1)", function (d) {
+            console.log(d);
+            console.log(d.current);    // 起始节点对应的dom和数据
+            console.log(d.target);   // 鼠标落点对应的dom和数据
+            console.log(this);      // 鼠标落点对应的dom
+            layer.msg('给服务器发送 文件夹位置变更 请求');//只要把这个文件夹原来的pid修改成移动到的文件夹的id就可以了
+        });
+
+        var i=10;
+        // 添加子节点事件之前
+        eleTree.on("nodeAppend(data1)", function (d) {
+            console.log(d.data);    // 点击节点对于的数据
+            console.log(d.node);    // 点击的dom节点
+            console.log(this);      // 与d.node相同
+            d.stop();               // 取消添加
+
+            layer.prompt({title: '请输入文件夹名称', formType: 0}, function(pass, index){
+                layer.close(index);
+                d.setData({             // 自定义数据
+                    id:i+1,
+                    pid: d.data.id,
+                    label: pass,
+                });
+                i++;
+                layer.msg('给服务器发送 添加 请求');
+            });
+
+        });
+
+        // 节点被编辑事件之前
+        eleTree.on("nodeEdit(data1)", function (d) {
+            console.log(d.data);        // 点击节点对于的数据
+        });
+        // 节点被编辑事件之后
+        eleTree.on("nodeEditFinish(data1)", function (d) {
+            console.log(d.data);        // 点击节点对于的数据
+            layer.msg('给服务器发送 修改 请求');
+        });
+
+        // 节点被删除事件之前
+        eleTree.on("nodeRemove(data1)", function (d) {
+            console.log(d.data);        // 点击节点对于的数据
+            console.log(d.node);        // 点击的dom节点
+        });
+        // 节点被删除事件之后
+        eleTree.on("nodeRemoveFinish(data1)", function (d) {
+            console.log(d.data);        // 点击节点对于的数据
+            console.log(d.node);        // 点击的dom节点
+            layer.msg('给服务器发送 删除 请求');
+        });
+
+
+        //表格
+        //首次渲染,拿到对象
+        var tableIns = table.render({
+            elem: '#demo'
+            ,height: '500'
+            ,url: '/data/table.json' //数据接口
+            ,page: true //开启分页
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+
+                {field: 'id', title: '网址名称', align:'center',}
+                ,{field: 'username', title: '网址链接', align:'center',}
+                ,{field: 'sex', title: '链接地址', align:'center',}
+                ,{field: 'city', title: '创建时间' ,align:'center',}
+                ,{fixed: 'right',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
+            ]],
+            done: function(res, curr, count){
+                //如果是异步请求数据方式，res即为你接口返回的信息。
+                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                console.log(res);
+
+                //得到当前页码
+                console.log(curr);
+
+                //得到数据总量
+                console.log(count);
+            }
+        });
+
+
+        //这里以搜索为例,在url请求不变的情况下
+        function search(keyword) {
+            tableIns.reload({
+                where: { //设定异步数据接口的额外参数，任意设
+                    keyword: keyword,
+                }
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        }
+
+
+        //监听行内工具条
+        table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if(layEvent === 'delete'){ //删除
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                });
+            } else if(layEvent === 'edit'){ //编辑
+                //do something
+
+                //同步更新缓存对应的值
+                obj.update({
+                    username: '123'
+                    ,title: 'xxx'
+                });
+            }
+        });
+
+//        //监听添加事件
+//        table.on('toolbar(test)', function(obj){
+//            var checkStatus = table.checkStatus(obj.config.id);
+//            if(obj.event==='add'){
+//                layer.msg('添加');
+//            }
+//        });
+
+
+        //监听行单击事件
+        table.on('row(test)', function(obj){
+//            layer.msg(obj.data.id);
+//            console.log(obj.tr) //得到当前行元素对象
+            console.log(obj.data) //得到当前行数据
+//            obj.del(); //删除当前行
+            //obj.update(fields) //修改当前行数据
+        });
+
+        //监听行双击事件
+        table.on('rowDouble(test)', function(obj){
+            //obj 同上
+            layer.msg('我被双击了');
+        });
+
+
+    });
+
+</script>
