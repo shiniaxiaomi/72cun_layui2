@@ -1018,6 +1018,10 @@ layui.define(["jquery","laytpl"], function (exports) {
                         // 停止添加
                         stop: function() {
                             isStop=true;
+                        },
+                        getIndex:function () {
+                            isStop=true;
+                            return _self.reInitData(node).index.length;
                         }
                     });
                     if(isStop) return;

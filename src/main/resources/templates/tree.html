@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="/css/cascader.css" />
+
+</head>
+<body>
+
+<div class="layui-form-item">
+    <label class="layui-form-label">文件夹位置</label>
+    <div class="layui-input-block">
+        <input type="text" id="a" class="layui-input" readonly="readonly">
+    </div>
+</div>
+
+</body>
+</html>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script>
+    layui.use(['form',"jquery","cascader"], function(){
+        var $ = layui.jquery;
+        var cascader = layui.cascader;
+
+        var data = [
+            {
+                value: 'A',
+                label: 'a',
+                children: [
+                    {value: 'AA1', label: 'aa1',},
+                    {value: 'BB1', label: 'bb1'},
+                ]
+            },
+            {value: 'B', label: 'b',}
+
+        ]
+        var cas=cascader({
+            elem: "#a",
+            data: data,
+            triggerType: "change",//滑动选择
+            showLastLevels: false,
+            // url: "/aa",
+            // type: "post",
+            // where: {
+            //     a: "aaa"
+            // },
+            value: ["A", "AA1"],//设置默认选中的值
+            success: function (data) {
+                console.log(data);
+            }
+        });
+
+        cas.reload({})  // 重载
+    });
+</script>

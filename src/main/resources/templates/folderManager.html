@@ -8,9 +8,6 @@
 
     <link rel="stylesheet" href="/css/eleTree.css" media="all">
 
-     <!--右边主体的css -->
-    <link rel="stylesheet" type="text/css" href="/css/fs.css?v=1.8.4" media="all"/>
-
 </head>
 <body>
 <div class="layui-row">
@@ -50,11 +47,10 @@
 <script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
 <script src="/myjs/app.js?v=1.0.0"></script>
-<script src="/js/eleTree.js"></script>
 <script src="/js/util.js?v=1.8.4"></script>
 <script>
 
-    layui.use(['jquery', 'table', 'code','table'], function () {
+    layui.use(['jquery', 'table', 'code','table','eleTree'], function () {
         var eleTree = layui.eleTree
             ,table = layui.table
             , $ = layui.$;
@@ -75,7 +71,7 @@
 
         //
         eleTree.on("nodeClick(data1)", function (d) {
-//            console.dir(d)
+            console.dir(d)
 //            el.remove(d.data.currentData.id);//点击删除节点
 //            节点点击事件
 //            el=el.reload([{
@@ -111,9 +107,13 @@
             console.log(d.data);    // 点击节点对于的数据
             console.log(d.node);    // 点击的dom节点
             console.log(this);      // 与d.node相同
-            d.stop();               // 取消添加
+            if(d.getIndex()>5){
+                d.stop();               // 取消添加
+                layer.msg('子结点深度不能超过5个');
+                return;
+            }
 
-            layer.prompt({title: '请输入文件夹名称', formType: 0}, function(pass, index){
+            layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 10}, function(pass, index){
                 layer.close(index);
                 d.setData({             // 自定义数据
                     id:i+1,
@@ -149,7 +149,15 @@
         });
 
 
-        //表格
+
+
+
+
+
+
+
+
+        //----------------------表格
         //首次渲染,拿到对象
         var tableIns = table.render({
             elem: '#demo'
@@ -239,6 +247,10 @@
             //obj 同上
             layer.msg('我被双击了');
         });
+
+        function getTreeDeep() {
+
+        }
 
 
     });
