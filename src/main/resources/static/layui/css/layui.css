@@ -859,7 +859,7 @@ hr, .layui-timeline-item:before{background-color: #e6e6e6;}
 .layui-table-body .layui-none{line-height: 26px; padding: 15px; text-align: center; color: #999;}
 .layui-table-fixed{position: absolute; left: 0; top: 0; z-index: 101;}
 .layui-table-fixed .layui-table-body{overflow: hidden;}
-.layui-table-fixed-l{box-shadow: 0 -1px 8px rgba(0,0,0,.08);}
+.layui-table-fixed-l{box-shadow: 0 -1px 8px rgba(0,0,0,.08); display: none}
 .layui-table-fixed-r{left: auto; right: -1px; border-width: 0; border-left-width: 1px; box-shadow: -1px 0 8px rgba(0,0,0,.08);}
 .layui-table-fixed-r .layui-table-header{position: relative; overflow: visible;}
 .layui-table-mend{position: absolute; right: -49px; top: 0; height: 100%; width: 50px;}

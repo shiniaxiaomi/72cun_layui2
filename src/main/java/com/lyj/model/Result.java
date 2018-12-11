@@ -18,20 +18,21 @@ import lombok.Setter;
 @Setter
 public class Result<T> {
 
+    public static Integer SUCCESS=0;
+    public static Integer ERROR=1;
+
     //错误码
     private Integer code;
-    //提示信息
+    //信息
     private String message;
     //具体内容
     private T data;
-    //状态
-    private String state;
 
-    public Result(Integer code, String message, T data, String state) {
+    public Result(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
-        this.state = state;
     }
+
 
 }

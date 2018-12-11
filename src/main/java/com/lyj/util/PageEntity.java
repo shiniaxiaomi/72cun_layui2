@@ -1,5 +1,9 @@
 package com.lyj.util;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
@@ -8,59 +12,19 @@ import java.util.List;
  */
 
 //包装分页数据
-//@NoArgsConstructor(force = true) //生成无参构造方法
-//@Getter //让lombok自动生成getset方法和无参构造方法
-//@Setter
+@NoArgsConstructor(force = true) //生成无参构造方法
+@Getter //让lombok自动生成getset方法和无参构造方法
+@Setter
 public class PageEntity<T> {
 
+    private int code=0;
 
-    private int totalSize;
+    private Long count;
 
-    private List<T> content;
+    private List<T> data;
 
-    private int pageIndex;
-
-    private int pageSize;
-
-    public PageEntity(List<T> list,int totalSize,int pageIndex,int pageSize) {
-        this.totalSize = totalSize;
-        this.content = list;
-        this.pageIndex = pageIndex;
-        this.pageSize = pageSize;
-    }
-
-    public PageEntity() {
-    }
-
-    public int getTotalSize() {
-        return totalSize;
-    }
-
-    public void setTotalSize(int totalSize) {
-        this.totalSize = totalSize;
-    }
-
-    public List<T> getContent() {
-        return content;
-    }
-
-    public void setContent(List<T> content) {
-        this.content = content;
-    }
-
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public PageEntity(Long count, List<T> data) {
+        this.count = count;
+        this.data = data;
     }
 }

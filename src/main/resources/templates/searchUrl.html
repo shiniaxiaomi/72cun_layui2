@@ -14,23 +14,23 @@
             <div class="layui-col-md4">
                 <form class="layui-form" action="">
                     <div class="layui-form-item" style="width: 110px;float: right">
-                        <select name="interest">
+                        <select name="interest" id="searchType">
                             <option value="0">综合查询</option>
-                            <option value="0">名称查询</option>
-                            <option value="0">位置查询</option>
+                            <option value="1">名称查询</option>
+                            <option value="2">位置查询</option>
                         </select>
                     </div>
                 </form>
             </div>
             <div class="layui-col-md4">
-                <input type="text" name="title" placeholder="输入关键字进行搜索" autocomplete="off" class="layui-input" style="float: left">
+                <input type="text" id="keywords" name="title" placeholder="输入关键字进行搜索" autocomplete="off" class="layui-input" style="float: left">
             </div>
             <div class="layui-col-md4">
                 <div class="layui-btn-group">
-                    <button class="layui-btn layui-btn-primary">
+                    <button class="layui-btn layui-btn-primary" id="searchBtn">
                         <i class="layui-icon layui-icon-search"></i> 搜索
                     </button>
-                    <button class="layui-btn layui-btn-primary" id="add">
+                    <button class="layui-btn layui-btn-primary" id="addBtn">
                         <i class="layui-icon layui-icon-add-1"></i> 添加
                     </button>
                 </div>
@@ -47,144 +47,210 @@
 
 <!-- 工具栏模板： -->
 <script type="text/html" id="toolbarDemo" lay-event="tool">
-    <!--<div class="layui-btn-container">-->
-    <!--</div>-->
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">编辑</button>
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="{{d.url}}" class="layui-table-link" target="_blank">{{ d.url }}</a>
 </script>
 
 <script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
 <script src="/myjs/app.js?v=1.0.0"></script>
+<script src="/js/util.js?v=1.0.0"></script>
 <script>
-    layui.use(['table','layer'], function(){
+    layui.use(['table','layer','form',"jquery","cascader"], function(){
         var table = layui.table
-            ,layer=layui.layer;
+        var layer=layui.layer;
+        var $ = layui.jquery;
+        var cascader = layui.cascader;
+        var form=layui.form;
 
-        //首次渲染,拿到对象
-        var tableIns = table.render({
-            elem: '#demo'
-            ,height: '500'
-            ,url: '/data/table.json' //数据接口
-            ,page: true //开启分页
-            ,skin: 'line' //行边框风格
-            ,limits:[10,20,30]//分页的数量选择
-            ,cols: [[ //表头
 
-                {field: 'id', title: '网址名称', align:'center',}
-                ,{field: 'username', title: '网址链接', align:'center',}
-                ,{field: 'sex', title: '链接地址', align:'center',}
-                ,{field: 'city', title: '创建时间' ,align:'center',}
-                ,{fixed: 'right',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
-            ]],
-            done: function(res, curr, count){
-                //如果是异步请求数据方式，res即为你接口返回的信息。
-                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                console.log(res);
-
-                //得到当前页码
-                console.log(curr);
-
-                //得到数据总量
-                console.log(count);
+        //绑定点击搜索
+        $("#searchBtn").on("click",function () {
+            var buff = $.extend(true,{},tableOption) //值赋值
+            buff.url='/url/getUrlsLike';
+            buff.where={keywords:$("#keywords")[0].value,searchType:$("#searchType")[0].value};
+            buff.page={curr: 1};//从第一页开始
+            tableIns = table.render(buff);
+        })
+        //绑定回车搜索
+        $("#keywords").keydown(function(event){
+            if(event.keyCode==13){
+                $("#searchBtn").click();//调用点击事件
             }
         });
 
+//        var tableData=[];//缓存目前展示的table中的数据
+        //抽取公共的配置项
+        var tableOption={
+            elem: '#demo'
+            ,height: '500'
+            ,page: true //开启分页
+            ,url:'/url/getUrlsLike'
+            ,where:{keywords:'',searchType:0}
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'label', title: '网址名称', align:'center',unresize:true}
+                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true}
+                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
+            ]],
+//            done: function(res, curr, count){
+//                tableData=res.data;
+//            }
+        };
 
-        //这里以搜索为例,在url请求不变的情况下
-        function search(keyword) {
-            tableIns.reload({
-                where: { //设定异步数据接口的额外参数，任意设
-                    keyword: keyword,
-                }
-                ,page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-            });
-        }
+
+        //首次渲染表格,拿到对象
+        var tableIns = table.render(tableOption);//传入参数进行渲染
 
 
+
+        var editLayer;
+        var cas_edit;//编辑弹窗的folder树
         //监听行内工具条
         table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的DOM对象
 
             if(layEvent === 'delete'){ //删除
-                layer.confirm('真的删除行么', function(index){
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
-                    //向服务端发送删除指令
-                });
+                util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                    if(data.code==0){
+                        tableIns.reload(tableOption);//刷新表格
+                        layer.msg("删除成功");
+                    }
+                })
             } else if(layEvent === 'edit'){ //编辑
-                //do something
-
-                //同步更新缓存对应的值
-                obj.update({
-                    username: '123'
-                    ,title: 'xxx'
+                //更改网址弹窗
+                editLayer=layer.open({
+                    type: 1,
+                    shadeClose: true,
+                    area: ['700px', '500px'], //宽高
+                    content: $("#editText")
                 });
+
+
+                form.val("editText", {
+                    "id": obj.data.id
+                    ,"label": obj.data.label
+                    ,"url": obj.data.url
+                    ,"pidName": obj.data.pidName
+                    ,"pid": obj.data.pid
+                })
             }
         });
 
-//        //监听添加事件
-//        table.on('toolbar(test)', function(obj){
-//            var checkStatus = table.checkStatus(obj.config.id);
-//            if(obj.event==='add'){
-//                layer.msg('添加');
-//            }
-//        });
-
-
-        //监听行单击事件
-        table.on('row(test)', function(obj){
-//            layer.msg(obj.data.id);
-//            console.log(obj.tr) //得到当前行元素对象
-            console.log(obj.data) //得到当前行数据
-//            obj.del(); //删除当前行
-            //obj.update(fields) //修改当前行数据
-        });
-
-        //监听行双击事件
-        table.on('rowDouble(test)', function(obj){
-            //obj 同上
-            layer.msg('我被双击了');
-        });
-
-
-        $("#add").on("click",function () {
+        //添加网址弹窗
+        var addLayer;
+        $("#addBtn").on("click",function () {
             //页面层
-            layer.open({
+            addLayer=layer.open({
                 type: 1,
                 shadeClose: true,
-                skin: 'layui-layer-rim', //加上边框
-                area: ['420px', '420px'], //宽高
+                area: ['700px', '500px'], //宽高
                 content: $("#addText")
             });
         })
 
+//#################################add弹窗###############################
+
+        //监听提交
+        form.on('submit(addSubmit)', function(data){
+            util.ajax("/url/add",data.field,function (data) {
+                tableIns.reload(tableOption);//刷新表格
+                layer.close(addLayer);
+                layer.msg("添加成功");
+
+                //清空表单
+                form.val("addText", {
+                    "label": ''
+                    ,"url": ''
+                    ,"pidName": ''
+                    ,"pid": ''
+                })
+            })
+            return false;
+        });
+
+        //url添加的文件夹选项的option
+        var FolderOption_add={
+            elem: "#folderName_add",
+            url:'/folder/query',
+            triggerType: "change",//滑动选择
+            showLastLevels: true,//选中后显示最后一个文件夹
+            //指定点击的回调函数
+            clickFunc:function (id) {
+                $("#folderId_add").val(id);
+            },
+            //数据格式转换 回调函数
+            transData:function (data) {
+                return buildTree(data);
+            },
+        };
+        var cas_add=cascader(FolderOption_add);//初次渲染
+
+
+        //url修改的文件夹选项的option
+        var FolderOption_edit={
+            elem: "#folderName_edit",
+            url:'/folder/query',
+            triggerType: "change",//滑动选择
+            showLastLevels: true,//选中后显示最后一个文件夹
+            //指定点击的回调函数
+            clickFunc:function (id) {
+                $("#folderId_edit").val(id);
+            },
+            //数据格式转换 回调函数
+            transData:function (data) {
+                return buildTree(data);
+            },
+        };
+        cas_edit=cascader(FolderOption_edit);//初次渲染
+
+//#################################edit弹窗###############################
+
+        //监听提交
+        form.on('submit(editSubmit)', function(formData){
+
+            util.ajax("/url/update",formData.field,function (data) {
+
+                tableIns.reload(tableOption);//刷新表格
+
+                layer.close(editLayer);
+                layer.msg("更改成功");
+            })
+            return false;
+        });
     });
 </script>
 
 
 <!-- url添加弹窗 -->
-<form class="layui-form" id="addText" style="display: none">
+<form class="layui-form" id="addText" lay-filter="addText" style="display: none">
     <div class="layui-form-item">
         <label class="layui-form-label">网址名称</label>
         <div class="layui-input-inline">
-            <input id="add1" type="text" lay-verify="required" name="title" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+            <input id="add1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">网址链接</label>
         <div class="layui-input-inline">
-            <input id="add2" type="text" name="password"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+            <input id="add2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">文件夹位置</label>
         <div class="layui-input-block">
-            <input type="text" id="a" class="layui-input" readonly="readonly">
+            <input id="folderName_add" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
+            <input id="folderId_add" lay-verify="required" type="text" name="pid"  class="layui-input"  style="display: none">
         </div>
     </div>
 
@@ -194,59 +260,36 @@
             <button type="reset" class="layui-btn">重置</button>
         </div>
     </div>
+</form>
 
-    <script>
-        layui.use(['form',"jquery","cascader"], function(){
-            var $ = layui.jquery;
-            var cascader = layui.cascader;
-            var form=layui.form;
 
-            //监听提交
-            form.on('submit(addSubmit)', function(data){
-                layer.close(layer.index);
-                layer.msg(JSON.stringify(data.field)+"添加成功");
-                return false;
-            });
+<!-- url编辑弹窗 -->
+<form class="layui-form" lay-filter="editText" id="editText" style="display: none">
+    <input lay-verify="required" type="text" name="id" class="layui-input">
+    <div class="layui-form-item">
+        <label class="layui-form-label">网址名称</label>
+        <div class="layui-input-inline">
+            <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">网址链接</label>
+        <div class="layui-input-inline">
+            <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件夹位置</label>
+        <div class="layui-input-block">
+            <input id="folderName_edit" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
+            <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" >
+        </div>
+    </div>
 
-            var data = [
-                {
-                    value: 'A',
-                    label: 'a',
-                    children: [
-                        {value: 'AA1', label: 'aa1',},
-                        {value: 'BB1', label: 'bb1'},
-                    ]
-                },
-                {value: 'B', label: 'b',}
-
-            ]
-            var cas=cascader({
-                elem: "#a",
-                data: data,
-                triggerType: "change",//滑动选择
-                showLastLevels: false,
-                // url: "/aa",
-                // type: "post",
-                // where: {
-                //     a: "aaa"
-                // },
-                value: ["A", "AA1"],//设置默认选中的值
-                success: function (data) {
-                    console.log(data);
-                }
-            });
-
-            cas.reload({})  // 重载
-
-//            $("#addSubmit").on("click",function () {
-//                layer.close(layer.index);
-//                layer.msg("添加成功");
-//                $("#add1").val("");
-//                $("#add2").val("");
-//            })
-//            $("#addCancel").on("click",function () {
-//                layer.close(layer.index);
-//            })
-        });
-    </script>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
+            <button type="reset" class="layui-btn">重置</button>
+        </div>
+    </div>
 </form>

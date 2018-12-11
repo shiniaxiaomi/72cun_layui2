@@ -23,13 +23,17 @@ public interface FolderDao{
     //删
     //删除folder
     @Delete("delete from folder where id=#{id}")
-    void deleteByFolderId(Integer id);
+    int deleteByFolderId(Integer id);
 
     //改
     //xml
-    void updateFolder(Folder folder);
+    int updateFolder(Folder folder);
 
     //查
+    //查询该文件夹下还有几个子文件夹
+    @Select("select count(1) from folder where userId=#{userId} and pid=#{id}")
+    int getChildrenFoldersCountByFolderId(@Param("userId") int userId,@Param("id")Integer id);
+
     //根据userId和pid获取folder
     @Select("select * from folder where userId=#{userId} and pid=#{pid}")
     Folder getFolderByUserIdAndPid(@Param("userId") Integer userId, @Param("pid") int pid);

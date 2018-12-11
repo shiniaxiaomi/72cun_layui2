@@ -2,8 +2,8 @@ package com.lyj.util;
 
 import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 /**
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 
 /**
- * 配置异常处理类
+ * 配置异常处理类,处理restful的返回的数据异常
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionHandle {
 
 //    private final static Logger logger= LoggerFactory.getLogger(ExceptionHandle.class);
@@ -25,11 +25,13 @@ public class ExceptionHandle {
     @ExceptionHandler(value = Exception.class)
     public Result handle(Exception e){
 //        logger.error("Exception异常:"+ Arrays.asList(e.getStackTrace()));
-        e.printStackTrace();
+
         //处理返回异常消息
         if(e instanceof MessageException){
-            return ResultUtil.error(e.getMessage(),e);
+            System.out.println(e.getMessage());
+            return ResultUtil.error(e.getMessage(),e.getStackTrace()[0]);//返回最上层[0]的错误信息
         }else{
+            e.printStackTrace();
             return ResultUtil.error("系统异常",e);
         }
     }

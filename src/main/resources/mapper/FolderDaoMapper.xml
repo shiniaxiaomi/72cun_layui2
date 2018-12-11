@@ -3,13 +3,13 @@
 <mapper namespace="com.lyj.dao.FolderDao" >
 
 
-    <update id="update">
+    <update id="updateFolder">
         UPDATE folder
         <trim prefix="set" suffixOverrides=",">
             <if test="name!=null">
                 name=#{name},
             </if>
-            <if test="pid!=null">
+            <if test="pid!=0">
                 pid=#{pid},
             </if>
         </trim>

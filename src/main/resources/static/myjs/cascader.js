@@ -57,7 +57,7 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
     var $ = layui.jquery;
     var laytpl = layui.laytpl;
     var layer = layui.layer;
-    var zIndex=3000;    // 共用一个层级
+    var zIndex=19991015;    // 共用一个层级
     
     function Cascader(option) {
         this.option=option;     // 获取传入的数据
@@ -77,7 +77,9 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
         constructor: Cascader,
         // 初始化参数数据
         initOption: function () {
+
             var self=this;
+
             self.option.elem?(function(){
                 self.elem=self.option.elem;
             })():(function() {
@@ -105,12 +107,16 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
                     type: self.option.type?self.option.type:"get",
                     data: self.option.where?self.option.where:{},
                     success: function(data){
-                        if(data.Code===0){
-                            self.d=data.Data;
+                        if(data.code===0){
+                            self.d=data.data;
+                            //数据格式转换 回调函数
+                            if(self.option.transData!=undefined){
+                                self.d=self.option.transData(data);
+                            }
                             self.callback();
                             return;
                         }
-                        layer.alert(data.Msg, { title: "选择器"+self.elem+"获取数据失败", icon: 2 });
+                        layer.alert(data.message, { title: "选择器"+self.elem+"获取数据失败", icon: 2 });
                     }
                 });
                 return;
@@ -214,6 +220,8 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
         },
         // 结束之后拿取数据
         finishInitData: function (triggerData) {
+            var self=this;
+
             this.domContent.find(".urp-cascader-child:gt("+(this.floor)+")").remove();
             
             this.textArr.length=this.floor;
@@ -222,6 +230,7 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
             this.valueArr.push(this.blockData.value);
             // 文本拼接
             this.textStr=this.textArr.join("/");
+
 
             (this.option.showLastLevels)?(
                 $(this.elem).val(this.textArr[this.textArr.length-1])
@@ -235,6 +244,12 @@ layui.define(["jquery","laytpl","layer"], function (exports) {
 
             // 如果有初始值，则第一次不回调
             if(triggerData!=="initValue" && this.option.success) this.option.success(this.valueArr,this.textArr);
+
+            //点击回调函数
+            if(this.option.clickFunc!=undefined){
+                this.option.clickFunc(this.valueArr[this.valueArr.length-1]);
+            }
+
             // this.count++;
             // if($.isArray(this.option.value) && this.option.value.length>0 && this.count===1 && this.option.success){
             //     return;

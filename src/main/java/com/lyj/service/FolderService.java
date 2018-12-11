@@ -1,7 +1,10 @@
 package com.lyj.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lyj.dao.FolderDao;
 import com.lyj.dao.URLDao;
+import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,8 +56,21 @@ public class FolderService {
 
     @Transactional
     public boolean deleteFolderByFolderId(int folderId, int userId) {
+        int num1=0;
+        int count = folderDao.getChildrenFoldersCountByFolderId(userId, folderId);
+        if(count>=1){
+            throw new MessageException("该文件夹下还有子文件夹,请先删除子文件夹");
+        }else{
+            num1 = folderDao.deleteByFolderId(folderId);//删除文件夹
+        }
 
-//        Folder folder2 = folderDao.getFolderById(folder.getId());
+        if(num1==1){
+            return true;
+        }else{
+            return false;
+        }
+
+//        Folder folder2 = folderDao.getFolderById(folderId);
 //        if(folder2==null){
 //            return ResultUtil.error("文件夹不存在");
 //        }
@@ -82,34 +98,18 @@ public class FolderService {
 //
 //        return ResultUtil.success("删除成功!");
 
-        return true;
     }
 
     @Transactional
     public boolean updateFolder(Folder folder) {
 
-//        Folder folder1 = folderDao.getFolderById(folder.getId());
-//        folder1.setName(folder.getName());
-//
-//        Integer last_pid=folder1.getPid();
-//        Integer now_pid=folder.getPid();
-//
-//
-//        if(last_pid==now_pid){//如果没有改变文件夹的位置
-//            folderDao.update(folder1);
-//        }else {
-//            folder1.setPid(now_pid);
-//            folderDao.update(folder1);
-//
-//            //增加现在父文件夹的FoderNum
-//            folderDao.incrFoderNumById(now_pid);
-//            //增加原文件夹的FoderNum
-//            folderDao.decrFolderNumById(last_pid);
-//        }
-//
-//        return ResultUtil.success("更改成功!");
+        int i = folderDao.updateFolder(folder);
+        if(i==1){
+            return true;
+        }else{
+            return false;
+        }
 
-        return true;
     }
 
 //    public int getRootFolderId(User user) {

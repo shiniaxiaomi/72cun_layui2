@@ -5,8 +5,8 @@ function fn(data,pid) {
     for (var i = 0; i < data.length; i++) {
         if (data[i].pid == pid) {
             var obj = {
-                "id": data[i].id,
-                "label": data[i].label,
+                "value": data[i].id,
+                "label": data[i].name,
                 "pid": data[i].pid
             };
             temp = fn(data, data[i].id);
@@ -34,6 +34,9 @@ var util={
             url: url,
             dataType: 'json',
             data: data,
+            complete:function (data) {
+                //console.dir(data)
+            },
             error: function (data) {
                 if(data.status==309){//自己设置的错误码,表示session失效
                     console.dir("session 失效")

@@ -1,13 +1,16 @@
 /* #region tree */
 .eleTree{
     position: relative;
+    height:515px;
+    width:335px;
+    overflow: auto
 }
 .eleTree-hide{
     display: none;
 }
 .eleTree-node-content{
     cursor: pointer;
-    height: 26px;
+    /*height: 26px;*/
     line-height: 1.3;
 }
 .eleTree-node-content:hover,

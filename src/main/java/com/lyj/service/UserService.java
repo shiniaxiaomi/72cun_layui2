@@ -63,6 +63,7 @@ public class UserService {
         if(user.getUserName()!=null && user.getPassword()!=null){
             User one = userDao.getUser(user.getUserName());
             if(one!=null && one.getPassword().equals(user.getPassword())){
+                user.setId(one.getId());
                 return true;
             }
         }

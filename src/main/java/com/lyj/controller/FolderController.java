@@ -26,11 +26,11 @@ public class FolderController {
 
 
     @RequestMapping("/query")
-    public List<Folder> query(HttpSession session){
+    public Result<Folder> query(HttpSession session){
         User user = (User) session.getAttribute("user");
         List<Folder> folders = folderService.getFoldersByUserId(user.getId());
 
-        return folders;
+        return ResultUtil.success(folders);
 
     }
 
@@ -42,14 +42,14 @@ public class FolderController {
         folder.setUserId(user.getId());
 
         if(folderService.addFolder(folder)){
-            return ResultUtil.success("添加成功");
+            return ResultUtil.success("添加成功",folder);
         }else{
-            return ResultUtil.error("添加失败");
+            return ResultUtil.error("添加失败",folder);
         }
     }
 
     @RequestMapping("/delete")
-    public Result delete(Folder folder, HttpSession session){
+    public Result<Folder> delete(Folder folder, HttpSession session){
         User user = (User) session.getAttribute("user");
         if(folderService.deleteFolderByFolderId(folder.getId(),user.getId())){
             return ResultUtil.success("删除成功");

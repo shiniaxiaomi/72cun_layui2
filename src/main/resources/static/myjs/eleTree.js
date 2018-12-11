@@ -189,7 +189,7 @@ layui.define(["jquery","laytpl"], function (exports) {
             },
             request: {
                 name: "label",
-                key: "id",
+                key: "value",
                 children: "children",
                 disabled: "disabled",
                 isLeaf: "isLeaf"
@@ -837,7 +837,8 @@ layui.define(["jquery","laytpl"], function (exports) {
                     cloneNode.remove();
                     options.elem.css("user-select","auto");
 
-                    
+                    var flag=undefined;
+
                     // 当前点击的是否时最外层
                     var isCurrentOuterMost=eleNode.parent().get(0).isEqualNode(options.elem.get(0))
                     // 目标是否时最外层
@@ -877,70 +878,85 @@ layui.define(["jquery","laytpl"], function (exports) {
                         },
                         stop: function() {
                             isStop=true;
+                        },
+                        setFlag:function (val) {
+                            flag=val;
+                        },
+                        getIndex:function () {
+                            var num=0;
+                            if(currentData.currentData)
+                            console.dir(currentData)
+                            return _self.reInitData(target).index.length;
                         }
                     });
+
                     // 拖拽是否取消
                     if(isStop){
                         return false;
                     }
 
-                    // 数据更改
-                    var currList=currentData.parentData.data[options.request.children]
-                    var currIndex=currentData.parentData.childIndex
-                    var currData=currentData.currentData;
-                    var tarData=targetData.currentData;
-                    // 当前是否是最外层
-                    isCurrentOuterMost ? options.data.splice(currIndex,1) : currList.splice(currIndex,1)
-                    // 目标是否是最外层
-                    isTargetOuterMost ? options.data.push(currData) : (function() {
-                        !tarData[options.request.children] ? tarData[options.request.children]=[] : "";
-                        tarData[options.request.children].push(currData);
-                    })()
+                    //等待后端返回数据
+                    var interval=setInterval(function () {
+                        console.dir(flag)
+                        if(flag!=undefined){
+                            clearInterval(interval);//退出定时
+                            if(flag==0){
+                                //执行变更
 
-                    // dom互换
-                    eleNode.remove();
-                    // 最外层判断
-                    if(isTargetOuterMost){
-                        target.append(temNode);
-                        var floor=0;
-                    }else{
-                        target.children(".eleTree-node-group").append(temNode);
-                        var floor=Number(target.attr("eletree-floor"))+1;
-                    }
-                    // 加floor和padding
-                    temNode.attr("eletree-floor",String(floor));
-                    temNode.children(".eleTree-node-content").css("padding-left",floor*options.indent+"px");
-                    // 通过floor差值计算子元素的floor
-                    var countFloor=eleFloor-floor;
-                    temNode.find(".eleTree-node").each(function(index,item) {
-                        var f=Number($(item).attr("eletree-floor"))-countFloor;
-                        $(item).attr("eletree-floor",String(f));
-                        $(item).children(".eleTree-node-content").css("padding-left",f*options.indent+"px");
-                    })
-                    // 原dom去三角
-                    var leaf=groupNode.children(".eleTree-node").length===0;
-                        leaf && groupNode.siblings(".eleTree-node-content")
-                        .children(".eleTree-node-content-icon").children(".layui-icon")
-                        .removeClass("icon-rotate").css("color","transparent");
-                    // 当前的增加三角
-                    var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===0;
-                        !cLeaf && target.children(".eleTree-node-content")
-                        .children(".eleTree-node-content-icon").children(".layui-icon")
-                        .addClass("icon-rotate").removeAttr("style");
+                                // 数据更改
+                                var currList=currentData.parentData.data[options.request.children]
+                                var currIndex=currentData.parentData.childIndex
+                                var currData=currentData.currentData;
+                                var tarData=targetData.currentData;
+                                // 当前是否是最外层
+                                isCurrentOuterMost ? options.data.splice(currIndex,1) : currList.splice(currIndex,1)
+                                // 目标是否是最外层
+                                isTargetOuterMost ? options.data.push(currData) : (function() {
+                                    !tarData[options.request.children] ? tarData[options.request.children]=[] : "";
+                                    tarData[options.request.children].push(currData);
+                                })()
 
-                    _self.unCheckNodes();
-                    _self.defaultChecked();
+                                // dom互换
+                                eleNode.remove();
+                                // 最外层判断
+                                if(isTargetOuterMost){
+                                    target.append(temNode);
+                                    var floor=0;
+                                }else{
+                                    target.children(".eleTree-node-group").append(temNode);
+                                    var floor=Number(target.attr("eletree-floor"))+1;
+                                }
+                                // 加floor和padding
+                                temNode.attr("eletree-floor",String(floor));
+                                temNode.children(".eleTree-node-content").css("padding-left",floor*options.indent+"px");
+                                // 通过floor差值计算子元素的floor
+                                var countFloor=eleFloor-floor;
+                                temNode.find(".eleTree-node").each(function(index,item) {
+                                    var f=Number($(item).attr("eletree-floor"))-countFloor;
+                                    $(item).attr("eletree-floor",String(f));
+                                    $(item).children(".eleTree-node-content").css("padding-left",f*options.indent+"px");
+                                })
+                                // 原dom去三角
+                                var leaf=groupNode.children(".eleTree-node").length===0;
+                                leaf && groupNode.siblings(".eleTree-node-content")
+                                    .children(".eleTree-node-content-icon").children(".layui-icon")
+                                    .removeClass("icon-rotate").css("color","transparent");
+                                // 当前的增加三角
+                                var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===0;
+                                !cLeaf && target.children(".eleTree-node-content")
+                                    .children(".eleTree-node-content-icon").children(".layui-icon")
+                                    .addClass("icon-rotate").removeAttr("style");
 
-                    layui.event.call(target, MOD_NAME, 'nodeDragFinish('+ _self.filter +')', {
-                        current: {
-                            node: eleNode,
-                            data: currentData
-                        },
-                        target: {
-                            node: target,
-                            data: targetData
-                        },
-                    });
+                                _self.unCheckNodes();
+                                _self.defaultChecked();
+
+                            }else{
+                                return false;
+                            }
+                            flag=undefined;//恢复undefined
+                        }
+                    },100)
+
 
                 })
             })
@@ -985,17 +1001,11 @@ layui.define(["jquery","laytpl"], function (exports) {
                     left: e.pageX,
                     top: e.pageY
                 }).show();
-                // 复制
-                $("#tree-menu li.copy").off().on("click",function() {
-                    var el = $(that).children(".eleTree-node-content-label").get(0);
-                    var selection = window.getSelection();
-                    var range = document.createRange();
-                    range.selectNodeContents(el);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    document.execCommand('Copy', 'false', null);
-                    selection.removeAllRanges();
-                });
+
+                var obj={};
+                obj[options.request.key]=_self.addKeyIndex;
+                obj[options.request.name]="未命名"+_self.nameIndex;
+
                 // 新增
                 $("#tree-menu li.add").off().on("click",function(e) {
                     e.stopPropagation();
@@ -1012,57 +1022,31 @@ layui.define(["jquery","laytpl"], function (exports) {
                         data: nodeData.currentData,
                         // 重新设置数据
                         setData: function(o) {
-                            _self[s](key,$.extend({},obj,o));
                             isStop=true;
+                            _self[s](key,$.extend({},obj,o));
                         },
                         // 停止添加
                         stop: function() {
                             isStop=true;
                         },
-                        getIndex:function () {
-                            isStop=true;
-                            return _self.reInitData(node).index.length;
-                        }
+                        //setFlag:function (val) {
+                        //    flag=val;
+                        //}
+                        //getIndex:function () {
+                        //    isStop=true;
+                        //    return _self.reInitData(node).index.length;
+                        //}
                     });
                     if(isStop) return;
-                    _self[s](key,obj)
-                    _self.nameIndex++;
-                    _self.addKeyIndex++;
+
+                    //_self[s](key,obj)
+                    //_self.nameIndex++;
+                    //_self.addKeyIndex++;
+
                 })
                 // 添加的默认数据
-                var obj={};
-                obj[options.request.key]=_self.addKeyIndex;
-                obj[options.request.name]="未命名"+_self.nameIndex;
 
-                //去除其他功能,只自己重写一种Append功能
-                //var arr=["Append","InsertBefore","InsertAfter"];
-                //arr.forEach(function(val) {
-                //    var s=val[0].toLocaleLowerCase()+val.slice(1,val.length);
-                //    $("#tree-menu li."+s).off().on("click",function(e) {
-                //        var node=$(that).parent(".eleTree-node");
-                //        var key=Number(node.attr("data-"+options.request.key));
-                //        var isStop=false;
-                //        var s=val[0].toLocaleLowerCase()+val.slice(1,val.length);
-                //        layui.event.call(node, MOD_NAME, 'node'+val+'('+ _self.filter +')', {
-                //            node: node,
-                //            data: nodeData.currentData,
-                //            // 重新设置数据
-                //            setData: function(o) {
-                //                _self[s](key,$.extend({},obj,o));
-                //                isStop=true;
-                //            },
-                //            // 停止添加
-                //            stop: function() {
-                //                isStop=true;
-                //            }
-                //        });
-                //        if(isStop) return;
-                //        _self[s](key,obj)
-                //        _self.nameIndex++;
-                //        _self.addKeyIndex++;
-                //    })
-                //})
-                
+
                 // 编辑
                 $("#tree-menu li.edit").off().on("click",function(e) {
                     e.stopPropagation();
@@ -1073,12 +1057,16 @@ layui.define(["jquery","laytpl"], function (exports) {
                     var text=label.text();
                     var inp="<input type='text' value='"+text+"' class='eleTree-node-content-input' />";
                     label.after(inp);
+
+                    var flag=undefined;
+
                     //绑定输入框失去焦点保存事件
                     label.siblings(".eleTree-node-content-input").focus().select().off().on("blur",function() {
                         var val=$(this).val();
                         var isStop=false;
                         var inpThis=this;
                         layui.event.call(node, MOD_NAME, 'nodeEdit('+ _self.filter +')', {
+                            initValue:text,
                             node: node,
                             value: val,
                             data: nodeData.currentData,
@@ -1087,20 +1075,36 @@ layui.define(["jquery","laytpl"], function (exports) {
                                 isStop=true;
                                 $(inpThis).siblings(".eleTree-node-content-label").show();
                                 $(inpThis).remove();
-                            }
+                            },
+                            setFlag: function(val) {
+                                flag=val;
+                            },
                         });
                         if(isStop) return;
-                        // 修改数据
-                        _self.reInitData(eleNode).currentData[options.request.name]=val;
-                        // 修改dom
-                        $(this).siblings(".eleTree-node-content-label").text(val).show();
-                        $(this).remove();
-                        //修改成功之后的回调
-                        //layui.event.call(node, MOD_NAME, 'nodeEditFinish('+ _self.filter +')', {
-                        //    node: node,
-                        //    value: val,
-                        //    data: nodeData.currentData,
-                        //});
+
+                        var this_=this;
+
+                        //等待后端返回数据
+                        var interval=setInterval(function () {
+                            console.dir(flag)
+                            if(flag!=undefined){
+                                clearInterval(interval);//退出定时
+                                if(flag==0){
+                                    //执行变更
+
+                                    // 修改数据
+                                    _self.reInitData(eleNode).currentData[options.request.name]=val;
+                                    // 修改dom
+                                    $(this_).siblings(".eleTree-node-content-label").text(val).show();
+                                    $(this_).remove();
+                                }else{
+                                    return false;
+                                }
+                                flag=undefined;
+                            }
+                        },100)
+
+
                     }).on("mousedown",function(e) {
                         // 防止input拖拽
                         e.stopPropagation();
@@ -1108,11 +1112,15 @@ layui.define(["jquery","laytpl"], function (exports) {
 
                     //给输入框绑定回车保存事件
                     label.siblings(".eleTree-node-content-input").on('keypress',function (e) {
+
+                        var flag=undefined;
+
                         if (e.which == 13) {
                             var val=$(this).val();
                             var isStop=false;
                             var inpThis=this;
                             layui.event.call(node, MOD_NAME, 'nodeEdit('+ _self.filter +')', {
+                                initValue:text,
                                 node: node,
                                 value: val,
                                 data: nodeData.currentData,
@@ -1121,20 +1129,35 @@ layui.define(["jquery","laytpl"], function (exports) {
                                     isStop=true;
                                     $(inpThis).siblings(".eleTree-node-content-label").show();
                                     $(inpThis).remove();
+                                },
+                                setFlag:function (val) {
+                                    flag=val;
                                 }
                             });
                             if(isStop) return;
-                            // 修改数据
-                            _self.reInitData(eleNode).currentData[options.request.name]=val;
-                            // 修改dom
-                            $(this).siblings(".eleTree-node-content-label").text(val).show();
-                            $(this).remove();
-                            //修改成功之后的回调
-                            layui.event.call(node, MOD_NAME, 'nodeEditFinish('+ _self.filter +')', {
-                                node: node,
-                                value: val,
-                                data: nodeData.currentData,
-                            });
+
+                            var this_=this;
+
+                            //等待后端返回数据
+                            var interval=setInterval(function () {
+                                console.dir(flag)
+                                if(flag!=undefined){
+                                    clearInterval(interval);//退出定时
+                                    if(flag==0){
+                                        //执行变更
+
+                                        // 修改数据
+                                        _self.reInitData(eleNode).currentData[options.request.name]=val;
+                                        // 修改dom
+                                        $(this_).siblings(".eleTree-node-content-label").text(val).show();
+                                        $(this_).remove();
+                                    }else{
+                                        return false;
+                                    }
+                                    flag=undefined;
+                                }
+                            },100)
+
                         }
                     }).on("mousedown",function(e) {
                         // 防止input拖拽
@@ -1147,21 +1170,40 @@ layui.define(["jquery","laytpl"], function (exports) {
                     var node=$(that).parent(".eleTree-node");
                     var key=Number(node.attr("data-"+options.request.key));
                     var isStop=false;
+
+                    var flag=undefined;
+
                     layui.event.call(node, MOD_NAME, 'nodeRemove('+ _self.filter +')', {
                         node: node,
                         data: nodeData.currentData,
                         // 停止添加
                         stop: function() {
                             isStop=true;
+                        },
+                        setFlag:function (val) {
+                            flag=val;
                         }
                     });
                     if(isStop) return;
-                    _self.remove(key);
-                    //删除成功的回调事件
-                    layui.event.call(node, MOD_NAME, 'nodeRemoveFinish('+ _self.filter +')', {
-                        node: node,
-                        data: nodeData.currentData,
-                    });
+
+                    var this_=this;
+
+                    //等待后端返回数据
+                    var interval=setInterval(function () {
+                        console.dir(flag)
+                        if(flag!=undefined){
+                            clearInterval(interval);//退出定时
+                            if(flag==0){
+                                //执行变更
+
+                                _self.remove(key);
+                            }else{
+                                return false;
+                            }
+                            flag=undefined;
+                        }
+                    },100)
+
                 })
 
                 _self.prevClickEle=$(this);

@@ -23,7 +23,7 @@ public class URL {
 
     private String label;
 
-    private int pid;
+    private int pid=-1;
 
     private String pidName;//父文件夹的名称
 
