@@ -36,48 +36,32 @@
         where id = #{id}
     </update>
 
-    <!-- 根据folderId查询url -->
-    <select id="getUrlsByPid">
-        select <include refid="url_list"></include>
-        from url u
-        where u.userId=#{userId} and u.pid=#{pid} order by u.createTime desc
-    </select>
 
-    <!--&lt;!&ndash; 根据keywords查询url &ndash;&gt;-->
-    <!--<select id="getUrlsByKeywords">-->
-        <!--select <include refid="url_list"></include>-->
-        <!--from url u left join folder f on u.folderId=f.id-->
-        <!--where u.userId=#{userId}-->
-        <!--<if test="keywords!=''">-->
-            <!--and u.name like CONCAT('%',#{keywords},'%')-->
-        <!--</if>-->
-        <!--order by u.createTime desc-->
-    <!--</select>-->
+    <!-- forEach : 用来循环 collection : 用来指定循环的数据的类型 可以填的值有：array,list,map item
+            : 循环中为每个循环的数据指定一个别名 index : 循环中循环的下标 open : 开始 close : 结束 separator : 数组中元素之间的分隔符 -->
+    <!-- 批量删除 -->
+    <delete id="deleteUrlsByIds_Batch">
+        delete from url where id in
+        <foreach collection="list" item="itemId" index="no" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
 
-    <!--&lt;!&ndash; 根据folderName查询url &ndash;&gt;-->
-    <!--<select id="getUrlsByPidName">-->
-        <!--select <include refid="url_list"></include>-->
-        <!--from url u-->
-        <!--where u.userId=#{userId}-->
-        <!--<if test="keywords!=''">-->
-            <!--and f.label like CONCAT('%',#{keywords},'%')-->
-        <!--</if>-->
-        <!--order by u.createTime desc-->
-    <!--</select>-->
+    <!-- 批量删除 -->
+    <!--<update id="updateUrlsByIds_Batch">-->
+        <!--update url set pid=#{pid} where id in-->
+        <!--<foreach collection="ids" item="itemId" index="no" open="(" separator="," close=")">-->
+            <!--#{itemId}-->
+        <!--</foreach>-->
+    <!--</update>-->
 
-    <!--&lt;!&ndash; 根据urlName和folderName查询url &ndash;&gt;-->
-    <!--<select id="getUrlsByLabelAndPidName">-->
-        <!--select <include refid="url_list"></include>-->
-        <!--from url u-->
-        <!--where u.userId=#{userId}-->
-        <!--<if test="label!=''">-->
-            <!--and u.label like CONCAT('%',#{label},'%')-->
-        <!--</if>-->
-        <!--<if test="pidName!=''">-->
-            <!--and f.pidName like CONCAT('%',#{pidName},'%')-->
-        <!--</if>-->
-        <!--order by u.createTime desc-->
-    <!--</select>-->
+    <!-- 批量删除 -->
+    <update id="updateUrlsByIds_Batch">
+        update url set pid=#{pid},pidName=#{pidName} where id in
+        <foreach collection="ids" item="itemId" index="no" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </update>
 
 
 

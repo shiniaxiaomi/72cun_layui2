@@ -30,24 +30,13 @@ public class URLController {
     @Autowired
     URLService urlService;
 
-
     //需要分页
-//    @RequestMapping("/query")
-//    public PageInfo<URL> findByFolderByPage(Folder folder, boolean needCount, Integer pageSize, Integer pageIndex, HttpSession session){
-//        User user = (User) session.getAttribute("user");
-////
-//        int count=-1;
-//        //如果需要总数
-//        if(needCount){
-//            count=urlService.getUrlsCountByUserIdAndFolderId(user.getId(),folder.getId());
-//        }
-//
-//        List<URL> urls = urlService.getUrlsByUserIdAndFolderId(user.getId(),folder.getId(),pageIndex,pageSize);
-//
-//        PageEntity<URL> pageEntity=new PageEntity<>(urls,count,pageIndex,pageSize);
-//
-//        return pageEntity;
-//    }
+    @RequestMapping("/getUrlsByPid")
+    public PageEntity<URL> getUrlsByPid(int pid,Integer page, Integer limit, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        PageInfo<URL> urls = urlService.getUrlsByPid(user.getId(), pid, page, limit);
+        return new PageEntity<>(urls.getTotal(),urls.getList());
+    }
 
     //需要分页
     @RequestMapping("/getUrlsLike")
@@ -82,12 +71,28 @@ public class URLController {
         }else{
             return ResultUtil.error("更新失败!");
         }
+    }
 
+    @RequestMapping("/updateInBatches")
+    public Result updateInBatches(String id,int pid,String pidName){
+        if(urlService.updateUrlsInBatchesByIds(id,pid,pidName)){
+            return ResultUtil.success("更新成功!");
+        }else{
+            return ResultUtil.error("更新失败!");
+        }
     }
 
     @RequestMapping("/delete")
     public Result delete(Integer id){
         if(urlService.deleteUrl(id)){
+            return ResultUtil.success("删除成功!");
+        }else{
+            return ResultUtil.error("删除失败!");
+        }
+    }
+    @RequestMapping("/deleteInBatches")
+    public Result deleteInBatches(String id){
+        if(urlService.deleteUrlsInBatchesByIds(id)){
             return ResultUtil.success("删除成功!");
         }else{
             return ResultUtil.error("删除失败!");

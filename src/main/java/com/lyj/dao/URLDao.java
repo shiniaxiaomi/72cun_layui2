@@ -6,6 +6,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 陆英杰
@@ -27,16 +28,18 @@ public interface URLDao{
     @Delete("delete from url where pid=#{pid}")
     void deleteUrlByPid(Integer pid);
 
+    //xml---批量删除
+    int deleteUrlsByIds_Batch(List<Integer> ids);
+
     //改
     //xml---根据id更新url
     int updateUrl(URL url);
+    //xml---批量更新
+    int updateUrlsByIds_Batch(@Param("ids")List<Integer> ids,@Param("pid")int pid,@Param("pidName")String pidName);
 
     //查
-    //xml---根据folderId查询url
-    List<URL> getUrlsByPid(@Param("userId") Integer userId, @Param("pid") int pid, RowBounds rowBounds);//分页
-    //xml---根据folderId查询总数
-    int getUrlsCountByPid(@Param("userId") Integer userId, @Param("pid") int pid);//查询总数
-
+    @Select("select * from url where userId=#{userId} and pid=#{pid} order by createTime desc")
+    List<URL> getUrlsByPid(@Param("userId") Integer userId, @Param("pid") int pid);//分页
 
     @Select("select * from url where userId=#{userId} and label like CONCAT('%',#{label},'%') order by createTime desc")
     List<URL> getUrlsByLabel(@Param("userId") Integer userId, @Param("label") String label);
@@ -46,4 +49,6 @@ public interface URLDao{
 
     @Select("select * from url where userId=#{userId} and pidName like CONCAT('%',#{pidName},'%') order by createTime desc")
     List<URL> getUrlsByPidName(@Param("userId") Integer userId, @Param("pidName") String pidName);
+
+
 }

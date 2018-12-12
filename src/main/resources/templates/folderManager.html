@@ -8,23 +8,31 @@
 
     <link rel="stylesheet" href="/css/eleTree.css" media="all">
 
+    <link rel="stylesheet" type="text/css" href="/css/cascader.css" />
+
+    <style>
+        /*设定表格特定的字体大小*/
+        .layui-table-cell {
+            font-size: 16px;
+        }
+    </style>
+
 </head>
 <body>
 <div class="layui-row">
     <div class="layui-col-md3">
         <div>
-            <input type="text" autocomplete="off" placeholder="输入关键字进行过滤" class="layui-input" style="max-width:335px">
+            <input type="text" autocomplete="off" placeholder="输入关键字进行过滤" class="layui-input" >
             <div class="eleTree ele1" lay-filter="data1"></div>
         </div>
     </div>
 
     <div class="layui-col-md9">
-
         <div>
             <label class="layui-form-label" style="font-size: 20px">批量操作</label>
             <div class="layui-btn-container">
-                <button class="layui-btn">移动到</button>
-                <button class="layui-btn">删除</button>
+                <button class="layui-btn" id="moveToBtn">移动到</button>
+                <button class="layui-btn" id="deleteBtn">删除</button>
             </div>
         </div>
 
@@ -38,10 +46,13 @@
 
 <!-- 工具栏模板： -->
 <script type="text/html" id="toolbarDemo" lay-event="tool">
-    <!--<div class="layui-btn-container">-->
-    <!--</div>-->
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">编辑</button>
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="{{d.url}}" class="layui-table-link" target="_blank">{{ d.url }}</a>
 </script>
 
 <script src="/js/jquery.min.js"></script>
@@ -50,10 +61,37 @@
 <script src="/js/util.js?v=1.8.4"></script>
 <script>
 
-    layui.use(['jquery', 'table', 'code','table','eleTree'], function () {
-        var eleTree = layui.eleTree
-            ,table = layui.table
-            , $ = layui.$;
+    layui.use(['jquery', 'table','eleTree','form',"cascader"], function () {
+        var eleTree = layui.eleTree;
+        var table = layui.table
+        var $ = layui.$;
+        var form = layui.form;
+        var cascader = layui.cascader;
+
+        $("#moveToBtn").on("click",function () {
+            //批量更改网址
+            editLayer=layer.open({
+                type: 1,
+                shadeClose: true,
+                area: ['700px', '500px'], //宽高
+                content: $("#moveText")
+            });
+        })
+
+        $("#deleteBtn").on("click",function () {
+            var checkStatus = table.checkStatus('idTest')
+            var data = checkStatus.data;
+
+            var id="";
+            for(var i=0;i<data.length;i++){id+=data[i].id+",";}
+            util.ajax("/url/deleteInBatches",{id:id},function (data) {
+                if(data.code==0){
+                    tableOption.where={pid:clickNodeId};
+                    tableIns.reload(tableOption);//刷新表格
+                    layer.msg("批量删除成功");
+                }
+            })
+        })
 
         //请求数据,初始化
         var el = eleTree.render({
@@ -70,13 +108,6 @@
 
         // 添加子节点事件之前
         eleTree.on("nodeAppend(data1)", function (d) {
-//            console.log(d.data);    // 点击节点对于的数据
-//            if(d.getIndex()>5){
-//                d.stop();               // 取消添加
-//                layer.msg('子结点深度不能超过5个');
-//                return;
-//            }
-
             layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 10}, function(pass, index){
                 util.ajax("/folder/addFolder",{name:pass,pid:d.data.value},function (data) {
                     d.setData({//设置数据
@@ -86,7 +117,6 @@
                     });
                     if(data.code==0){
                         layer.close(index);
-//
                         layer.msg('文件夹添加成功');
                     }
                 })
@@ -96,19 +126,6 @@
 
         // 节点被编辑事件之前(检查编译后的名称和检验后台是否修改成功)
         eleTree.on("nodeEdit(data1)", function (d) {
-//            if(d.value.length>10){
-//                layer.msg('文件夹名字不能超过10个字');
-//                d.stop();
-//            }else{
-//                util.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
-//                    d.setFlag(data.code);
-//                    if(data.code==0){
-//                        layer.msg('文件夹名称更改成功');
-//                    }else{
-//                        layer.msg('文件夹名称更改失败');
-//                    }
-//                })
-//            }
             util.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
                 d.setFlag(data.code);
                 if(data.code==0){
@@ -121,15 +138,11 @@
 
         // 节点被拖拽事件之前
         eleTree.on("nodeDrag(data1)", function (d) {
-//            console.dir(d.getIndex())
-//            if(d.getIndex()>5){
-//                d.stop();               // 取消添加
-//                layer.msg('子结点深度不能超过5个');
-//                return;
-//            }
-
-//            console.log(d.current.data.currentData.value);    // 起始节点对应的dom和数据
-//            console.log(d.target.data.currentData.value);   // 鼠标落点对应的dom和数据
+            //返回原来的节点,则返回
+            if(d.current.data.currentData.pid==d.target.data.currentData.value){
+                d.setFlag(0);//告知定时器结束定时
+                return;
+            }
             util.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
                 d.setFlag(data.code);//通知ajax已经请求完成,进行下一步操作
                 if(data.code==0){
@@ -154,120 +167,202 @@
 
 
 
-
+        var clickNodeId;//保存点击过的node的id
         eleTree.on("nodeClick(data1)", function (d) {
+            clickNodeId=d.data.currentData.value;
             console.dir(d)
-//            el.remove(d.data.currentData.value);//点击删除节点
-//            节点点击事件
-//            el=el.reload([{
-//                "value": 13,
-//                "label": "姑苏区"
-//            }]);//重新请求新数据,并重新渲染
-//            el=el.reload();//重新请求数据
-//            console.dir(el.getTreeData());//获取树的全部数据
-        });
-
-
-
-
-
-
-        //----------------------表格
-        //首次渲染,拿到对象
-        var tableIns = table.render({
-            elem: '#demo'
-            ,height: '500'
-            ,url: '/data/table.json' //数据接口
-            ,page: true //开启分页
-            ,skin: 'line' //行边框风格
-            ,limits:[10,20,30]//分页的数量选择
-            ,cols: [[ //表头
-
-                {field: 'id', title: '网址名称', align:'center',}
-                ,{field: 'username', title: '网址链接', align:'center',}
-                ,{field: 'sex', title: '链接地址', align:'center',}
-                ,{field: 'city', title: '创建时间' ,align:'center',}
-                ,{fixed: 'right',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
-            ]],
-            done: function(res, curr, count){
-                //如果是异步请求数据方式，res即为你接口返回的信息。
-                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                console.log(res);
-
-                //得到当前页码
-                console.log(curr);
-
-                //得到数据总量
-                console.log(count);
-            }
-        });
-
-
-        //这里以搜索为例,在url请求不变的情况下
-        function search(keyword) {
             tableIns.reload({
                 where: { //设定异步数据接口的额外参数，任意设
-                    keyword: keyword,
+                    pid:clickNodeId
                 }
                 ,page: {
                     curr: 1 //重新从第 1 页开始
                 }
             });
+        });
+
+
+//######################################################表格
+
+        var tableOption={
+            elem: '#demo'
+            ,id:'idTest'
+            ,height: '500'
+            ,url: '/url/getUrlsByPid' //数据接口
+            ,where:{pid:-1}
+            ,page: true //开启分页
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {type:'checkbox'}
+                ,{field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'label', title: '网址名称', align:'center',unresize:true}
+                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true}
+                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
+            ]],
         }
 
+        //首次渲染,拿到对象
+        var tableIns = table.render(tableOption);
 
+        var editLayer;
+        var cas_edit;//编辑弹窗的folder树
         //监听行内工具条
         table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的DOM对象
 
             if(layEvent === 'delete'){ //删除
-                layer.confirm('真的删除行么', function(index){
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
-                    //向服务端发送删除指令
-                });
+                util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                    if(data.code==0){
+                        tableOption.where={pid:clickNodeId};
+                        tableIns.reload(tableOption);//刷新表格
+                        layer.msg("删除成功");
+                    }
+                })
             } else if(layEvent === 'edit'){ //编辑
-                //do something
-
-                //同步更新缓存对应的值
-                obj.update({
-                    username: '123'
-                    ,title: 'xxx'
+                //更改网址弹窗
+                editLayer=layer.open({
+                    type: 1,
+                    shadeClose: true,
+                    area: ['700px', '500px'], //宽高
+                    content: $("#editText")
                 });
+
+                form.val("editText", {
+                    "id": obj.data.id
+                    ,"label": obj.data.label
+                    ,"url": obj.data.url
+                    ,"pidName": obj.data.pidName
+                    ,"pid": obj.data.pid
+                })
             }
         });
 
-//        //监听添加事件
-//        table.on('toolbar(test)', function(obj){
-//            var checkStatus = table.checkStatus(obj.config.id);
-//            if(obj.event==='add'){
-//                layer.msg('添加');
-//            }
-//        });
 
 
-        //监听行单击事件
-        table.on('row(test)', function(obj){
-//            layer.msg(obj.data.id);
-//            console.log(obj.tr) //得到当前行元素对象
-            console.log(obj.data) //得到当前行数据
-//            obj.del(); //删除当前行
-            //obj.update(fields) //修改当前行数据
+        //url修改的文件夹选项的option
+        var FolderOption_edit={
+            elem: "#folderName_edit",
+            url:'/folder/query',
+            triggerType: "change",//滑动选择
+            showLastLevels: true,//选中后显示最后一个文件夹
+            //指定点击的回调函数
+            clickFunc:function (id) {
+                $("#folderId_edit").val(id);
+            },
+            //数据格式转换 回调函数
+            transData:function (data) {
+                return buildTree(data);
+            },
+        };
+        cas_edit=cascader(FolderOption_edit);//初次渲染
+
+        //url批量移动的文件夹选项的option
+        var FolderOption_move={
+            elem: "#folderName_move",
+            url:'/folder/query',
+            triggerType: "change",//滑动选择
+            showLastLevels: true,//选中后显示最后一个文件夹
+            //指定点击的回调函数
+            clickFunc:function (id) {
+                $("#folderId_move").val(id);
+            },
+            //数据格式转换 回调函数
+            transData:function (data) {
+                return buildTree(data);
+            },
+        };
+        cas_move=cascader(FolderOption_move);//初次渲染
+
+
+        //监听提交
+        form.on('submit(editSubmit)', function(formData){
+            util.ajax("/url/update",formData.field,function (data) {
+                tableOption.where={pid:clickNodeId};
+                tableIns.reload(tableOption);//刷新表格
+
+                layer.close(editLayer);
+                layer.msg("更改成功");
+            })
+            return false;
         });
 
-        //监听行双击事件
-        table.on('rowDouble(test)', function(obj){
-            //obj 同上
-            layer.msg('我被双击了');
+        //监听批量移动弹窗中的移动按钮
+        form.on('submit(moveSubmit)', function(formData){
+            var checkStatus = table.checkStatus('idTest')
+            var data = checkStatus.data;
+
+            var id="";
+            for(var i=0;i<data.length;i++){
+                id+=data[i].id+",";
+            }
+
+            util.ajax("/url/updateInBatches",{pid:formData.field.pid,id:id,pidName:formData.field.pidName},function (data) {
+                if(data.code==0){
+                    tableOption.where={pid:clickNodeId};
+                    tableIns.reload(tableOption);//刷新表格
+
+                    layer.close(editLayer);
+                    layer.msg("更改成功");
+                }
+            })
+            return false;
         });
-
-        function getTreeDeep() {
-
-        }
-
 
     });
 
 </script>
+
+
+<!-- url编辑弹窗 -->
+<form class="layui-form" lay-filter="editText" id="editText" style="display: none">
+    <input lay-verify="required" type="text" name="id" class="layui-input">
+    <div class="layui-form-item">
+        <label class="layui-form-label">网址名称</label>
+        <div class="layui-input-inline">
+            <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">网址链接</label>
+        <div class="layui-input-inline">
+            <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件夹位置</label>
+        <div class="layui-input-block">
+            <input id="folderName_edit" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
+            <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" >
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
+            <button type="reset" class="layui-btn">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<!-- url批量移动 弹窗 -->
+<form class="layui-form" lay-filter="moveText" id="moveText" style="display: none">
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件夹位置</label>
+        <div class="layui-input-block">
+            <input id="folderName_move" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
+            <input id="folderId_move" lay-verify="required" type="text" name="pid"  class="layui-input" >
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="moveSubmit">移动</button>
+            <button type="reset" class="layui-btn">重置</button>
+        </div>
+    </div>
+</form>

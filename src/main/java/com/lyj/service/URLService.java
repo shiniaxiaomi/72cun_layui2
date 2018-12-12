@@ -8,7 +8,10 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -31,14 +34,10 @@ public class URLService {
     //3、获取分页查询后的数据
 //        PageInfo<Folder> pageInfo = new PageInfo<>(folders);
 
-    public List<URL> getUrlsByPid(Integer userId, int pid, Integer pageIndex, Integer pageSize) {
-        RowBounds rowBounds=new RowBounds((pageIndex-1)*pageSize,pageSize);//分页用
-
-        return urlDao.getUrlsByPid(userId,pid,rowBounds);
-    }
-
-    public int getUrlsCountByPid(Integer userId, int pid) {
-        return urlDao.getUrlsCountByPid(userId,pid);
+    public PageInfo<URL> getUrlsByPid(Integer userId, int pid, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        List<URL> urls = urlDao.getUrlsByPid(userId, pid);
+        return new PageInfo<>(urls);
     }
 
     //根据label查询url
@@ -61,17 +60,6 @@ public class URLService {
         List<URL> urls = urlDao.getUrlsByPidName(userId, pidName);
         return new PageInfo<>(urls);
     }
-
-//    public int getUrlsCountByKeywords(Integer userId, String keywords) {
-//        return urlDao.getUrlsCountByKeywords(userId,keywords);
-//    }
-//
-//
-//
-//    public int getUrlsCountByLable(Integer userId, String keywords) {
-//        return urlDao.getUrlsCountByKeywords(userId,keywords);
-//    }
-
 
     public boolean updateUrl(URL url) {
         int i = urlDao.updateUrl(url);
@@ -100,14 +88,49 @@ public class URLService {
         }
     }
 
+    public boolean deleteUrlsInBatchesByIds(String id) {
+        String[] split = id.split(",");
+        List<Integer> ids=new ArrayList();
+        for(int i=0;i<split.length;i++){
+            ids.add(Integer.valueOf(split[i]));
+        }
+        int i = urlDao.deleteUrlsByIds_Batch(ids);
+        if(i>=1){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
+//    public boolean updateUrlsInBatchesByIds(String id, int pid) {
+//        String[] split = id.split(",");
+//        List<Integer> ids=new ArrayList();
+//        for(int i=0;i<split.length;i++){
+//            ids.add(Integer.valueOf(split[i]));
+//        }
+//        Map map=new HashMap();
+//        map.put("ids",ids);
+//        map.put("pid",pid);
+//        int i = urlDao.updateUrlsByIds_Batch(map);
+//        if(i>=1){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//
+//    }
+    public boolean updateUrlsInBatchesByIds(String id, int pid,String pidName) {
+        String[] split = id.split(",");
+        List<Integer> ids=new ArrayList();
+        for(int i=0;i<split.length;i++){
+            ids.add(Integer.valueOf(split[i]));
+        }
+        int i = urlDao.updateUrlsByIds_Batch(ids,pid,pidName);
+        if(i>=1){
+            return true;
+        }else{
+            return false;
+        }
 
-//    //综合查询--个数
-//    public int getUrlsCountByLabelAndPidName(Integer userId, String label, String pidName) {
-//        return urlDao.getUrlsCountByLabelAndPidName(userId,label,pidName);
-//    }
-//    //综合查询-url
-//    public List<URL> getUrlsByLabelAndPidName(Integer userId, String lable, String pidName) {
-//        return urlDao.getUrlsByLabelAndPidName(userId,lable,pidName);
-//    }
+    }
 }

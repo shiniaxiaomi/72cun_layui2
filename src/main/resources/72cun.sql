@@ -2,7 +2,8 @@
 SQLyog 企业版 - MySQL GUI v8.14 
 MySQL - 5.0.27-community-nt : Database - 72cun_layui
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -38,6 +39,7 @@ CREATE TABLE `url` (
   `label` varchar(20) default NULL,
   `pid` int(11) default NULL,
   `pidName` varchar(20) default NULL,
+  `userId` int(11) DEFAULT null,
   `createTime` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
