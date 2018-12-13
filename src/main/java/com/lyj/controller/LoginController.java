@@ -65,12 +65,11 @@ public class LoginController {
             seccessFlag=true;
         }else{
             seccessFlag = userService.login(user);
+            session.setAttribute("user",user);
         }
 
         //根据不同的参数选择要返回的页面
         if(seccessFlag){
-            session.setAttribute("user",user);
-
             Object type = session.getAttribute("type");
             Object url = session.getAttribute("url");
             if(type!=null && !"".equals((String)type)){

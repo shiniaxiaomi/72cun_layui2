@@ -22,7 +22,7 @@
 <div class="layui-row">
     <div class="layui-col-md3">
         <div>
-            <input type="text" autocomplete="off" placeholder="输入关键字进行过滤" class="layui-input" >
+            <input id='searchFolder1' type='text' autocomplete='off' placeholder='输入关键字进行过滤' class='layui-input' >
             <div class="eleTree ele1" lay-filter="data1"></div>
         </div>
     </div>
@@ -93,6 +93,46 @@
             })
         })
 
+        //绑定输入框搜索事件
+        $("#searchFolder1").on("input",function (e) {
+            if($("#searchFolder1").val()!=""){
+                var parentDataArrBuff=$.extend(true,[],parentDataArr)
+                var searchTableDataObjBuff=parentDataArrBuff[0];
+                filterTree(searchTableDataObjBuff,$("#searchFolder1").val(),parentDataArrBuff,0);
+                el.reload(parentDataArrBuff);//重新渲染filter文件夹后的数据
+            }else{
+                el.reload(parentDataArr);//重新渲染原始数据
+            }
+        })
+
+        //过滤文件夹
+        function filterTree(data,keyword,parentData,index) {
+            if(data.children==undefined){
+                if(data.label.indexOf(keyword) == -1){//不包含,则删除自身
+                    parentData.splice(index,1);
+                }
+                return;
+            }
+
+            for(var i=data.children.length-1;i>=0;i--){
+                filterTree(data.children[i],keyword,data.children,i);
+            }
+
+            if(data.children.length==0){
+                if(data.label.indexOf(keyword) == -1){//自身不包含,删除自身
+                    parentData.splice(index,1);
+                }else{
+                    delete data["children"];//自身包含,则删除children字段
+                }
+            }
+        }
+
+
+
+//###########################################树
+        var searchTableDataObj;//保存请求到的文件夹数据,可用于搜索
+        var parentDataArr;//请求到的原始数据
+
         //请求数据,初始化
         var el = eleTree.render({
             elem: '.ele1',
@@ -102,7 +142,10 @@
             expandOnClickNode: false,//点击节点前的图标才收缩
             defaultExpandAll:true,//默认展开所有节点
             done: function(res){
-                return buildTree(res);//将平面数据转换成tree数据,返回给data
+                var buff=buildTree(res);//转化成树结构
+                searchTableDataObj=buff[0];
+                parentDataArr=buff;
+                return buff;//将平面数据转换成tree数据,返回给data
             }
         });
 
@@ -169,16 +212,20 @@
 
         var clickNodeId;//保存点击过的node的id
         eleTree.on("nodeClick(data1)", function (d) {
-            clickNodeId=d.data.currentData.value;
-            console.dir(d)
-            tableIns.reload({
-                where: { //设定异步数据接口的额外参数，任意设
-                    pid:clickNodeId
-                }
-                ,page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-            });
+//            clickNodeId=d.data.currentData.value;
+//            console.dir(d)
+//            tableIns.reload({
+//                where: { //设定异步数据接口的额外参数，任意设
+//                    pid:clickNodeId
+//                }
+//                ,page: {
+//                    curr: 1 //重新从第 1 页开始
+//                }
+//            });
+
+
+
+
         });
 
 
@@ -242,6 +289,20 @@
         });
 
 
+        //设置单击行选中复选框
+        $(document).on("click",".layui-table-body table.layui-table tbody tr",function(){
+            var obj = event ? event.target : event.srcElement;
+            var tag = obj.tagName;
+            var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if(checkbox.length!=0){
+                if(tag == 'DIV') {
+                    checkbox.click();
+                }
+            }
+        });
+        $(document).on("click","td div.laytable-cell-checkbox div.layui-form-checkbox",function(e){
+            e.stopPropagation();
+        });
 
         //url修改的文件夹选项的option
         var FolderOption_edit={

@@ -137,7 +137,7 @@ var layer = {
     if(type) end = options;
     return layer.open($.extend({
       content: content,
-      time: 3000,
+      time: 1000,
       shade: false,
       skin: skin,
       title: false,
@@ -171,7 +171,7 @@ var layer = {
       type: 4,
       content: [content, follow],
       closeBtn: false,
-      time: 3000,
+      time: 1000,
       shade: false,
       resize: false,
       fixed: false,

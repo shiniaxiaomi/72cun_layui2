@@ -48,14 +48,6 @@
     </delete>
 
     <!-- 批量删除 -->
-    <!--<update id="updateUrlsByIds_Batch">-->
-        <!--update url set pid=#{pid} where id in-->
-        <!--<foreach collection="ids" item="itemId" index="no" open="(" separator="," close=")">-->
-            <!--#{itemId}-->
-        <!--</foreach>-->
-    <!--</update>-->
-
-    <!-- 批量删除 -->
     <update id="updateUrlsByIds_Batch">
         update url set pid=#{pid},pidName=#{pidName} where id in
         <foreach collection="ids" item="itemId" index="no" open="(" separator="," close=")">

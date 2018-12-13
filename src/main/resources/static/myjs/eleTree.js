@@ -157,7 +157,7 @@ layui.define(["jquery","laytpl"], function (exports) {
         constructor: Class,
         config: {
             elem: "",
-            data: [],
+            data: undefined,
             emptText: "暂无数据",        //1 内容为空的时候展示的文本
             renderAfterExpand: true,    //1 是否在第一次展开某个树节点后才渲染其子节点
             highlightCurrent: false,    //1 是否高亮当前选中节点，默认值是 false。
@@ -209,7 +209,7 @@ layui.define(["jquery","laytpl"], function (exports) {
             this.filter=options.elem.attr("lay-filter");
 
             // 判断加载方式
-            if(options.data.length===0){
+            if(options.data==undefined){
                 this.ajaxGetData();
             }else{
                 this.renderData();
@@ -217,7 +217,8 @@ layui.define(["jquery","laytpl"], function (exports) {
         },
         renderData: function() {
             var options=this.config;
-            // 渲染第一层
+            // 渲染第一层时加上一个搜索框
+            var str="<input id='searchFolder' type='text' autocomplete='off' placeholder='输入关键字进行过滤' class='layui-input' >";
             laytpl(TPL_ELEM(options,0)).render(options.data, function(string){
                 options.elem.html(string).children().show();
             }); 
@@ -257,13 +258,14 @@ layui.define(["jquery","laytpl"], function (exports) {
                 ,success: function(res){
                     if(res[options.response.statusName] != options.response.statusCode || !res[options.response.dataName]){
                         hint.error("请检查数据格式是否符合规范");
-                        typeof options.done === 'function' && options.done(res);
+                        // typeof options.done === 'function' && options.done(res);
                         return;
                     }
                     //options.data=res[options.response.dataName];
-                    options.data=options.done(res);
+                    if(typeof options.done === 'function'){
+                        options.data=options.done(res);
+                    }
                     _self.renderData();
-                    typeof options.done === 'function' && options.done(res);
                 }
             });
         },
