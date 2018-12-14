@@ -218,7 +218,6 @@ layui.define(["jquery","laytpl"], function (exports) {
         renderData: function() {
             var options=this.config;
             // 渲染第一层时加上一个搜索框
-            var str="<input id='searchFolder' type='text' autocomplete='off' placeholder='输入关键字进行过滤' class='layui-input' >";
             laytpl(TPL_ELEM(options,0)).render(options.data, function(string){
                 options.elem.html(string).children().show();
             }); 

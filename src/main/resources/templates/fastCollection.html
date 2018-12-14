@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>快速收藏</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+    <link rel="stylesheet" href="/css/eleTree.css" media="all">
+    <style>
+        /*设置表单*/
+        .layui-form-item{
+            width: 350px;
+            display: inline-block;
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div class="layui-row"style="top: 30px;">
+        <div class="layui-col-md3">
+            <a href="/main" class="layui-btn" target="_blank" onclick="window.close()">去主页</a>
+        </div>
+        <div class="layui-col-md3">
+            <a href="/fast/open" class="layui-btn">快速打开网址</a>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="/js/util.js"></script>
+<script>
+    layui.use(['layer',"eleTree",'form',"jquery"], function() {
+        var eleTree = layui.eleTree;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var form = layui.form;
+
+
+
+        //绑定输入框搜索事件
+        $("#searchFolder_add").on("input",function (e) {
+            if($("#searchFolder_add").val()!=""){
+                var parentDataArrBuff=$.extend(true,[],parentDataArr)
+                var searchTableDataObjBuff=parentDataArrBuff[0];
+                filterTree(searchTableDataObjBuff,$("#searchFolder_add").val(),parentDataArrBuff,0);
+                el_add.reload(parentDataArrBuff);//重新渲染filter文件夹后的数据
+            }else{
+                el_add.reload(parentDataArr);//重新渲染原始数据
+            }
+        })
+
+        //过滤文件夹
+        function filterTree(data,keyword,parentData,index) {
+            if(data.children==undefined){
+                if(data.label.indexOf(keyword) == -1){//不包含,则删除自身
+                    parentData.splice(index,1);
+                }
+                return;
+            }
+
+            for(var i=data.children.length-1;i>=0;i--){
+                filterTree(data.children[i],keyword,data.children,i);
+            }
+
+            if(data.children.length==0){
+                if(data.label.indexOf(keyword) == -1){//自身不包含,删除自身
+                    parentData.splice(index,1);
+                }else{
+                    delete data["children"];//自身包含,则删除children字段
+                }
+            }
+        }
+
+        //添加网址弹窗
+        var addLayer;
+        addLayer=layer.open({
+            type: 1,
+            shadeClose: true,
+            area: ['700px', '500px'], //宽高
+            content: $("#addText")
+        });
+
+
+        var searchTableDataObj;//保存请求到的文件夹数据,可用于搜索
+        var parentDataArr;//请求到的原始数据
+
+        //请求数据,初始化
+        var el_add = eleTree.render({
+            elem: '#ele_add',
+            url: '/folder/query',//请求数据的url
+            expandOnClickNode: false,//点击节点前的图标才收缩
+            defaultExpandAll:true,//默认展开所有节点
+            done: function(res){
+                var buff=buildTree(res);//转化成树结构
+                searchTableDataObj=buff[0];
+                parentDataArr=buff;
+                return buff;//将平面数据转换成tree数据,返回给data
+            }
+        });
+
+        var clickNodeId;//保存点击过的node的id
+        eleTree.on("nodeClick(data_add)", function (d) {
+            clickNodeId=d.data.currentData.value;
+            $("#folderId_add").val(clickNodeId);
+            $("#folderName_add").val(d.data.currentData.label);
+        });
+
+
+        //监听提交
+        form.on('submit(addSubmit)', function(data){
+            util.ajax("/url/add",data.field,function (data) {
+                layer.close(addLayer);
+                layer.msg("添加成功");
+
+                setTimeout(function () {
+                    window.close();
+                },500)
+
+            })
+            return false;
+        });
+
+
+    })
+</script>
+
+
+<!-- url添加弹窗 -->
+<form class="layui-form" id="addText" lay-filter="addText" style="display: none;margin-top: 20px">
+    <div class="layui-row">
+        <div class="layui-col-md5">
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址名称</label>
+                <div class="layui-input-inline">
+                    <input id="add1" value="${title}" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址链接</label>
+                <div class="layui-input-inline">
+                    <input id="add2" value="${url}" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit">添加</button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md7">
+            <div class="layui-form-item">
+                <label class="layui-form-label">文件夹位置</label>
+                <div id="location" class="layui-input-block">
+                    <input id="folderName_add" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
+                    <input id="folderId_add" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+                    <div id="folderTree" style="height: 320px;overflow-y: hidden;" >
+                        <input id='searchFolder_add' type='text' autocomplete='off' placeholder='输入关键字进行文件夹过滤' class='layui-input' >
+                        <div id="ele_add" class="eleTree ele1" lay-filter="data_add"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>

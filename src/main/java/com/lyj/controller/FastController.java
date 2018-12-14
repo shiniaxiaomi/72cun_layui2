@@ -57,18 +57,18 @@ public class FastController {
     //快速收藏
     @RequestMapping("/collection")
     public ModelAndView collection(ModelAndView mv, HttpSession session){
-        mv.setViewName("collection");
+        mv.setViewName("fastCollection");
         mv.addObject("url",session.getAttribute("url"));
-        mv.addObject("title",session.getAttribute("title"));
+        mv.addObject("label",session.getAttribute("label"));
         session.removeAttribute("url");
-        session.removeAttribute("title");
+        session.removeAttribute("label");
         return mv;
     }
 
     //快速打开
     @RequestMapping("/open")
     public ModelAndView open(ModelAndView mv, HttpSession session){
-        mv.setViewName("searchUrl");
+        mv.setViewName("fastOpen");
         mv.addObject("type",session.getAttribute("type"));
         session.removeAttribute("type");
         return mv;

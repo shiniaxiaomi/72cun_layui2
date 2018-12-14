@@ -6,7 +6,13 @@
 
     <link rel="stylesheet" href="/layui/css/layui.css">
 
-    <link rel="stylesheet" type="text/css" href="/css/cascader.css" />
+    <link rel="stylesheet" href="/css/eleTree.css" media="all">
+
+    <style>
+        .form-dialog{
+            display: none;
+        }
+    </style>
 
 </head>
 <body>
@@ -37,9 +43,10 @@
             </div>
         </div>
 
-        <div class="layui-row">
+        <div class="layui-row" style="height: 90%">
             <table id="demo" lay-filter="test"></table>
         </div>
+
 </body>
 
 </html>
@@ -53,20 +60,40 @@
 
 <!-- 网址链接列的templet -->
 <script type="text/html" id="urlTpl">
-    <a href="{{d.url}}" class="layui-table-link" target="_blank">{{ d.url }}</a>
+    <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="">{{ d.url }}</a>
 </script>
 
 <script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="/myjs/app.js?v=1.0.0"></script>
-<script src="/js/util.js?v=1.0.0"></script>
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="/js/util.js"></script>
 <script>
-    layui.use(['table','layer','form',"jquery","cascader"], function(){
-        var table = layui.table
-        var layer=layui.layer;
-        var $ = layui.jquery;
-        var cascader = layui.cascader;
-        var form=layui.form;
+
+    var eleTree;
+    var table;
+    var layer;
+    var layer_folderTree;//文件夹树显示层
+    var $;
+    var form;
+
+    var searchTableDataObj;//保存请求到的文件夹数据,可用于搜索
+    var parentDataArr;//请求到的原始数据
+
+    var folderTree_layer;//树弹窗id
+    var tableOption;//抽取table公共的配置项
+    var tableIns;//表格实例
+    var editLayer;//编辑弹窗id
+    var addLayer;//添加弹窗id
+    var el;//文件夹树实例
+    var clickNodeId;//保存点击过的node的id
+
+
+    layui.use(['table','layer','form',"jquery"], function(){
+        table = layui.table;
+        layer=layui.layer;
+        layer_folderTree=layui.layer;//文件夹树显示层
+        $ = layui.jquery;
+        form=layui.form;
 
 
         //绑定点击搜索
@@ -77,6 +104,7 @@
             buff.page={curr: 1};//从第一页开始
             tableIns = table.render(buff);
         })
+
         //绑定回车搜索
         $("#keywords").keydown(function(event){
             if(event.keyCode==13){
@@ -84,11 +112,10 @@
             }
         });
 
-//        var tableData=[];//缓存目前展示的table中的数据
-        //抽取公共的配置项
-        var tableOption={
+        //配置table选项
+        tableOption={
             elem: '#demo'
-            ,height: '500'
+            ,height: '505'
             ,page: true //开启分页
             ,url:'/url/getUrlsLike'
             ,where:{keywords:'',searchType:0}
@@ -106,13 +133,9 @@
 
 
         //首次渲染表格,拿到对象
-        var tableIns = table.render(tableOption);//传入参数进行渲染
+        tableIns = table.render(tableOption);//传入参数进行渲染
 
-
-
-        var editLayer;
-        var cas_edit;//编辑弹窗的folder树
-        //监听行内工具条
+        //table的编辑和删除事件
         table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
@@ -129,7 +152,7 @@
                 editLayer=layer.open({
                     type: 1,
                     shadeClose: true,
-                    area: ['700px', '500px'], //宽高
+                    area: ['515px', '351px'], //宽高
                     content: $("#editText")
                 });
 
@@ -144,149 +167,207 @@
             }
         });
 
-        //添加网址弹窗
-        var addLayer;
+        //打开添加弹窗
         $("#addBtn").on("click",function () {
             //页面层
             addLayer=layer.open({
                 type: 1,
                 shadeClose: true,
-                area: ['700px', '500px'], //宽高
+                area: ['515px', '351px'], //宽高]
                 content: $("#addText")
             });
+
+            //清空表单
+            form.val("addText", {
+                "label": "",
+                "url": "",
+                "pidName": "",
+                "pid": ""
+            })
         })
 
-//#################################add弹窗###############################
-
-        //监听提交
+        //url添加事件
         form.on('submit(addSubmit)', function(data){
             util.ajax("/url/add",data.field,function (data) {
                 tableIns.reload(tableOption);//刷新表格
                 layer.close(addLayer);
                 layer.msg("添加成功");
-
-                //清空表单
-                form.val("addText", {
-                    "label": ''
-                    ,"url": ''
-                    ,"pidName": ''
-                    ,"pid": ''
-                })
             })
             return false;
         });
-
-        //url添加的文件夹选项的option
-        var FolderOption_add={
-            elem: "#folderName_add",
-            url:'/folder/query',
-            triggerType: "change",//滑动选择
-            showLastLevels: true,//选中后显示最后一个文件夹
-            //指定点击的回调函数
-            clickFunc:function (id) {
-                $("#folderId_add").val(id);
-            },
-            //数据格式转换 回调函数
-            transData:function (data) {
-                return buildTree(data);
-            },
-        };
-        var cas_add=cascader(FolderOption_add);//初次渲染
-
-
-        //url修改的文件夹选项的option
-        var FolderOption_edit={
-            elem: "#folderName_edit",
-            url:'/folder/query',
-            triggerType: "change",//滑动选择
-            showLastLevels: true,//选中后显示最后一个文件夹
-            //指定点击的回调函数
-            clickFunc:function (id) {
-                $("#folderId_edit").val(id);
-            },
-            //数据格式转换 回调函数
-            transData:function (data) {
-                return buildTree(data);
-            },
-        };
-        cas_edit=cascader(FolderOption_edit);//初次渲染
-
-//#################################edit弹窗###############################
-
-        //监听提交
+        //url更改事件
         form.on('submit(editSubmit)', function(formData){
 
             util.ajax("/url/update",formData.field,function (data) {
-
                 tableIns.reload(tableOption);//刷新表格
-
                 layer.close(editLayer);
                 layer.msg("更改成功");
             })
             return false;
         });
+
     });
+
 </script>
 
 
-<!-- url添加弹窗 -->
-<form class="layui-form" id="addText" lay-filter="addText" style="display: none">
-    <div class="layui-form-item">
-        <label class="layui-form-label">网址名称</label>
-        <div class="layui-input-inline">
-            <input id="add1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+<!-- url 添加 弹窗 -->
+<div class="layui-form form-dialog" id="addText" lay-filter="addText">
+    <div class="layui-row">
+        <div class="layui-col-md11">
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址名称</label>
+                <div class="layui-input-block">
+                    <input id="add1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址链接</label>
+                <div class="layui-input-block">
+                    <input id="add2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文件夹位置</label>
+                <div id="location_add" class="layui-input-block">
+                    <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
+                    <button class="layui-btn selectTree" >选择</button>
+                    <button class="layui-btn">自定义</button>
+                    <input id="folderId_add" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit">添加</button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">网址链接</label>
-        <div class="layui-input-inline">
-            <input id="add2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">文件夹位置</label>
-        <div class="layui-input-block">
-            <input id="folderName_add" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
-            <input id="folderId_add" lay-verify="required" type="text" name="pid"  class="layui-input"  style="display: none">
-        </div>
+
     </div>
 
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="addSubmit">立即提交</button>
-            <button type="reset" class="layui-btn">重置</button>
+</div>
+
+<!-- url 编辑 弹窗 -->
+<div class="layui-form form-dialog" lay-filter="editText" id="editText" >
+
+        <div class="layui-row">
+            <div class="layui-col-md11">
+                <input lay-verify="required" type="text" name="id" class="layui-input">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网址名称</label>
+                    <div class="layui-input-block">
+                        <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网址链接</label>
+                    <div class="layui-input-block">
+                        <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">文件夹位置</label>
+                    <div id="location_edit" class="layui-input-block">
+                        <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
+                        <button class="layui-btn selectTree" >选择</button>
+                        <button class="layui-btn">自定义</button>
+                        <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</form>
+</div>
 
 
-<!-- url编辑弹窗 -->
-<form class="layui-form" lay-filter="editText" id="editText" style="display: none">
-    <input lay-verify="required" type="text" name="id" class="layui-input">
-    <div class="layui-form-item">
-        <label class="layui-form-label">网址名称</label>
-        <div class="layui-input-inline">
-            <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">网址链接</label>
-        <div class="layui-input-inline">
-            <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">文件夹位置</label>
-        <div class="layui-input-block">
-            <input id="folderName_edit" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" class="layui-input" readonly="readonly">
-            <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" >
-        </div>
-    </div>
+<!-- 文件夹树弹窗 -->
+<div id="folderTree" style="height: 320px;overflow-y: auto;display: none" >
+    <input id='searchFolder' type='text' autocomplete='off' placeholder='输入关键字进行文件夹过滤' class='layui-input' >
+    <div id="ele" class="eleTree ele1" lay-filter="data"></div>
 
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
-            <button type="reset" class="layui-btn">重置</button>
-        </div>
-    </div>
-</form>
+    <script>
+
+        layui.use(["eleTree"], function() {
+            eleTree = layui.eleTree;
+
+
+            //绑定输入框搜索事件
+            $("#searchFolder").on("input",function (e) {
+                if($("#searchFolder").val()!=""){
+                    var parentDataArrBuff=$.extend(true,[],parentDataArr)
+                    var searchTableDataObjBuff=parentDataArrBuff[0];
+                    filterTree(searchTableDataObjBuff,$("#searchFolder").val(),parentDataArrBuff,0);
+                    el.reload(parentDataArrBuff);//重新渲染filter文件夹后的数据
+                }else{
+                    el.reload(parentDataArr);//重新渲染原始数据
+                }
+            })
+
+            //打开文件夹树弹窗
+            $(".selectTree").on("click",function () {
+                folderTree_layer=layer_folderTree.open({
+                    type: 1,
+                    shadeClose: true,
+                    area: ['515px', '351px'], //宽高]
+                    content: $("#folderTree")
+                });
+            })
+
+
+            //请求数据,初始化
+            el = eleTree.render({
+                elem: '#ele',
+                url: '/folder/query',//请求数据的url
+                expandOnClickNode: false,//点击节点前的图标才收缩
+                defaultExpandAll:true,//默认展开所有节点
+                done: function(res){
+                    var buff=buildTree(res);//转化成树结构
+                    searchTableDataObj=buff[0];
+                    parentDataArr=buff;
+                    return buff;//将平面数据转换成tree数据,返回给data
+                }
+            });
+
+
+            eleTree.on("nodeClick(data)", function (d) {
+                clickNodeId=d.data.currentData.value;
+                $("#folderId_add").val(clickNodeId);
+                $("#folderName_add").val(d.data.currentData.label);
+                $("#folderId_edit").val(clickNodeId);
+                $("#folderName_edit").val(d.data.currentData.label);
+                layer_folderTree.close(folderTree_layer);
+            });
+
+            //过滤文件夹
+            function filterTree(data,keyword,parentData,index) {
+                if(data.children==undefined){
+                    if(data.label.indexOf(keyword) == -1){//不包含,则删除自身
+                        parentData.splice(index,1);
+                    }
+                    return;
+                }
+
+                for(var i=data.children.length-1;i>=0;i--){
+                    filterTree(data.children[i],keyword,data.children,i);
+                }
+
+                if(data.children.length==0){
+                    if(data.label.indexOf(keyword) == -1){//自身不包含,删除自身
+                        parentData.splice(index,1);
+                    }else{
+                        delete data["children"];//自身包含,则删除children字段
+                    }
+                }
+            }
+
+        })
+
+
+    </script>
+</div>

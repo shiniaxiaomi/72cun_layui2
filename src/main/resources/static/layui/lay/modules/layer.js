@@ -198,7 +198,7 @@ doms.anim = ['layer-anim-00', 'layer-anim-01', 'layer-anim-02', 'layer-anim-03',
 //默认配置
 Class.pt.config = {
   type: 0,
-  shade: 0.3,
+  shade: 0.2,
   fixed: true,
   move: doms[1],
   title: '&#x4FE1;&#x606F;',

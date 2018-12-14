@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>关于本站</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+
+<body>
+
+<div class="layui-row">
+    <!-- 介绍 -->
+    <div class="layui-col-md6">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">本站介绍</h2>
+                <div class="layui-colla-content layui-show">
+                    <ul class="layui-timeline">
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">本站是关于一个网址收藏的工具网站</h3>
+                                <ul>
+                                    <li>存储的方式是由网址名称和网址链接的这种键值对的形式存储的</li>
+                                    <li>推荐用法是直接通过便于记忆的网址名称进行搜索对应的网址,通过鼠标单击即可直接打开网页</li>
+                                    <li>当网址收藏多了之后,也可以通过文件夹进行管理</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">操作提示</h3>
+                                <ul>
+                                    <li>主页中的搜索框可直接回车进行搜索</li>
+                                    <li>使用综合搜索,可以使用'='对网址名称和文件夹名称(即链接位置)的交集搜索
+                                        <dd>&nbsp;&nbsp;&nbsp;&nbsp;如果输入 <em>网址名称</em> ,则进行网址名称的搜索</dd>
+                                        <dd>&nbsp;&nbsp;&nbsp;&nbsp;如果输入 <em>网址名称=文件夹名称</em> ,则进行网址名称和文件夹名称的交集搜索</dd>
+                                        <dd>&nbsp;&nbsp;&nbsp;&nbsp;如果输入 <em>=文件夹名称</em> ,则进行文件夹名称的搜索</dd>
+                                    </li>
+                                    <li>直接点击网址链接的内容即可直接打开网页</li>
+                                    <li>文件夹的增删改查在文件夹管理的左半部分,点击对应的文件夹可以显示文件夹中对应的网址链接</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">快速工具</h3>
+                                <ul>
+                                    <li>将快速工具的链接拖到浏览器的地址栏中即可</li>
+                                    <li>下次想要单纯的打开网址或者是收藏网址就可以非常的便捷</li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 时间线 -->
+    <div class="layui-col-md6">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">时间线</h2>
+                <div class="layui-colla-content layui-show">
+                    <ul class="layui-timeline">
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">2018.12.13</h3>
+                                <p>增加文件夹树的搜索功能</p>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">2018.12.12</h3>
+                                <p>增加批量操作功能</p>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">2018.12.10</h3>
+                                <p>雏形产生</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+
+</html>
+
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+</script>

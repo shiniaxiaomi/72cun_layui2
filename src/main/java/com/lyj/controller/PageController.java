@@ -14,9 +14,9 @@ public class PageController {
 
 
 
-    @RequestMapping("/tree")
+    @RequestMapping("/home")
     public ModelAndView tree(ModelAndView mv){
-        mv.setViewName("tree");
+        mv.setViewName("home");
         return mv;
     }
     @RequestMapping("/register")
