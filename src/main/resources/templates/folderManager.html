@@ -13,7 +13,7 @@
         .layui-table-cell {
             font-size: 16px;
         }
-        .form-dialog{
+        .form-dialog,.hide{
             display: none;
         }
     </style>
@@ -89,13 +89,23 @@
 
         //打开批量移动到弹窗
         $("#moveToBtn").on("click",function () {
+            if(table.checkStatus('idTest').data.length==0){
+                layer.msg("请选中数据!");
+                return;
+            }
+
             //批量更改网址
-            editLayer=layer.open({
+            layer.open({
                 type: 1,
                 shadeClose: true,
                 area: ['515px', '351px'], //宽高
                 content: $("#moveText")
             });
+
+
+            form.val("moveText", {
+                "pidName": ""
+            })
         })
 
         //批量删除事件
@@ -155,7 +165,7 @@
             elem: '#ele_left',
             url: '/folder/query',//请求数据的url
             draggable:true,//是否开启拖拽
-            contextmenuList:["add","edit","remove"],//节点的操作
+            contextmenuList:["add","edit","remove","setting"],//节点的操作
             expandOnClickNode: false,//点击节点前的图标才收缩
             defaultExpandAll:true,//默认展开所有节点
             done: function(res){
@@ -170,14 +180,18 @@
         eleTree.on("nodeAppend(data1)", function (d) {
             layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 10}, function(pass, index){
                 util.ajax("/folder/addFolder",{name:pass,pid:d.data.value},function (data) {
-                    d.setData({//设置数据
-                        value:data.data.id,
-                        pid: d.data.value,
-                        label: pass,
-                    });
                     if(data.code==0){
+                        d.setData({//设置数据
+                            value:data.data.id,
+                            pid: d.data.value,
+                            label: pass,
+                        });
+
                         layer.close(index);
                         layer.msg('文件夹添加成功');
+                    }else{
+                        layer.close(index);
+                        layer.msg('文件夹添加失败');
                     }
                 })
             });
@@ -187,11 +201,11 @@
         // 节点被编辑事件之前(检查编译后的名称和检验后台是否修改成功)
         eleTree.on("nodeEdit(data1)", function (d) {
             util.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
-                d.setFlag(data.code);
                 if(data.code==0){
                     layer.msg('文件夹名称更改成功');
                 }else{
                     layer.msg('文件夹名称更改失败');
+                    el_left.reload();//发生错误时,重新加载
                 }
             })
         });
@@ -200,15 +214,14 @@
         eleTree.on("nodeDrag(data1)", function (d) {
             //返回原来的节点,则返回
             if(d.current.data.currentData.pid==d.target.data.currentData.value){
-                d.setFlag(0);//告知定时器结束定时
                 return;
             }
             util.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
-                d.setFlag(data.code);//通知ajax已经请求完成,进行下一步操作
                 if(data.code==0){
                     layer.msg('文件夹位置更改成功');
                 }else{
                     layer.msg('文件夹位置更改失败');
+                    el_left.reload();//发生错误时,重新加载
                 }
             })
         });
@@ -216,15 +229,16 @@
         // 节点被删除事件
         eleTree.on("nodeRemove(data1)",function(d) {
             util.ajax("/folder/delete",{id:d.data.value},function (data) {
-                d.setFlag(data.code);//通知ajax已经请求完成,进行下一步操作
                 if(data.code==0){
                     layer.msg('删除成功');
                 }else{
                     layer.msg(data.message);
+                    el_left.reload();//发生错误时,重新加载
                 }
             })
         })
 
+        // 节点被点击事件
         eleTree.on("nodeClick(data1)", function (d) {
             clickNodeId=d.data.currentData.value;
             tableIns.reload({
@@ -236,6 +250,15 @@
                 }
             });
 
+        });
+
+        // 节点被自定义事件
+        eleTree.on("nodeSetting(data1)", function (d) {
+            clickNodeId=d.data.value;
+
+            util.ajax("/user/updateCustomFolder",{customFolderId:clickNodeId,customFolderName:d.data.label},function (data) {
+                layer.msg(data.message);
+            })
         });
 
 //######################################################表格
@@ -355,7 +378,7 @@
 <div class="layui-form form-dialog" lay-filter="editText" id="editText" >
     <div class="layui-row">
         <div class="layui-col-md11">
-            <input lay-verify="required" type="text" name="id" class="layui-input">
+            <input class="layui-input hide" lay-verify="required" type="text" name="id">
             <div class="layui-form-item">
                 <label class="layui-form-label">网址名称</label>
                 <div class="layui-input-block">
@@ -374,8 +397,8 @@
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn">自定义</button>
-                    <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <input id="folderId_edit" class="layui-input hide" lay-verify="required" type="text" name="pid">
                 </div>
             </div>
 
@@ -399,8 +422,8 @@
                 <div id="location_move" class="layui-input-block">
                     <input id="folderName_move" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn">自定义</button>
-                    <input id="folderId_move" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <input id="folderId_move" class="layui-input hide" lay-verify="required" type="text" name="pid" >
                 </div>
             </div>
             <div class="layui-form-item">
@@ -437,12 +460,29 @@
 
             //打开文件夹树弹窗
             $(".selectTree").on("click",function () {
+                el.reload();//每次打开都重新请求最新的数据和重新渲染
+
                 folderTree_layer=layer_folderTree.open({
                     type: 1,
                     shadeClose: true,
                     area: ['515px', '351px'], //宽高]
                     content: $("#folderTree")
                 });
+
+            })
+
+            //请求自定义文件夹id
+            $(".customFolderSetting").on("click",function () {
+                util.ajax("/user/getCustomFolder",{},function (data) {
+                    if(data.code==0){
+                        $("#folderId_move").val(data.data.customFolderId);
+                        $("#folderName_move").val(data.data.customFolderName);
+                        $("#folderId_edit").val(data.data.customFolderId);
+                        $("#folderName_edit").val(data.data.customFolderName);
+                    }else{
+                        layer.msg(data.message);
+                    }
+                })
             })
 
             //请求数据,初始化

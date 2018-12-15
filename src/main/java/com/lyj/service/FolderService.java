@@ -112,6 +112,13 @@ public class FolderService {
 
     }
 
+
+
+//    public boolean getCustomFolder(Integer userId) {
+//        return folderDao.getCustomFolder(userId);
+//
+//    }
+
 //    public int getRootFolderId(User user) {
 //        return folderDao.getFolderIdByUserIdAndPid(user.getId(), 0);//查找根文件夹的id
 //    }

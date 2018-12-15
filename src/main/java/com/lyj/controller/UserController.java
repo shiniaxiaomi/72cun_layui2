@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by 陆英杰
  * 2018/9/17 0:41
@@ -61,6 +63,34 @@ public class UserController {
         return ResultUtil.error("注册失败");
     }
 
+
+    @ResponseBody
+    @RequestMapping("/updateCustomFolder")
+    public Result updateCustomFolder(int customFolderId,String customFolderName,HttpSession session){
+
+        User user = (User) session.getAttribute("user");
+
+        if(userService.updateCustomFolder(customFolderId,customFolderName,user.getId())){
+            return ResultUtil.success("自定义文件夹成功");
+        }else{
+            return ResultUtil.error("自定义文件夹失败");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/getCustomFolder")
+    public Result getCustomFolder(HttpSession session){
+
+        User user = (User) session.getAttribute("user");
+
+        User user1=userService.getCustomFolder(user.getId());
+
+        if(user1.getCustomFolderName()!=null){
+            return ResultUtil.success(user1);
+        }else{
+            return ResultUtil.error("你还没有自定文件夹",user1);
+        }
+    }
 
 
 

@@ -28,14 +28,14 @@
                     <input type="password" id="password" name="password"  placeholder="" autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">验证码</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="yzm" name="yzm" placeholder="" autocomplete="off" class="layui-input" style="width: 90px">
-                </div>
-                <div class="layui-form-mid layui-word-aux" style="margin-left: -80px" id="num"></div>
-            </div>
-            <div class="layui-form-item">
+            <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label">验证码</label>-->
+                <!--<div class="layui-input-inline">-->
+                    <!--<input type="text" id="yzm" name="yzm" placeholder="" autocomplete="off" class="layui-input" style="width: 90px">-->
+                <!--</div>-->
+                <!--<div class="layui-form-mid layui-word-aux" style="margin-left: -80px" id="num"></div>-->
+            <!--</div>-->
+            <div class="layui-form-item" style="margin-top: 60px">
                 <div class="layui-input-block">
                     <button class="layui-btn" id="login">登入</button>
                     <button class="layui-btn" id="register">注册</button>
@@ -69,13 +69,15 @@
             }else if(password==""){
                 layer.msg('密码不能为空', {offset: '50px', anim: 0});
                 return;
-            }else if(yzm==""){
-                layer.msg('验证码不能为空', {offset: '50px', anim: 0});
-                return;
-            }else if(yzm!=num){
-                layer.msg('验证码不正确', {offset: '50px', anim: 0});
-                return;
-            }else{
+            }
+//            else if(yzm==""){
+//                layer.msg('验证码不能为空', {offset: '50px', anim: 0});
+//                return;
+//            }else if(yzm!=num){
+//                layer.msg('验证码不正确', {offset: '50px', anim: 0});
+//                return;
+//            }
+            else{
                 $.ajax({
                     url:"/login",
                     type:'post',

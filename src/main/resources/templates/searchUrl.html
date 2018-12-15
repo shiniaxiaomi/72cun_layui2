@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/eleTree.css" media="all">
 
     <style>
-        .form-dialog{
+        .form-dialog,.hide{
             display: none;
         }
     </style>
@@ -86,6 +86,11 @@
     var addLayer;//添加弹窗id
     var el;//文件夹树实例
     var clickNodeId;//保存点击过的node的id
+
+    ////输入框获得焦点
+    window.onload=function() {
+        $("#keywords").focus();
+    }
 
 
     layui.use(['table','layer','form',"jquery"], function(){
@@ -232,8 +237,8 @@
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn">自定义</button>
-                    <input id="folderId_add" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
+                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid"   style="" >
 
                 </div>
             </div>
@@ -250,39 +255,38 @@
 
 <!-- url 编辑 弹窗 -->
 <div class="layui-form form-dialog" lay-filter="editText" id="editText" >
+    <div class="layui-row">
+        <div class="layui-col-md11">
+            <input class="layui-input hide" lay-verify="required" type="text" name="id" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址名称</label>
+                <div class="layui-input-block">
+                    <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址链接</label>
+                <div class="layui-input-block">
+                    <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文件夹位置</label>
+                <div id="location_edit" class="layui-input-block">
+                    <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
+                    <button class="layui-btn selectTree" >选择</button>
+                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <input id="folderId_edit" class="layui-input hide" lay-verify="required" type="text" name="pid" >
+                </div>
+            </div>
 
-        <div class="layui-row">
-            <div class="layui-col-md11">
-                <input lay-verify="required" type="text" name="id" class="layui-input">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">网址名称</label>
-                    <div class="layui-input-block">
-                        <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">网址链接</label>
-                    <div class="layui-input-block">
-                        <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">文件夹位置</label>
-                    <div id="location_edit" class="layui-input-block">
-                        <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                        <button class="layui-btn selectTree" >选择</button>
-                        <button class="layui-btn">自定义</button>
-                        <input id="folderId_edit" lay-verify="required" type="text" name="pid"  class="layui-input" style="" >
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
-                    </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="editSubmit">更改</button>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 
@@ -311,14 +315,30 @@
 
             //打开文件夹树弹窗
             $(".selectTree").on("click",function () {
+                el.reload();//每次打开都重新请求最新的数据和重新渲染
+
                 folderTree_layer=layer_folderTree.open({
                     type: 1,
                     shadeClose: true,
                     area: ['515px', '351px'], //宽高]
                     content: $("#folderTree")
                 });
+
             })
 
+            //请求自定义文件夹id
+            $(".customFolderSetting").on("click",function () {
+                util.ajax("/user/getCustomFolder",{},function (data) {
+                    if(data.code==0){
+                        $("#folderId_add").val(data.data.customFolderId);
+                        $("#folderName_add").val(data.data.customFolderName);
+                        $("#folderId_edit").val(data.data.customFolderId);
+                        $("#folderName_edit").val(data.data.customFolderName);
+                    }else{
+                        layer.msg(data.message);
+                    }
+                })
+            })
 
             //请求数据,初始化
             el = eleTree.render({

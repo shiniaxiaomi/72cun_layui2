@@ -20,8 +20,8 @@ public interface UserDao{
     //删
 
     //改
-    @Update("update user set customFolderId=#{customFolderId} where userId=#{userId}")
-    int updateCustomFolderIdByUserId(@Param("customFolderId") Integer customFolderId, @Param("userId") int userId);
+    @Update("update user set customFolderId=#{customFolderId},customFolderName=#{customFolderName} where id=#{userId}")
+    int updateCustomFolder(@Param("customFolderId")int customFolderId,@Param("customFolderName")String customFolderName,  @Param("userId")Integer userId);
 
     @Update("update user set rootFolderId=#{rootFolderId} where id=#{userId}")
     int updateRootFolderIdByUserId(@Param("rootFolderId") int rootFolderId, @Param("userId") Integer userId);
@@ -33,5 +33,6 @@ public interface UserDao{
     @Select("select * from user where userName=#{userName}")
     User getUser(String userName);
 
-
+    @Select("select customFolderId,customFolderName from user where id=#{userId}")
+    User getCustomFolder(Integer userId);
 }

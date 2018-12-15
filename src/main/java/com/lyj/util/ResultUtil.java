@@ -8,7 +8,9 @@ import com.lyj.model.Result;
  */
 public class ResultUtil {
 
-
+    public static Result success(String message){
+        return success(message,null);
+    }
     public static Result success(Object data){
         return new Result(Result.SUCCESS,"成功",data);
     }
@@ -16,6 +18,9 @@ public class ResultUtil {
         return new Result(Result.SUCCESS,message,data);
     }
 
+    public static Result error(String message){
+        return error(message,null);
+    }
     public static Result error(Object data){
         return new Result(Result.ERROR,"失败",data);
     }

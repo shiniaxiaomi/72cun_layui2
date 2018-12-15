@@ -1,9 +1,8 @@
 /*
 SQLyog 企业版 - MySQL GUI v8.14 
-MySQL - 5.0.27-community-nt : Database - 72cun_layui
+MySQL - 5.1.49-community : Database - 72cun_layui
 *********************************************************************
-*/
-
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -22,40 +21,41 @@ USE `72cun_layui`;
 DROP TABLE IF EXISTS `folder`;
 
 CREATE TABLE `folder` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` varchar(20) default NULL,
-  `pid` int(11) default NULL,
-  `userId` int(11) default NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  `pid` int(11) DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `url` */
 
 DROP TABLE IF EXISTS `url`;
 
 CREATE TABLE `url` (
-  `id` int(11) NOT NULL auto_increment,
-  `url` varchar(20) default NULL,
-  `label` varchar(20) default NULL,
-  `pid` int(11) default NULL,
-  `pidName` varchar(20) default NULL,
-  `userId` int(11) DEFAULT null,
-  `createTime` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(100) DEFAULT NULL,
+  `label` varchar(20) DEFAULT NULL,
+  `pid` int(11) DEFAULT NULL,
+  `createTime` timestamp NULL DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `pidName` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `user` */
 
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL auto_increment,
-  `userName` varchar(20) default NULL,
-  `password` varchar(20) default NULL,
-  `rootFolderId` int(11) default NULL,
-  `customFolderId` int(11) default NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userName` varchar(20) DEFAULT NULL,
+  `password` varchar(20) DEFAULT NULL,
+  `rootFolderId` int(11) DEFAULT NULL,
+  `customFolderId` int(11) DEFAULT NULL,
+  `customFolderName` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

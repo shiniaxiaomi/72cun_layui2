@@ -50,14 +50,14 @@ public class UserService {
         }
     }
 
-    public boolean updateCustomFolderIdByUserId(User user){
-        int i = userDao.updateCustomFolderIdByUserId(user.getCustomFolderId(), user.getId());
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
-    }
+//    public boolean updateCustomFolderIdByUserId(User user){
+//        int i = userDao.updateCustomFolderIdByUserId(user.getCustomFolderId(), user.getId());
+//        if(i==1){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//    }
 
     public boolean login(User user){
         if(user.getUserName()!=null && user.getPassword()!=null){
@@ -72,4 +72,18 @@ public class UserService {
     }
 
 
+    public boolean updateCustomFolder(int customFolderId,String customFolderName, Integer userId) {
+        int i = userDao.updateCustomFolder(customFolderId,customFolderName,userId);
+        if(i==1){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+
+    public User getCustomFolder(Integer userId) {
+        return userDao.getCustomFolder(userId);
+    }
 }

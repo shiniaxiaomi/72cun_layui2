@@ -684,7 +684,7 @@ layui.define(['laytpl', 'laypage', 'layer', 'form', 'util'], function(exports){
           } else {
             that.renderData(res, curr, res[response.countName]), sort();
             options.time = (new Date().getTime() - that.startTime) + ' ms'; //耗时（接口请求+视图渲染）
-            console.dir("耗时:"+options.time)
+            //console.dir("耗时:"+options.time)
           }
           that.setColsWidth();
           typeof options.done === 'function' && options.done(res, curr, res[response.countName]);

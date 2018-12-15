@@ -29,6 +29,7 @@ public interface FolderDao{
     //xml
     int updateFolder(Folder folder);
 
+
     //查
     //查询该文件夹下还有几个子文件夹
     @Select("select count(1) from folder where userId=#{userId} and pid=#{id}")
@@ -53,4 +54,6 @@ public interface FolderDao{
     //
     @Select("select name from folder where id=#{id}")
     String getFolderNameByFolderId(int id);
+
+
 }
