@@ -19,11 +19,6 @@ public class PageController {
         mv.setViewName("home");
         return mv;
     }
-    @RequestMapping("/register")
-    public ModelAndView register(ModelAndView mv){
-        mv.setViewName("register");
-        return mv;
-    }
 
     @RequestMapping("/searchUrl")
     public ModelAndView searchUrl(ModelAndView mv){

@@ -62,6 +62,27 @@
 		</dependency>
 
 
+		<!-- css,js压缩工具 -->
+		<dependency>
+			<groupId>com.yahoo.platform.yui</groupId>
+			<artifactId>yuicompressor</artifactId>
+			<version>2.4.8</version>
+			<exclusions>
+				<exclusion>
+					<!-- 去除，否则在Web环境下会出错：StringIndexOutOfBoundsException -->
+					<groupId>rhino</groupId>
+					<artifactId>js</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!--引入druid数据源-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.8</version>
+		</dependency>
 
 
 	</dependencies>

@@ -64,10 +64,16 @@
                     },
                     complete:function (data) {
                         if(data.status==200){
-                            layer.msg('注册成功', {offset: '50px', anim: 0});
-                            setTimeout(function () {
-                                window.location.href='/';
-                            },1000)
+                            if(data.responseJSON!=undefined){
+                                if(data.responseJSON.code==0){
+                                    layer.msg('注册成功', {offset: '50px', anim: 0});
+                                    setTimeout(function () {
+                                        window.location.href='/';
+                                    },700)
+                                }else{
+                                    layer.msg(data.responseJSON.message, {offset: '50px', anim: 0});
+                                }
+                            }
                         }else{
                             layer.msg(JSON.parse(data.responseText).message, {offset: '50px', anim: 0});
                         }

@@ -65,7 +65,9 @@ public class LoginController {
             seccessFlag=true;
         }else{
             seccessFlag = userService.login(user);
-            session.setAttribute("user",user);
+            if(seccessFlag){
+                session.setAttribute("user",user);
+            }
         }
 
         //根据不同的参数选择要返回的页面
