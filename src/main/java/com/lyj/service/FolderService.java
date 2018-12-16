@@ -6,6 +6,7 @@ import com.lyj.dao.FolderDao;
 import com.lyj.dao.URLDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
+import com.lyj.redisKey.FolderKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +28,10 @@ public class FolderService {
     @Autowired
     URLDao urlDao;
 
-//    public void insertDefaultFolder(User user){
-//        Folder folder = new Folder(VarUtil.intFalse, "默认文件夹", 0, user.getId(), 0);
-//        folderDao.addFolder(folder);
-//    }
+
+    @Autowired
+    RedisService redisService;
+
 
     public Folder addRootFolder(int userId){
         Folder folder = new Folder("默认文件夹", 0, userId);
@@ -40,7 +41,17 @@ public class FolderService {
 
 
     public List<Folder> getFoldersByUserId(Integer userId){
+        //先查询redis
+        List<Folder> list = redisService.getList(FolderKey.getByUserId, userId, Folder.class);
+        if(list!=null){
+            return list;
+        }
+
         List<Folder> folders = folderDao.getFoldersByUserId(userId);
+
+        //吧查询结果放入redis中
+        redisService.set(FolderKey.getByUserId,userId,folders);
+
         return folders;
     }
 
@@ -48,6 +59,7 @@ public class FolderService {
     public boolean addFolder(Folder folder) {
         int flag=folderDao.addFolder(folder);//新增folder,并获取到了自增id
         if(flag==1){
+            redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
             return true;
         }else{
             return false;
@@ -65,46 +77,20 @@ public class FolderService {
         }
 
         if(num1==1){
+            redisService.deleteKey(FolderKey.getByUserId,userId);//删除key
             return true;
         }else{
             return false;
         }
 
-//        Folder folder2 = folderDao.getFolderById(folderId);
-//        if(folder2==null){
-//            return ResultUtil.error("文件夹不存在");
-//        }
-//
-//        if(folder2.getFolderNum()>0){
-//            return ResultUtil.error("该文件夹下还有文件夹,先删除子文件夹!");
-//        }
-//
-//        //将父文件夹个数减1
-//        folderDao.deleteById(folder2.getId());
-//        Folder pFloder = folderDao.getFolderById(folder.getPid());
-//        if(pFloder==null){
-//            return ResultUtil.error("父文件夹不存在");
-//        }
-//        folderDao.decrFolderNumById(pFloder.getId());
-//
-//        if(isDefaultFolder){//将自定义文件夹设置成默认文件夹
-//            UserSettings settings = userSettingsDao.getUserSettingsByUserId(user.getId());
-//            int rootFolderId = folderDao.getFolderIdByUserIdAndPid(user.getId(), 0);//查找根文件夹的id
-//            userSettingsDao.updateDefaultFolderId(rootFolderId,user.getId());
-//        }
-//
-//        //将删除文件夹下的所有url删除
-//        urlDao.deleteByFolderId(folder.getId());
-//
-//        return ResultUtil.success("删除成功!");
 
     }
 
     @Transactional
     public boolean updateFolder(Folder folder) {
-
         int i = folderDao.updateFolder(folder);
         if(i==1){
+            redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
             return true;
         }else{
             return false;
@@ -113,17 +99,4 @@ public class FolderService {
     }
 
 
-
-//    public boolean getCustomFolder(Integer userId) {
-//        return folderDao.getCustomFolder(userId);
-//
-//    }
-
-//    public int getRootFolderId(User user) {
-//        return folderDao.getFolderIdByUserIdAndPid(user.getId(), 0);//查找根文件夹的id
-//    }
-//
-//    public String getFolderNameById(int id){
-//        return folderDao.getFolderNameById(id);
-//    }
 }

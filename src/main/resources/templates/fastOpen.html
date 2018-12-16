@@ -131,11 +131,11 @@
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
-                ,{field: 'label', title: '网址名称', align:'center',unresize:true}
-                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true}
-                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true}
-                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true}
-                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
+                ,{field: 'label', title: '网址名称', align:'center',unresize:true,width:'25%'}
+                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'25%'}
+                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true,width:'15%'}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"20%"}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"15%"} //这里的toolbar值是模板元素的选择器
             ]],
         };
 
@@ -225,6 +225,16 @@
             })
             return false;
         });
+
+        //参数长度校验
+        form.verify({
+            label: [/^.{1,20}$/,'长度在1~20之间']
+
+            //我们既支持上述函数式的方式，也支持下述数组的形式
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            ,myUrl: [/^.{1,100}$/,'长度在1~100之间']
+        });
+
     });
 
 
@@ -238,13 +248,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">网址名称</label>
                 <div class="layui-input-block">
-                    <input id="add1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                    <input id="add1" lay-verify="label" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">网址链接</label>
                 <div class="layui-input-block">
-                    <input id="add2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                    <input id="add2" lay-verify="myUrl" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -277,13 +287,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">网址名称</label>
                 <div class="layui-input-block">
-                    <input id="edit1" lay-verify="required" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+                    <input id="edit1" lay-verify="label" type="text" name="label" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">网址链接</label>
                 <div class="layui-input-block">
-                    <input id="edit2" lay-verify="required" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
+                    <input id="edit2" lay-verify="myUrl" type="text" name="url"  placeholder="请输入网址链接" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -16,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor(force = true) //生成无参构造方法
 @Getter
 @Setter
-public class URL {
+public class URL implements Serializable {
     private Integer id;
 
     private String url;
