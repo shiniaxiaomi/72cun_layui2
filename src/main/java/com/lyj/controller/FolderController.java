@@ -51,7 +51,9 @@ public class FolderController {
     @RequestMapping("/delete")
     public Result<Folder> delete(Folder folder, HttpSession session){
         User user = (User) session.getAttribute("user");
-        if(folderService.deleteFolderByFolderId(folder.getId(),user.getId())){
+        if(folder.getPid()==0){
+            return ResultUtil.error("根文件夹不能删除");
+        }else if(folderService.deleteFolderByFolderId(folder.getId(),user.getId())){
             return ResultUtil.success("删除成功");
         }else{
             return ResultUtil.error("删除失败");

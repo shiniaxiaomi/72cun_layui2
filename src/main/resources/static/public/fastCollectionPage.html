@@ -373,7 +373,7 @@
                 .replace('[title]', encodeURIComponent(x.title));
             newWin.document.body.innerHTML = formStr;
             newWin.document.forms[0].submit();
-        })(document, screen, 1250, 660);
+        })(document, screen, 1420, 760);
     `;
     document.getElementById('collection').href=str;
 
@@ -381,7 +381,7 @@
     var str2 = `
         javascript:(function (x, sc, width, height) {
             window.open('https://www.usetools.cn/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
-        })(document, screen, 1250, 660);
+        })(document, screen, 1420, 760);
     `;
     document.getElementById('open').href=str2;
 </script>

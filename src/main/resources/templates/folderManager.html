@@ -110,18 +110,27 @@
 
         //批量删除事件
         $("#deleteBtn").on("click",function () {
-            var checkStatus = table.checkStatus('idTest')
-            var data = checkStatus.data;
+            //确认弹窗
+            layer.confirm('您确定要批量删除吗', {
+                btn: ['确定','取消'], //按钮
+                shadeClose: true,
+            }, function(){
 
-            var id="";
-            for(var i=0;i<data.length;i++){id+=data[i].id+",";}
-            util.ajax("/url/deleteInBatches",{id:id},function (data) {
-                if(data.code==0){
-                    tableOption.where={pid:clickNodeId};
-                    tableIns.reload(tableOption);//刷新表格
-                    layer.msg("批量删除成功");
-                }
-            })
+                var checkStatus = table.checkStatus('idTest')
+                var data = checkStatus.data;
+
+                var id="";
+                for(var i=0;i<data.length;i++){id+=data[i].id+",";}
+                util.ajax("/url/deleteInBatches",{id:id},function (data) {
+                    if(data.code==0){
+                        tableOption.where={pid:clickNodeId};
+                        tableIns.reload(tableOption);//刷新表格
+                        layer.msg("批量删除成功");
+                    }
+                })
+
+            }, function(){
+            });
         })
 
         //绑定输入框搜索事件
@@ -178,7 +187,7 @@
 
         // 添加子节点事件之前
         eleTree.on("nodeAppend(data1)", function (d) {
-            layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 10}, function(pass, index){
+            layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 15,shadeClose: true}, function(pass, index){
                 util.ajax("/folder/addFolder",{name:pass,pid:d.data.value},function (data) {
                     if(data.code==0){
                         d.setData({//设置数据
@@ -212,6 +221,9 @@
 
         // 节点被拖拽事件之前
         eleTree.on("nodeDrag(data1)", function (d) {
+            if(d.target.data.currentData==undefined){
+                return;
+            }
             //返回原来的节点,则返回
             if(d.current.data.currentData.pid==d.target.data.currentData.value){
                 return;
@@ -219,6 +231,7 @@
             util.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
                 if(data.code==0){
                     layer.msg('文件夹位置更改成功');
+                    d.move();//成功之后页面上才移动
                 }else{
                     layer.msg('文件夹位置更改失败');
                     el_left.reload();//发生错误时,重新加载
@@ -228,14 +241,29 @@
 
         // 节点被删除事件
         eleTree.on("nodeRemove(data1)",function(d) {
-            util.ajax("/folder/delete",{id:d.data.value},function (data) {
-                if(data.code==0){
-                    layer.msg('删除成功');
-                }else{
-                    layer.msg(data.message);
-                    el_left.reload();//发生错误时,重新加载
-                }
-            })
+            //确认弹窗
+            layer.confirm('您确定要删除该文件夹和该文件夹下的所有网址吗', {
+                btn: ['确定','取消'], //按钮
+                shadeClose: true,
+            }, function(){
+
+                util.ajax("/folder/delete",{id:d.data.value,pid:d.data.pid},function (data) {
+                    if(data.code==0){
+                        layer.msg('删除成功');
+                        d.deleteNode();//删除该节点
+
+                        tableOption.where={pid:clickNodeId};
+                        tableIns.reload(tableOption);//刷新表格
+
+                    }else{
+                        layer.msg(data.message);
+                        el_left.reload();//发生错误时,重新加载
+                    }
+                })
+
+            }, function(){
+            });
+
         })
 
         // 节点被点击事件
@@ -292,13 +320,21 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
 
             if(layEvent === 'delete'){ //删除
-                util.ajax("/url/delete",{id:obj.data.id},function (data) {
-                    if(data.code==0){
-                        tableOption.where={pid:clickNodeId};
-                        tableIns.reload(tableOption);//刷新表格
-                        layer.msg("删除成功");
-                    }
-                })
+                //确认弹窗
+                layer.confirm('您确定要删除该网址吗', {
+                    btn: ['确定','取消'], //按钮
+                    shadeClose: true,
+                }, function(){
+                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                        if(data.code==0){
+                            tableOption.where={pid:clickNodeId};
+                            tableIns.reload(tableOption);//刷新表格
+                            layer.msg(data.message);
+                        }
+                    })
+                }, function(){
+                });
+
             } else if(layEvent === 'edit'){ //编辑
                 //更改网址弹窗
                 editLayer=layer.open({
@@ -342,7 +378,8 @@
                 tableIns.reload(tableOption);//刷新表格
 
                 layer.close(editLayer);
-                layer.msg("更改成功");
+                layer.msg(data.message);
+
             })
             return false;
         });
@@ -372,11 +409,11 @@
 
         //参数长度校验
         form.verify({
-            label: [/^.{1,20}$/,'长度在1~20之间']
+            label: [/^.{1,150}$/,'长度在1~150之间']
 
             //我们既支持上述函数式的方式，也支持下述数组的形式
             //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
-            ,myUrl: [/^.{1,100}$/,'长度在1~100之间']
+            ,myUrl: [/^.{1,500}$/,'长度在1~500之间']
         });
     });
 
@@ -405,8 +442,8 @@
                 <label class="layui-form-label">文件夹位置</label>
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                    <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <button class="layui-btn layui-btn-primary selectTree" >选择</button>
+                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_edit" class="layui-input hide" lay-verify="required" type="text" name="pid">
                 </div>
             </div>
@@ -430,8 +467,8 @@
                 <label class="layui-form-label">文件夹位置</label>
                 <div id="location_move" class="layui-input-block">
                     <input id="folderName_move" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                    <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <button class="layui-btn layui-btn-primary selectTree" >选择</button>
+                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_move" class="layui-input hide" lay-verify="required" type="text" name="pid" >
                 </div>
             </div>
@@ -461,6 +498,7 @@
                     var parentDataArrBuff=$.extend(true,[],parentDataArr)
                     var searchTableDataObjBuff=parentDataArrBuff[0];
                     filterTree(searchTableDataObjBuff,$("#searchFolder").val(),parentDataArrBuff,0);
+                    console.dir(parentDataArrBuff)
                     el.reload(parentDataArrBuff);//重新渲染filter文件夹后的数据
                 }else{
                     el.reload(parentDataArr);//重新渲染原始数据
@@ -477,6 +515,9 @@
                     area: ['515px', '351px'], //宽高]
                     content: $("#folderTree")
                 });
+
+                $("#searchFolder").val("");//清空数据
+                $("#searchFolder").focus();//获取焦点
 
             })
 

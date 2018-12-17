@@ -79,6 +79,15 @@ public class URLService {
         }
     }
 
+    public boolean deleteUrlByPid(Integer id) {
+        int i = urlDao.deleteUrlByPid(id);
+        if(i>=1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public boolean addUrl(URL url) {
         int i = urlDao.addUrl(url);
         if(i==1){

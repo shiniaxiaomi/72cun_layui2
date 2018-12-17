@@ -16,12 +16,7 @@
 
 </head>
 <body>
-    <div class="layui-row" style="text-align: center;margin-top: 30px;">
-        <div class="layui-btn-container">
-            <a href="/main" class="layui-btn" target="_blank" onclick="window.close()">去往主页</a>
-            <a href="/fast/open" class="layui-btn">打开网址</a>
-        </div>
-    </div>
+
 
 </body>
 </html>
@@ -73,18 +68,18 @@
 
         //参数长度校验
         form.verify({
-            label: [/^.{1,20}$/,'长度在1~20之间']
+            label: [/^.{1,150}$/,'长度在1~150之间']
 
             //我们既支持上述函数式的方式，也支持下述数组的形式
             //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
-            ,myUrl: [/^.{1,100}$/,'长度在1~100之间']
+            ,myUrl: [/^.{1,500}$/,'长度在1~500之间']
         });
 
     })
 </script>
 
 <!-- url 添加 弹窗 -->
-<div class="layui-form form-dialog" id="addText" lay-filter="addText">
+<div class="layui-form form-dialog" style="text-align: center" id="addText" lay-filter="addText">
     <div class="layui-row">
         <div class="layui-col-md11">
             <div class="layui-form-item">
@@ -103,18 +98,28 @@
                 <label class="layui-form-label">文件夹位置</label>
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                    <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <button class="layui-btn layui-btn-primary selectTree" >选择</button>
+                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid" >
 
                 </div>
             </div>
             <div class="layui-form-item" >
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="addSubmit">添加</button>
+                <div class="">
+                    <button class="layui-btn " lay-submit lay-filter="addSubmit">添加</button>
                 </div>
             </div>
         </div>
+        <div class="layui-row">
+            <hr>
+            <div style="text-align: center;margin-top: 30px;">
+                <div class="layui-btn-container">
+                    <a href="/main" class="layui-btn layui-btn-radius layui-btn-primary layui-btn-sm" target="_blank" onclick="window.close()">去往主页</a>
+                    <a href="/fast/open" class="layui-btn layui-btn-radius layui-btn-primary layui-btn-sm">打开网址</a>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 
@@ -153,6 +158,9 @@
                     area: ['515px', '351px'], //宽高]
                     content: $("#folderTree")
                 });
+
+                $("#searchFolder").val("");//清空数据
+                $("#searchFolder").focus();//获取焦点
 
             })
 

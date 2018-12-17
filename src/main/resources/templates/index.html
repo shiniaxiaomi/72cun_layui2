@@ -14,18 +14,18 @@
 <div class="m-login-bg">
     <div class="m-login">
         <h3>72cun 网址收藏</h3>
-        <div class="m-login-warp">
+        <div class="m-login-warp layui-form">
 
             <div class="layui-form-item">
                 <label class="layui-form-label">账号</label>
                 <div class="layui-input-block">
-                    <input type="text" id="userName" name="userName" placeholder="" autocomplete="off" class="layui-input">
+                    <input type="text" id="userName" lay-verify="myUserName" name="userName" placeholder="" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">密码</label>
                 <div class="layui-input-block">
-                    <input type="password" id="password" name="password"  placeholder="" autocomplete="off" class="layui-input">
+                    <input type="password" id="password"  lay-verify="myPassword" name="password"  placeholder="" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <!--<div class="layui-form-item">-->
@@ -37,7 +37,7 @@
             <!--</div>-->
             <div class="layui-form-item" style="margin-top: 60px">
                 <div class="layui-input-block">
-                    <button class="layui-btn" id="login">登入</button>
+                    <button class="layui-btn" lay-submit lay-filter="loginSubmit" id="login">登入</button>
                     <button class="layui-btn" id="register">注册</button>
                 </div>
             </div>
@@ -49,55 +49,40 @@
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
 <script src="/myjs/app.js?v=1.0.0"></script>
 <script>
-    layui.use(['layer'], function() {
+    layui.use(['layer','form'], function() {
         var layer = layui.layer;
+        var form = layui.form;
 
-        var num="";
-        for(var i=0;i<4;i++){
-            num+=Math.ceil(Math.random()*9);
-        }
-        $("#num").html(num);
+//        var num="";
+//        for(var i=0;i<4;i++){
+//            num+=Math.ceil(Math.random()*9);
+//        }
+//        $("#num").html(num);
 
+        form.verify({
+            myUserName: [/^.{1,20}$/,'长度在1~20之间']
+            ,myPassword: [/^.{1,20}$/,'长度在1~20之间']
+        });
 
-        $("#login").on('click',function () {
-            var userName=$("#userName").val();
-            var password=$("#password").val();
-            var yzm=$("#yzm").val();
-            if(userName ==""){
-                layer.msg('账号不能为空', {offset: '50px', anim: 0});
-                return;
-            }else if(password==""){
-                layer.msg('密码不能为空', {offset: '50px', anim: 0});
-                return;
-            }
-//            else if(yzm==""){
-//                layer.msg('验证码不能为空', {offset: '50px', anim: 0});
-//                return;
-//            }else if(yzm!=num){
-//                layer.msg('验证码不正确', {offset: '50px', anim: 0});
-//                return;
-//            }
-            else{
-                $.ajax({
-                    url:"/login",
-                    type:'post',
-                    dataType:"json",
-                    data:{
-                        userName:userName,
-                        password:password
-                    },
-                    complete:function (data) {
-                        console.dir(data)
-                        if(data.responseJSON!=undefined && data.responseJSON.code==1){
-                            layer.msg(data.responseJSON.message, {offset: '50px', anim: 0});
-                        }else if(data.responseText!=undefined){
-                            document.write(data.responseText);
-                            document.close()
-                        }
-                    },
-                })
-            }
-        })
+        //注册事件
+        form.on('submit(loginSubmit)', function(formData){
+            $.ajax({
+                url:"/login",
+                type:'post',
+                dataType:"json",
+                data:formData.field,
+                complete:function (data) {
+                    console.dir(data)
+                    if(data.responseJSON!=undefined && data.responseJSON.code==1){
+                        layer.msg(data.responseJSON.message, {offset: '50px', anim: 0});
+                    }else if(data.responseText!=undefined){
+                        document.write(data.responseText);
+                        document.close()
+                    }
+                },
+            })
+            return false;
+        });
 
         $("#register").on('click',function () {
             window.location.href='/public/register.html';

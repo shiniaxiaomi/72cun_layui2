@@ -35,8 +35,8 @@ DROP TABLE IF EXISTS `url`;
 
 CREATE TABLE `url` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(100) DEFAULT NULL,
-  `label` varchar(20) DEFAULT NULL,
+  `url` varchar(500) DEFAULT NULL,
+  `label` varchar(150) DEFAULT NULL,
   `pid` int(11) DEFAULT NULL,
   `createTime` timestamp NULL DEFAULT NULL,
   `userId` int(11) DEFAULT NULL,

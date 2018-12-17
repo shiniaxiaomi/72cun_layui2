@@ -1,9 +1,6 @@
 package com.lyj.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.lyj.dao.FolderDao;
-import com.lyj.dao.URLDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
 import com.lyj.redisKey.FolderKey;
@@ -26,11 +23,15 @@ public class FolderService {
 
 
     @Autowired
-    URLDao urlDao;
+    URLService urlService;
 
 
     @Autowired
     RedisService redisService;
+
+
+
+
 
 
     public Folder addRootFolder(int userId){
@@ -74,6 +75,9 @@ public class FolderService {
             throw new MessageException("该文件夹下还有子文件夹,请先删除子文件夹");
         }else{
             num1 = folderDao.deleteByFolderId(folderId);//删除文件夹
+
+            //删除文件夹下的网址
+            urlService.deleteUrlByPid(folderId);
         }
 
         if(num1==1){

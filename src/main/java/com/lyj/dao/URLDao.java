@@ -26,7 +26,7 @@ public interface URLDao{
     int deleteUrlByUrlId(Integer id);
 
     @Delete("delete from url where pid=#{pid}")
-    void deleteUrlByPid(Integer pid);
+    int deleteUrlByPid(Integer pid);
 
     //xml---批量删除
     int deleteUrlsByIds_Batch(List<Integer> ids);

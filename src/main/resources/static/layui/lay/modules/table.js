@@ -1599,12 +1599,17 @@ layui.define(['laytpl', 'laypage', 'layer', 'form', 'util'], function(exports){
     ,gridExpand = function(hide){
       var othis = $(this)
       ,elemCell = othis.children(ELEM_CELL);
-      
+
+
+
       if(hide){
-        othis.find('.layui-table-grid-down').remove();
+          layer.closeAll("tips");
+        // othis.find('.layui-table-grid-down').remove();
       } else if(elemCell.prop('scrollWidth') > elemCell.outerWidth()){
         if(elemCell.find('.'+ ELEM_GRID_DOWN)[0]) return;
-        othis.append('<div class="'+ ELEM_GRID_DOWN +'"><i class="layui-icon layui-icon-down"></i></div>');
+        if(elemCell.find("a")[0]) return;//去除a标签提示
+        // othis.append('<div class="'+ ELEM_GRID_DOWN +'"><i class="layui-icon layui-icon-down"></i></div>');
+          layer.tips("<span style='word-wrap: break-word;'>"+othis[0].innerText+"</span>", othis,{tips: 1,time:0,isOutAnim: false,anim:-1});//加上换行样式,关闭所有动画
       }
     };
     

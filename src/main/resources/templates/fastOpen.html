@@ -12,6 +12,10 @@
         .form-dialog,.hide{
             display: none;
         }
+        /*设定表格特定的字体大小*/
+        .layui-table-cell {
+            font-size: 16px;
+        }
     </style>
 
 
@@ -150,12 +154,20 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
 
             if(layEvent === 'delete'){ //删除
-                util.ajax("/url/delete",{id:obj.data.id},function (data) {
-                    if(data.code==0){
-                        tableIns.reload(tableOption);//刷新表格
-                        layer.msg("删除成功");
-                    }
-                })
+                //确认弹窗
+                layer.confirm('您确定要删除该网址吗', {
+                    btn: ['确定','取消'], //按钮
+                    shadeClose: true,
+                }, function(){
+                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                        if(data.code==0){
+                            tableIns.reload(tableOption);//刷新表格
+                            layer.msg("删除成功");
+                        }
+                    })
+                }, function(){
+                });
+
             } else if(layEvent === 'edit'){ //编辑
                 //更改网址弹窗
                 editLayer=layer.open({
@@ -228,11 +240,11 @@
 
         //参数长度校验
         form.verify({
-            label: [/^.{1,20}$/,'长度在1~20之间']
+            label: [/^.{1,150}$/,'长度在1~150之间']
 
             //我们既支持上述函数式的方式，也支持下述数组的形式
             //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
-            ,myUrl: [/^.{1,100}$/,'长度在1~100之间']
+            ,myUrl: [/^.{1,500}$/,'长度在1~500之间']
         });
 
     });
@@ -261,8 +273,8 @@
                 <label class="layui-form-label">文件夹位置</label>
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                    <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <button class="layui-btn layui-btn-primary selectTree" >选择</button>
+                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid">
 
                 </div>
@@ -300,8 +312,8 @@
                 <label class="layui-form-label">文件夹位置</label>
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
-                    <button class="layui-btn selectTree" >选择</button>
-                    <button class="layui-btn customFolderSetting">自定义</button>
+                    <button class="layui-btn layui-btn-primary selectTree" >选择</button>
+                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_edit" class="layui-input hide" lay-verify="required" type="text" name="pid">
                 </div>
             </div>
@@ -349,6 +361,9 @@
                     area: ['515px', '351px'], //宽高]
                     content: $("#folderTree")
                 });
+
+                $("#searchFolder").val("");//清空数据
+                $("#searchFolder").focus();//获取焦点
 
             })
 

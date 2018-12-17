@@ -273,6 +273,10 @@ layui.define(["jquery","laytpl"], function (exports) {
             if(this.config.data && this.config.data.constructor === Array) this.config.data=arrData;
             this.config = $.extend({}, this.config, arrData);
             $(this.config.elem).off();  // 取消事件绑定，防止多次绑定事件
+            //如果是[],则直接将data赋值为[]
+            if(arrData!=undefined && arrData.length==0){
+                this.config.data=[];
+            }
             return eleTree.render($.extend({}, this.config, arrData))
         },
         // 下拉
@@ -883,61 +887,62 @@ layui.define(["jquery","laytpl"], function (exports) {
                             if(currentData.currentData)
                             console.dir(currentData)
                             return _self.reInitData(target).index.length;
+                        },
+                        move:function(){
+                            // 数据更改
+                            var currList=currentData.parentData.data[options.request.children]
+                            var currIndex=currentData.parentData.childIndex
+                            var currData=currentData.currentData;
+                            var tarData=targetData.currentData;
+                            // 当前是否是最外层
+                            isCurrentOuterMost ? options.data.splice(currIndex,1) : currList.splice(currIndex,1)
+                            // 目标是否是最外层
+                            isTargetOuterMost ? options.data.push(currData) : (function() {
+                                !tarData[options.request.children] ? tarData[options.request.children]=[] : "";
+                                tarData[options.request.children].push(currData);
+                            })()
+
+                            // dom互换
+                            eleNode.remove();
+                            // 最外层判断
+                            if(isTargetOuterMost){
+                                target.append(temNode);
+                                var floor=0;
+                            }else{
+                                target.children(".eleTree-node-group").append(temNode);
+                                var floor=Number(target.attr("eletree-floor"))+1;
+                            }
+                            // 加floor和padding
+                            temNode.attr("eletree-floor",String(floor));
+                            temNode.children(".eleTree-node-content").css("padding-left",floor*options.indent+"px");
+                            // 通过floor差值计算子元素的floor
+                            var countFloor=eleFloor-floor;
+                            temNode.find(".eleTree-node").each(function(index,item) {
+                                var f=Number($(item).attr("eletree-floor"))-countFloor;
+                                $(item).attr("eletree-floor",String(f));
+                                $(item).children(".eleTree-node-content").css("padding-left",f*options.indent+"px");
+                            })
+                            // 原dom去三角
+                            var leaf=groupNode.children(".eleTree-node").length===0;
+                            leaf && groupNode.siblings(".eleTree-node-content")
+                                .children(".eleTree-node-content-icon").children(".layui-icon")
+                                .removeClass("icon-rotate").css("color","transparent");
+                            // 当前的增加三角
+                            var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===0;
+                            !cLeaf && target.children(".eleTree-node-content")
+                                .children(".eleTree-node-content-icon").children(".layui-icon")
+                                .addClass("icon-rotate").removeAttr("style");
+
+                            _self.unCheckNodes();
+                            _self.defaultChecked();
                         }
+
                     });
 
                     // 拖拽是否取消
                     if(isStop){
                         return false;
                     }
-
-
-                    // 数据更改
-                    var currList=currentData.parentData.data[options.request.children]
-                    var currIndex=currentData.parentData.childIndex
-                    var currData=currentData.currentData;
-                    var tarData=targetData.currentData;
-                    // 当前是否是最外层
-                    isCurrentOuterMost ? options.data.splice(currIndex,1) : currList.splice(currIndex,1)
-                    // 目标是否是最外层
-                    isTargetOuterMost ? options.data.push(currData) : (function() {
-                        !tarData[options.request.children] ? tarData[options.request.children]=[] : "";
-                        tarData[options.request.children].push(currData);
-                    })()
-
-                    // dom互换
-                    eleNode.remove();
-                    // 最外层判断
-                    if(isTargetOuterMost){
-                        target.append(temNode);
-                        var floor=0;
-                    }else{
-                        target.children(".eleTree-node-group").append(temNode);
-                        var floor=Number(target.attr("eletree-floor"))+1;
-                    }
-                    // 加floor和padding
-                    temNode.attr("eletree-floor",String(floor));
-                    temNode.children(".eleTree-node-content").css("padding-left",floor*options.indent+"px");
-                    // 通过floor差值计算子元素的floor
-                    var countFloor=eleFloor-floor;
-                    temNode.find(".eleTree-node").each(function(index,item) {
-                        var f=Number($(item).attr("eletree-floor"))-countFloor;
-                        $(item).attr("eletree-floor",String(f));
-                        $(item).children(".eleTree-node-content").css("padding-left",f*options.indent+"px");
-                    })
-                    // 原dom去三角
-                    var leaf=groupNode.children(".eleTree-node").length===0;
-                    leaf && groupNode.siblings(".eleTree-node-content")
-                        .children(".eleTree-node-content-icon").children(".layui-icon")
-                        .removeClass("icon-rotate").css("color","transparent");
-                    // 当前的增加三角
-                    var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===0;
-                    !cLeaf && target.children(".eleTree-node-content")
-                        .children(".eleTree-node-content-icon").children(".layui-icon")
-                        .addClass("icon-rotate").removeAttr("style");
-
-                    _self.unCheckNodes();
-                    _self.defaultChecked();
                 })
             })
         },
@@ -1108,10 +1113,12 @@ layui.define(["jquery","laytpl"], function (exports) {
                         stop: function() {
                             isStop=true;
                         },
+                        deleteNode:function () {//删除节点操作
+                            _self.remove(key);
+                        }
                     });
-                    if(isStop) return;
+                    // if(isStop) return;
 
-                    _self.remove(key);
                 })
                 // 自定义
                 $("#tree-menu li.setting").off().on("click",function(e) {
