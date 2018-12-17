@@ -62,7 +62,10 @@ public class FolderController {
 
 
     @RequestMapping("/update")
-    public Result update(Folder folder){
+    public Result update(Folder folder,HttpSession session){
+        User user = (User) session.getAttribute("user");
+
+        folder.setUserId(user.getId());
 
          if(folderService.updateFolder(folder)){
              return ResultUtil.success("更新成功");

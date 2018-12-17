@@ -7,7 +7,7 @@ ps -ef | grep 72cun
 kill -9 8080
 
 运行,并在运行时临时指定动态端口,方便nginx进行重新转发到改端口
-nohup java -jar /72cun/72cun-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod --server.port=9999 >>  /72cun/temp_9999.log 2>&1
+nohup java -jar /72cun/72cun-layui-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod --server.port=9999 >>  /72cun/temp_9999.log 2>&1
 
 查看输出日志
 tail -f /72cun/temp_9999.log

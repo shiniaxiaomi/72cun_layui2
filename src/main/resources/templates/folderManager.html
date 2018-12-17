@@ -78,6 +78,8 @@
     var clickNodeId;//保存点击过的node的id
     var tableIns;//表格实例
     var editLayer;//编辑弹窗id
+    var moveLayer;//编辑弹窗id
+    var beforeMoveFolderId;//点击批量移动前的文件夹id
 
     layui.use(['jquery','layer', 'table','eleTree','form'], function () {
         eleTree = layui.eleTree;
@@ -89,13 +91,16 @@
 
         //打开批量移动到弹窗
         $("#moveToBtn").on("click",function () {
+
+            beforeMoveFolderId=clickNodeId;//保存批量移动前的文件夹id
+
             if(table.checkStatus('idTest').data.length==0){
                 layer.msg("请选中数据!");
                 return;
             }
 
             //批量更改网址
-            layer.open({
+            moveLayer=layer.open({
                 type: 1,
                 shadeClose: true,
                 area: ['515px', '351px'], //宽高
@@ -212,9 +217,9 @@
             util.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
                 if(data.code==0){
                     layer.msg('文件夹名称更改成功');
+                    d.update();//更新页面数据
                 }else{
                     layer.msg('文件夹名称更改失败');
-                    el_left.reload();//发生错误时,重新加载
                 }
             })
         });
@@ -336,6 +341,9 @@
                 });
 
             } else if(layEvent === 'edit'){ //编辑
+
+                beforeMoveFolderId=clickNodeId;//保存批量移动前的文件夹id
+
                 //更改网址弹窗
                 editLayer=layer.open({
                     type: 1,
@@ -374,8 +382,9 @@
         //url更改事件
         form.on('submit(editSubmit)', function(formData){
             util.ajax("/url/update",formData.field,function (data) {
-                tableOption.where={pid:clickNodeId};
+                tableOption.where={pid:beforeMoveFolderId};//展示批量移动前的文件夹
                 tableIns.reload(tableOption);//刷新表格
+                clickNodeId=beforeMoveFolderId;//重新法赋值文件夹id
 
                 layer.close(editLayer);
                 layer.msg(data.message);
@@ -396,13 +405,15 @@
 
             util.ajax("/url/updateInBatches",{pid:formData.field.pid,id:id,pidName:formData.field.pidName},function (data) {
                 if(data.code==0){
-                    tableOption.where={pid:clickNodeId};
+                    tableOption.where={pid:beforeMoveFolderId};//展示批量移动前的文件夹
                     tableIns.reload(tableOption);//刷新表格
+                    clickNodeId=beforeMoveFolderId;//重新法赋值文件夹id
 
-                    layer.close(editLayer);
+                    layer.close(moveLayer);
                     layer.msg("更改成功");
                 }
             })
+
             return false;
         });
 

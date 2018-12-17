@@ -21,6 +21,7 @@ public class RedisConfig {
     private int poolMaxTotal;
     private int poolMaxdle;
     private int poolMaxWait;//秒
+    private int database;//连几号库
 
     //创建一个JedisPool
     @Bean
@@ -31,7 +32,7 @@ public class RedisConfig {
         poolConfig.setMaxTotal(poolMaxWait);
         poolConfig.setMaxWaitMillis(poolMaxWait*1000);
 
-        JedisPool jp=new JedisPool(poolConfig,host,port,timeout*1000);
+        JedisPool jp=new JedisPool(poolConfig,host,port,timeout*1000,null,database);
 
         return jp;
     }
@@ -82,5 +83,13 @@ public class RedisConfig {
 
     public void setPoolMaxWait(int poolMaxWait) {
         this.poolMaxWait = poolMaxWait;
+    }
+
+    public int getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(int database) {
+        this.database = database;
     }
 }

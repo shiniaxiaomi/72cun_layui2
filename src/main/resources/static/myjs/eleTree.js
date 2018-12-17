@@ -639,7 +639,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 data[options.request.key]=d[obj.i][options.request.key];
                 data[options.request.children]=d[obj.i][options.request.children];
                 d[obj.i]=$.extend({},d[obj.i],data);
-                console.log(options.data);
+                //console.log(options.data);
             });
         },
         remove: function(key) {
@@ -1028,6 +1028,7 @@ layui.define(["jquery","laytpl"], function (exports) {
 
                 // 编辑
                 $("#tree-menu li.edit").off().on("click",function(e) {
+
                     e.stopPropagation();
                     $("#tree-menu").hide().remove();
                     var node=$(that).parent(".eleTree-node");
@@ -1053,17 +1054,21 @@ layui.define(["jquery","laytpl"], function (exports) {
                                 $(inpThis).siblings(".eleTree-node-content-label").show();
                                 $(inpThis).remove();
                             },
+                            update:function () {
+                                // 修改数据
+                                _self.reInitData(eleNode).currentData[options.request.name]=val;
+                                // 修改dom
+                                $(inpThis).siblings(".eleTree-node-content-label").text(val).show();
+                                $(inpThis).remove();
+                            }
                         });
                         if(isStop) return;
 
-                        // 修改数据
-                        _self.reInitData(eleNode).currentData[options.request.name]=val;
-                        // 修改dom
-                        $(this).siblings(".eleTree-node-content-label").text(val).show();
-                        $(this).remove();
-
                     }).on("mousedown",function(e) {
                         // 防止input拖拽
+                        e.stopPropagation();
+                    }).on("click",function(e) {
+                        // 防止点击
                         e.stopPropagation();
                     })
 
@@ -1085,17 +1090,21 @@ layui.define(["jquery","laytpl"], function (exports) {
                                     $(inpThis).siblings(".eleTree-node-content-label").show();
                                     $(inpThis).remove();
                                 },
+                                update:function () {
+                                    // 修改数据
+                                    _self.reInitData(eleNode).currentData[options.request.name]=val;
+                                    // 修改dom
+                                    $(inpThis).siblings(".eleTree-node-content-label").text(val).show();
+                                    $(inpThis).remove();
+                                }
                             });
                             if(isStop) return;
-
-                            // 修改数据
-                            _self.reInitData(eleNode).currentData[options.request.name]=val;
-                            // 修改dom
-                            $(this).siblings(".eleTree-node-content-label").text(val).show();
-                            $(this).remove();
                         }
                     }).on("mousedown",function(e) {
                         // 防止input拖拽
+                        e.stopPropagation();
+                    }).on("click",function(e) {
+                        // 防止点击
                         e.stopPropagation();
                     })
 
