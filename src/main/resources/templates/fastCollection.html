@@ -11,6 +11,13 @@
         .form-dialog,.hide{
             display: none;
         }
+        .folderTree{
+            height: 320px;
+            display: none
+        }
+        .selectFoldertree{
+            height: 255px;
+        }
     </style>
 
 
@@ -126,9 +133,9 @@
 </div>
 
 <!-- 文件夹树弹窗 -->
-<div id="folderTree" style="height: 320px;overflow-y: auto;display: none" >
+<div id="folderTree" class="folderTree">
     <input id='searchFolder' type='text' autocomplete='off' placeholder='输入关键字进行文件夹过滤' class='layui-input' >
-    <div id="ele" class="eleTree ele1" lay-filter="data"></div>
+    <div id="ele" class="eleTree ele1 selectFoldertree" lay-filter="data"></div>
 
     <script>
 
