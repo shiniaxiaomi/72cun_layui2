@@ -25,7 +25,8 @@ public class Compressor {
     //需要压缩的文件夹(会压缩此文件夹下的所有js、css文件)
 //    private String filePath="F:\\lyj_CodeArea\\72cun_buff\\static";//个人
 //    private String filePath="F:\\code\\72cun_buff\\static";
-    private String filePath="C:\\Users\\lyj80\\Desktop\\eleTree.js";
+//    private String filePath="C:\\Users\\lyj80\\Desktop\\eleTree.js";
+    private String filePath="C:\\Users\\Yingjie.lu\\Desktop\\eleTree.js";
 
     static int linebreakpos = 1000;//-1;换行：负数表示不换行
     static boolean munge=true;

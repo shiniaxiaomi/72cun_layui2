@@ -209,7 +209,7 @@ layui.define(["jquery","laytpl"], function (exports) {
             this.filter=options.elem.attr("lay-filter");
 
             // 判断加载方式
-            if(options.data==undefined){
+            if(options.data==undefined){//如果data是undefined,则请求数据
                 this.ajaxGetData();
             }else{
                 this.renderData();
@@ -273,11 +273,9 @@ layui.define(["jquery","laytpl"], function (exports) {
             if(this.config.data && this.config.data.constructor === Array) this.config.data=arrData;
             this.config = $.extend({}, this.config, arrData);
             $(this.config.elem).off();  // 取消事件绑定，防止多次绑定事件
-            //如果是[],则直接将data赋值为[]
-            if(arrData!=undefined && arrData.length==0){
-                this.config.data=[];
-            }
-            return eleTree.render($.extend({}, this.config, arrData))
+
+            this.config.data=arrData;//直接将arrData赋值
+            return eleTree.render(this.config)
         },
         // 下拉
         eleTreeEvent: function() {
