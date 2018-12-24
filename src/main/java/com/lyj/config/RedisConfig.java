@@ -32,7 +32,7 @@ public class RedisConfig {
         poolConfig.setMaxTotal(poolMaxWait);
         poolConfig.setMaxWaitMillis(poolMaxWait*1000);
 
-        JedisPool jp=new JedisPool(poolConfig,host,port,timeout*1000,null,database);
+        JedisPool jp=new JedisPool(poolConfig,host,port,timeout*1000,"lyjLYJ123",database);
 
         return jp;
     }

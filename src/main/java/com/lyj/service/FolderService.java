@@ -59,8 +59,10 @@ public class FolderService {
 
     public boolean addFolder(Folder folder) {
         int flag=folderDao.addFolder(folder);//新增folder,并获取到了自增id
+
+        redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
+
         if(flag==1){
-            redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
             return true;
         }else{
             return false;
@@ -80,8 +82,9 @@ public class FolderService {
             urlService.deleteUrlByPid(folderId);
         }
 
+        redisService.deleteKey(FolderKey.getByUserId,userId);//删除key
+
         if(num1==1){
-            redisService.deleteKey(FolderKey.getByUserId,userId);//删除key
             return true;
         }else{
             return false;
@@ -93,8 +96,10 @@ public class FolderService {
     @Transactional
     public boolean updateFolder(Folder folder) {
         int i = folderDao.updateFolder(folder);
+
+        redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
+
         if(i==1){
-            redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
             return true;
         }else{
             return false;
