@@ -50,7 +50,7 @@ public class DruidConfig {
         bean.setFilter(new WebStatFilter());
 
         Map<String,String> initParams = new HashMap<>();
-        initParams.put("exclusions","*.js,*.css,*.html,/druid/*");//排除这些请求
+        initParams.put("exclusions","/druid/**");//排除这些请求
 
         bean.setInitParameters(initParams);
 
