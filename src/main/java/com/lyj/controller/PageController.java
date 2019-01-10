@@ -1,9 +1,12 @@
 package com.lyj.controller;
 
+import com.lyj.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by Yingjie.Lu on 2018/10/7.
@@ -12,11 +15,23 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PageController {
 
-//    @RequestMapping("/home")
-//    public ModelAndView tree(ModelAndView mv){
-//        mv.setViewName("home");
-//        return mv;
-//    }
+    //后台管理系统的路由
+    @RequestMapping("/admin")
+    public ModelAndView admin(ModelAndView mv, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        if(user==null){
+            mv.setViewName("admin/index");
+        }else{
+            mv.setViewName("admin/main");
+        }
+        return mv;
+    }
+
+    @RequestMapping("/admin/userManager")
+    public ModelAndView userManager(ModelAndView mv){
+        mv.setViewName("admin/userManager");
+        return mv;
+    }
 
     @RequestMapping("/searchUrl")
     public ModelAndView searchUrl(ModelAndView mv){

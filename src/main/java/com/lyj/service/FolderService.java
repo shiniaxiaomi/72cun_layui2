@@ -108,4 +108,7 @@ public class FolderService {
     }
 
 
+    public int deleteFolderByUserId(Integer userId) {
+        return folderDao.deleteByUserId(userId);
+    }
 }

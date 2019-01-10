@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+    <style>
+        .form-dialog,.hide{
+            display: none;
+        }
+        .folderTree{
+            height: 320px;
+            display: none
+        }
+        .selectFoldertree{
+            height: 255px;
+        }
+    </style>
+
+</head>
+<body>
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <form class="layui-form" action="">
+                    <div class="layui-form-item" style="width: 110px;float: right">
+                        <select name="interest" id="searchType">
+                            <option value="0">用户查询</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="layui-col-md4">
+                <input type="text" id="keywords" name="title" placeholder="输入用户名称进行搜索" autocomplete="off" class="layui-input" style="float: left">
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-btn-group">
+                    <button class="layui-btn layui-btn-primary" id="searchBtn">
+                        <i class="layui-icon layui-icon-search"></i> 搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-row" style="height: 90%">
+            <table id="demo" lay-filter="test"></table>
+        </div>
+
+</body>
+
+</html>
+
+<!-- 工具栏模板： -->
+<script type="text/html" id="toolbarDemo" lay-event="tool">
+    <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="/js/util.js"></script>
+<script>
+
+    var table;
+    var layer;
+    var $;
+    var form;
+
+
+    var tableOption;//抽取table公共的配置项
+    var tableIns;//表格实例
+
+
+    ////输入框获得焦点
+    window.onload=function() {
+        $("#keywords").focus();
+    }
+
+
+    layui.use(['table','layer','form',"jquery"], function(){
+        table = layui.table;
+        layer=layui.layer;
+        layer_folderTree=layui.layer;//文件夹树显示层
+        $ = layui.jquery;
+        form=layui.form;
+
+
+        //绑定点击搜索
+        $("#searchBtn").on("click",function () {
+            var buff = $.extend(true,{},tableOption) //值赋值
+            buff.url='/admin/getUsers';
+//            buff.where={keywords:$("#keywords")[0].value,searchType:$("#searchType")[0].value};
+            buff.page={curr: 1};//从第一页开始
+            tableIns = table.render(buff);
+        })
+
+        //绑定回车搜索
+        $("#keywords").keydown(function(event){
+            if(event.keyCode==13){
+                $("#searchBtn").click();//调用点击事件
+            }
+        });
+
+        //配置table选项
+        tableOption={
+            elem: '#demo'
+            ,height: '505'
+            ,page: true //开启分页
+            ,url:'/admin/getUsers'
+//            ,where:{keywords:'',searchType:0}
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {field: 'id', title: 'id', align:'center'}
+                ,{field: 'userName', title: '用户名称', align:'center',unresize:true}
+                ,{field: 'lastLoginTime', title: '登入时间' ,align:'center',unresize:true}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
+            ]],
+        };
+
+
+        //首次渲染表格,拿到对象
+        tableIns = table.render(tableOption);//传入参数进行渲染
+
+
+        //table的编辑和删除事件
+        table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            if(layEvent === 'delete'){ //删除
+                //确认弹窗
+                layer.confirm('您确定要删除该用户吗', {
+                    btn: ['确定','取消'], //按钮
+                    shadeClose: true,
+                }, function(){
+                    util.ajax("/admin/deleteUserById",{id:obj.data.id},function (data) {
+                        if(data.code==0){
+                            tableIns.reload(tableOption);//刷新表格
+                            layer.msg("删除成功");
+                        }
+                    })
+                }, function(){
+                });
+
+            }
+        });
+
+    });
+
+</script>
+

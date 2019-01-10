@@ -74,7 +74,9 @@ public class LoginController {
         if(seccessFlag){
             Object type = session.getAttribute("type");
             Object url = session.getAttribute("url");
-            if(type!=null && !"".equals((String)type)){
+            if("admin".equals(user.getUserName())){
+                mv.setViewName("admin/main");//跳转到后台管理页面
+            }else if(type!=null && !"".equals((String)type)){
                 mv.setViewName("forward:/fast/open");
             }else if(url!=null && !"".equals((String)url)){
                 mv.setViewName("forward:/fast/collection");

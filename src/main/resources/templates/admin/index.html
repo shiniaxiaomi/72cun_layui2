@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>72cun 网址收藏</title>
+    <title>后台管理</title>
     <link rel="stylesheet" type="text/css" href="/layui/css/layui.css" />
     <link rel="stylesheet" type="text/css" href="/css/login.css" />
 
@@ -13,7 +13,7 @@
 <body>
 <div class="m-login-bg">
     <div class="m-login">
-        <h3>72cun 网址收藏</h3>
+        <h3>后台管理</h3>
         <div class="m-login-warp layui-form">
 
             <div class="layui-form-item">
@@ -28,13 +28,6 @@
                     <input type="password" id="password"  lay-verify="myPassword" name="password"  placeholder="" autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <!--<div class="layui-form-item">-->
-                <!--<label class="layui-form-label">验证码</label>-->
-                <!--<div class="layui-input-inline">-->
-                    <!--<input type="text" id="yzm" name="yzm" placeholder="" autocomplete="off" class="layui-input" style="width: 90px">-->
-                <!--</div>-->
-                <!--<div class="layui-form-mid layui-word-aux" style="margin-left: -80px" id="num"></div>-->
-            <!--</div>-->
             <div class="layui-form-item" style="margin-top: 60px">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit lay-filter="loginSubmit" id="login">登入</button>
@@ -53,11 +46,6 @@
         var layer = layui.layer;
         var form = layui.form;
 
-//        var num="";
-//        for(var i=0;i<4;i++){
-//            num+=Math.ceil(Math.random()*9);
-//        }
-//        $("#num").html(num);
 
         form.verify({
             myUserName: [/^.{1,20}$/,'长度在1~20之间']

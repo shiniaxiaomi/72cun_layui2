@@ -142,4 +142,8 @@ public class URLService {
         }
 
     }
+
+    public int deleteUrlByUserId(Integer userId) {
+        return urlDao.deleteUrlByUserId(userId);
+    }
 }

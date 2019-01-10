@@ -1,11 +1,16 @@
 package com.lyj.service;
 
-import com.lyj.dao.FolderDao;
 import com.lyj.dao.UserDao;
+import com.lyj.model.Result;
 import com.lyj.model.User;
+import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by Yingjie.Lu on 2018/9/17.
@@ -19,7 +24,10 @@ public class UserService {
     UserDao userDao;
 
     @Autowired
-    FolderDao folderDao;
+    FolderService folderService;
+
+    @Autowired
+    URLService urlService;
 
 
     public boolean isExists(User user){
@@ -64,6 +72,9 @@ public class UserService {
             User one = userDao.getUser(user.getUserName());
             if(one!=null && one.getPassword().equals(user.getPassword())){
                 user.setId(one.getId());
+
+                //记录用户的登入时间
+                userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
                 return true;
             }
         }
@@ -85,5 +96,18 @@ public class UserService {
 
     public User getCustomFolder(Integer userId) {
         return userDao.getCustomFolder(userId);
+    }
+
+    //删除用户
+    @Transactional
+    public Result deleteUserById(Integer userId) {
+        int deleteUrlCount=urlService.deleteUrlByUserId(userId);
+        int deleteFolderCount= folderService.deleteFolderByUserId(userId);
+        int deleteUserCount=userDao.deleteById(userId);
+        if(deleteFolderCount>0 && deleteUserCount>0){
+            return ResultUtil.success("删除成功!");
+        }else{
+            return ResultUtil.error("删除失败!");
+        }
     }
 }

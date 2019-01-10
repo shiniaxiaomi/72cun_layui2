@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         //这个拦截的要看的就是请求的url是否包含指定的内容
         InterceptorRegistration loginCheckInterceptor = registry.addInterceptor(new LoginCheckInterceptor());//添加登入拦截器
-        loginCheckInterceptor.addPathPatterns("/**").excludePathPatterns( "/", "/login","/user/add","/exit", "/fast/saveAndLogin");
+        loginCheckInterceptor.addPathPatterns("/**").excludePathPatterns( "/", "/login","/user/add","/exit", "/fast/saveAndLogi","/admin");
 
         loginCheckInterceptor.excludePathPatterns("/css/**","/icon/**","/images/**","/js/**","/layui/**","/myjs/**","/public/**");//排除static下的静态文件(在本地访问的时候)
 

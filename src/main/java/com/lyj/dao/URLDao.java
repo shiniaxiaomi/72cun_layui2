@@ -28,6 +28,10 @@ public interface URLDao{
     @Delete("delete from url where pid=#{pid}")
     int deleteUrlByPid(Integer pid);
 
+    //根据userid删除所有url
+    @Delete("delete from url where userId=#{userId}")
+    int deleteUrlByUserId(Integer userId);
+
     //xml---批量删除
     int deleteUrlsByIds_Batch(List<Integer> ids);
 
@@ -49,6 +53,5 @@ public interface URLDao{
 
     @Select("select * from url where userId=#{userId} and pidName like CONCAT('%',#{pidName},'%') order by createTime desc")
     List<URL> getUrlsByPidName(@Param("userId") Integer userId, @Param("pidName") String pidName);
-
 
 }

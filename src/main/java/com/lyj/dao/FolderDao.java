@@ -25,6 +25,10 @@ public interface FolderDao{
     @Delete("delete from folder where id=#{id}")
     int deleteByFolderId(Integer id);
 
+    //根据用户id删除所有文件夹
+    @Delete("delete from folder where userId=#{userId}")
+    int deleteByUserId(Integer userId);
+
     //改
     //xml
     int updateFolder(Folder folder);
@@ -54,6 +58,7 @@ public interface FolderDao{
     //
     @Select("select name from folder where id=#{id}")
     String getFolderNameByFolderId(int id);
+
 
 
 }

@@ -1,11 +1,13 @@
 package com.lyj.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by 陆英杰
@@ -28,6 +30,9 @@ public class User implements Serializable {
     private int customFolderId;
 
     private String customFolderName;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    private Date lastLoginTime;//最后一次的登入时间
 
 
 }

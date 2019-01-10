@@ -4,6 +4,9 @@ import com.lyj.model.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * Created by 陆英杰
  * 2018/9/25 9:42
@@ -18,6 +21,9 @@ public interface UserDao{
     int addUser(User user);
 
     //删
+    //删除用户
+    @Delete("delete from user where id=#{userId}")
+    int deleteById(Integer userId);
 
     //改
     @Update("update user set customFolderId=#{customFolderId},customFolderName=#{customFolderName} where id=#{userId}")
@@ -25,6 +31,9 @@ public interface UserDao{
 
     @Update("update user set rootFolderId=#{rootFolderId} where id=#{userId}")
     int updateRootFolderIdByUserId(@Param("rootFolderId") int rootFolderId, @Param("userId") Integer userId);
+
+    @Update("update user set lastLoginTime=#{date} where id=#{userId}")
+    void updateLastLoginTime(@Param("date")Date date,@Param("userId") Integer userId);
 
     //查
     @Select("select count(1) from user where userName=#{userName}")
@@ -35,4 +44,6 @@ public interface UserDao{
 
     @Select("select customFolderId,customFolderName from user where id=#{userId}")
     User getCustomFolder(Integer userId);
+
+
 }
