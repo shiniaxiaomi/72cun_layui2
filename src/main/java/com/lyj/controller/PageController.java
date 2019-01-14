@@ -21,8 +21,10 @@ public class PageController {
         User user = (User) session.getAttribute("user");
         if(user==null){
             mv.setViewName("admin/index");
-        }else{
+        }else if("陆英杰".equals(user.getUserName())){
             mv.setViewName("admin/main");
+        }else{
+            mv.setViewName("/");
         }
         return mv;
     }

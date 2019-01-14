@@ -332,40 +332,16 @@
 </html>
 
 <script>
-//    //本地
-//    //快速收藏
-//    var str = `
-//        javascript:(function (x, sc, width, height) {
-//            var newWin = window.open('', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
-//            var formStr = '';
-//            formStr = "<form style='visibility:hidden;' method='POST' action='http://localhost:8087/fast/saveAndLogin'>"+
-//                        "<input type='hidden' name='url' value='[url]' />"+
-//                        "<input type='hidden' name='title' value='[title]' />"+
-//                      "</form>";
-//            formStr=formStr.replace('[url]', encodeURIComponent(location.href))
-//                .replace('[title]', encodeURIComponent(x.title));
-//            newWin.document.body.innerHTML = formStr;
-//            newWin.document.forms[0].submit();
-//            return newWin;
-//        })(document, screen, 1250, 660);
-//    `;
-//    document.getElementById('collection').href=str;
-//
-//    //快速打开
-//    var str2 = `
-//        javascript:(function (x, sc, width, height) {
-//            window.open('http://localhost:8087/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
-//        })(document, screen, 1250, 660);
-//    `;
-//    document.getElementById('open').href=str2;
 
-    //生产
+//    var product_url="http://localhost:8087";
+    var product_url="https://www.72cun.cn";
+
     //快速收藏
     var str = `
         javascript:(function (x, sc, width, height) {
             var newWin = window.open('', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
             var formStr = '';
-            formStr = "<form style='visibility:hidden;' method='POST' action='https://www.usetools.cn/fast/saveAndLogin'>"+
+            formStr = "<form style='visibility:hidden;' method='POST' action='`+product_url+`/fast/saveAndLogin'>"+
                         "<input type='hidden' name='url' value='[url]' />"+
                         "<input type='hidden' name='title' value='[title]' />"+
                       "</form>";
@@ -380,7 +356,7 @@
     //快速打开
     var str2 = `
         javascript:(function (x, sc, width, height) {
-            window.open('https://www.usetools.cn/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
+            window.open('`+product_url+`/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
         })(document, screen, 1420, 760);
     `;
     document.getElementById('open').href=str2;
