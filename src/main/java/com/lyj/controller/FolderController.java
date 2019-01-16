@@ -3,7 +3,9 @@ package com.lyj.controller;
 import com.lyj.model.Folder;
 import com.lyj.model.Result;
 import com.lyj.model.User;
+import com.lyj.redisKey.UserRootFolderKey;
 import com.lyj.service.FolderService;
+import com.lyj.service.RedisService;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,9 @@ public class FolderController {
 
     @Autowired
     FolderService folderService;
+
+    @Autowired
+    RedisService redisService;
 
 
     @RequestMapping("/query")
@@ -74,11 +79,18 @@ public class FolderController {
          }
     }
 
-//    @RequestMapping("/getRootFolderId")
-//    public int getRootFolderId(HttpSession session){
-//        User user = (User) session.getAttribute("user");
-//        return folderService.getRootFolderId(user);
-//    }
+    @RequestMapping("/getRootFolderId")
+    public int getRootFolderId(HttpSession session){
+        User user = (User) session.getAttribute("user");
+
+        Integer rootId = redisService.get(UserRootFolderKey.getRootFolderByUserId, user.getId(), Integer.class);//从redis中获取rootFolderId
+        if(rootId==null){//如果为空,则从数据库查询,并保存到redis中
+            rootId = folderService.getRootFolderIdByUserId(user.getId());
+            redisService.set(UserRootFolderKey.getRootFolderByUserId, user.getId(), rootId);
+        }
+
+        return rootId;
+    }
 
 
 }

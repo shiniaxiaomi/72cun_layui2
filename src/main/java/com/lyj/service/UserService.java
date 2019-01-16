@@ -29,6 +29,9 @@ public class UserService {
     @Autowired
     URLService urlService;
 
+    @Autowired
+    RedisService redisService;
+
 
     public boolean isExists(User user){
         if(!StringUtil.isEmpty(user.getUserName())){
@@ -58,14 +61,6 @@ public class UserService {
         }
     }
 
-//    public boolean updateCustomFolderIdByUserId(User user){
-//        int i = userDao.updateCustomFolderIdByUserId(user.getCustomFolderId(), user.getId());
-//        if(i==1){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//    }
 
     public boolean login(User user){
         if(user.getUserName()!=null && user.getPassword()!=null){
@@ -75,6 +70,7 @@ public class UserService {
 
                 //记录用户的登入时间
                 userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
+
                 return true;
             }
         }

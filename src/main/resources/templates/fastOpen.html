@@ -80,7 +80,7 @@
 
 <!-- 网址链接列的templet -->
 <script type="text/html" id="urlTpl">
-    <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="if($('.layui-form-switch').find('em').eq(0).html()=='OFF'){window.close()}">{{ d.url }}</a>
+    <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="isClose()">{{ d.url }}</a>
 </script>
 
 
@@ -109,6 +109,13 @@
         $("#keywords").focus();
     }
 
+    //判断是否是连续打开网址
+    function isClose() {
+        if($('.layui-form-switch').find('em').eq(0).html()=='OFF'){
+            window.close()
+        }
+    }
+
     layui.use(['table','layer','form',"jquery"], function(){
         table = layui.table
         layer=layui.layer;
@@ -134,7 +141,7 @@
         //抽取公共的配置项
         tableOption={
             elem: '#demo'
-            ,height: '505'
+            ,height: $(window).height()*0.85
             ,page: true //开启分页
             ,url:'/url/getUrlsLike'
             ,where:{keywords:'',searchType:0}
@@ -205,12 +212,15 @@
                 content: $("#addText")
             });
 
-            //清空表单
-            form.val("addText", {
-                "label": "",
-                "url": "",
-                "pidName": "",
-                "pid": ""
+            //查询默认文件夹id
+            util.ajax("/folder/getRootFolderId",[],function (data) {
+                //清空表单
+                form.val("addText", {
+                    "label": "",
+                    "url": "",
+                    "pidName": "默认文件夹",
+                    "pid": data
+                })
             })
         })
 
@@ -221,12 +231,15 @@
                 layer.close(addLayer);
                 layer.msg("添加成功");
 
-                //清空表单
-                form.val("addText", {
-                    "label": ''
-                    ,"url": ''
-                    ,"pidName": ''
-                    ,"pid": ''
+                //查询默认文件夹id
+                util.ajax("/folder/getRootFolderId",[],function (data) {
+                    //清空表单
+                    form.val("addText", {
+                        "label": "",
+                        "url": "",
+                        "pidName": "默认文件夹",
+                        "pid": data
+                    })
                 })
             })
             return false;

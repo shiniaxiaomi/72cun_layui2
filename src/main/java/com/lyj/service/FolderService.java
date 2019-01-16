@@ -111,4 +111,8 @@ public class FolderService {
     public int deleteFolderByUserId(Integer userId) {
         return folderDao.deleteByUserId(userId);
     }
+
+    public int getRootFolderIdByUserId(Integer userId) {
+        return folderDao.getRootFolderIdByUserId(userId);
+    }
 }

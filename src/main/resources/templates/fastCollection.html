@@ -50,13 +50,22 @@
         form = layui.form;
         layer_folderTree=layui.layer;//文件夹树显示层
 
-        //添加网址弹窗
-        addLayer=layer.open({
-            type: 1,
-            shadeClose: true,
-            area: ['515px', '351px'], //宽高
-            content: $("#addText")
-        });
+        //查询默认文件夹id
+        util.ajax("/folder/getRootFolderId",[],function (data) {
+            //清空表单
+            form.val("addText", {
+                "pidName": "默认文件夹",
+                "pid": data
+            })
+
+            //添加网址弹窗
+            addLayer=layer.open({
+                type: 1,
+                shadeClose: true,
+                area: ['515px', '351px'], //宽高
+                content: $("#addText")
+            });
+        })
 
         //url添加事件
         form.on('submit(addSubmit)', function(data){
