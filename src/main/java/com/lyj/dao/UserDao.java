@@ -16,7 +16,7 @@ public interface UserDao{
 
     //add,delete.update,get
     //增
-    @Insert("insert into user (password,userName,rootFolderId,customFolderId) values (#{password},#{userName},#{rootFolderId},#{customFolderId})")
+    @Insert("insert into user (password,userName,rootFolderId,customFolderId,phoneNumber) values (#{password},#{userName},#{rootFolderId},#{customFolderId},#{phoneNumber})")
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id") //数据插入成功后，id值被反填到user对象中，调用getId()就可以获取
     int addUser(User user);
 
@@ -35,12 +35,18 @@ public interface UserDao{
     @Update("update user set lastLoginTime=#{date} where id=#{userId}")
     void updateLastLoginTime(@Param("date")Date date,@Param("userId") Integer userId);
 
+    @Update("update user set password=#{password} where phoneNumber=#{phoneNumber}")
+    int updatePassword(User user);
+
     //查
     @Select("select count(1) from user where userName=#{userName}")
     int isExists(String userName);
 
     @Select("select * from user where userName=#{userName}")
-    User getUser(String userName);
+    User getUserByUserName(String userName);
+
+    @Select("select * from user where phoneNumber=#{phoneNumber}")
+    User getUserByPhoneNumber(String phoneNumber);
 
     @Select("select customFolderId,customFolderName from user where id=#{userId}")
     User getCustomFolder(Integer userId);

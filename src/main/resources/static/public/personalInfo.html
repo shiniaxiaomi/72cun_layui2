@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>72cun - 网址收藏</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body>
+
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>个人信息</legend>
+    </fieldset>
+
+    <form class="layui-form" action="" lay-filter="example">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+
+        <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">密码框</label>-->
+            <!--<div class="layui-input-block">-->
+                <!--<input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="layui-form-item layui-form-text">-->
+            <!--<label class="layui-form-label">文本域</label>-->
+            <!--<div class="layui-input-block">-->
+                <!--<textarea placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            </div>
+        </div>
+    </form>
+
+</body>
+
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer;
+
+
+
+        //自定义验证规则
+        form.verify({
+            title: function(value){
+                if(value.length < 5){
+                    return '标题至少得5个字符啊';
+                }
+            }
+            ,pass: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+        });
+
+
+        //监听提交
+        form.on('submit(demo1)', function(data){
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+
+        //表单初始赋值
+        form.val('example', {
+            "username": "贤心" // "name": "value"
+            ,"password": "123456"
+            ,"interest": 1
+            ,"like[write]": true //复选框选中状态
+            ,"close": true //开关状态
+            ,"sex": "女"
+            ,"desc": "我爱 layui"
+        })
+
+
+    });
+</script>
+
+</html>

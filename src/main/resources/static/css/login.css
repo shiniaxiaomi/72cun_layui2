@@ -22,12 +22,15 @@ input:-webkit-autofill {
   height: 100%;
 }
 .m-login {
-  width: 400px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -195px;
-  margin-top: -205px;
+  width: 450px;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 25%;
+  /*margin-left: 0px;*/
+  /*margin-right: 0px;*/
+  /*margin-top: -205px;*/
+  margin:0 auto;
 }
 .m-login h3 {
   color: #fff;
@@ -98,4 +101,5 @@ input:-webkit-autofill {
 
 .layui-form-label{
   text-align: center;
+  width: 95px;
 }

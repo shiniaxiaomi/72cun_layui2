@@ -19,7 +19,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">账号</label>
                 <div class="layui-input-block">
-                    <input type="text" id="userName" lay-verify="myUserName" name="userName" placeholder="" autocomplete="off" class="layui-input">
+                    <input type="text" id="userName" lay-verify="myUserName" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -28,20 +28,19 @@
                     <input type="password" id="password"  lay-verify="myPassword" name="password"  placeholder="" autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <!--<div class="layui-form-item">-->
-                <!--<label class="layui-form-label">验证码</label>-->
-                <!--<div class="layui-input-inline">-->
-                    <!--<input type="text" id="yzm" name="yzm" placeholder="" autocomplete="off" class="layui-input" style="width: 90px">-->
-                <!--</div>-->
-                <!--<div class="layui-form-mid layui-word-aux" style="margin-left: -80px" id="num"></div>-->
-            <!--</div>-->
             <div class="layui-form-item" style="margin-top: 60px;text-align: center">
                     <button class="layui-btn" lay-submit lay-filter="loginSubmit" id="login">登入</button>
-                    <button class="layui-btn" id="register">注册</button>
                     <a href="/public/quickStart.html" class="layui-btn" target="_blank">预览</a>
             </div>
 
         </div>
+
+        <div style="text-align: center;margin-top: 10px">
+            <a href="/public/forgetPassword.html" style="font-size: 10px">忘记密码</a>
+            <span>|</span>
+            <a href="/public/register.html" style="font-size: 10px">注册账号</a>
+        </div>
+
     </div>
 </div>
 <script src="/js/jquery.min.js"></script>
@@ -83,24 +82,12 @@
             return false;
         });
 
-        $("#register").on('click',function () {
-            window.location.href='/public/register.html';
+        //回车执行登入操作
+        $(document).bind('keyup',function (event) {
+            if (event.keyCode == "13") {
+                $('#login').click();
+            }
         })
-
-        //回车执行登入操作
-        $('#password').bind('keyup', function(event) {
-            if (event.keyCode == "13") {
-                $('#login').click();
-            }
-        });
-
-        //回车执行登入操作
-        $('#userName').bind('keyup', function(event) {
-            if (event.keyCode == "13") {
-                $('#login').click();
-            }
-        });
-
 
 
     });

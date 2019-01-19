@@ -35,17 +35,7 @@ public class PageController {
         return mv;
     }
 
-    @RequestMapping("/searchUrl")
-    public ModelAndView searchUrl(ModelAndView mv){
-        mv.setViewName("searchUrl");
-        return mv;
-    }
 
-    @RequestMapping("/folderManager")
-    public ModelAndView urlManager(ModelAndView mv){
-        mv.setViewName("folderManager");
-        return mv;
-    }
 
 
 

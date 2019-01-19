@@ -62,19 +62,24 @@ public class UserService {
     }
 
 
+    /**
+     * 支持用户名登入和手机号登入
+     */
     public boolean login(User user){
         if(user.getUserName()!=null && user.getPassword()!=null){
-            User one = userDao.getUser(user.getUserName());
-            if(one!=null && one.getPassword().equals(user.getPassword())){
-                user.setId(one.getId());
+            User one = userDao.getUserByUserName(user.getUserName());//先使用用户名查询
+            if(one==null){
+                one = userDao.getUserByPhoneNumber(user.getUserName());//如果查不到用户,则是使用手机号登入
+            }
 
+            if(one.getPassword().equals(user.getPassword())){
+                user.setId(one.getId());
+                user.setUserName(one.getUserName());//重新更新用户名
                 //记录用户的登入时间
                 userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
-
                 return true;
             }
         }
-
         return false;
     }
 
@@ -105,5 +110,15 @@ public class UserService {
         }else{
             return ResultUtil.error("删除失败!");
         }
+    }
+
+    public boolean updatePassword(User user) {
+        int i = userDao.updatePassword(user);
+        if(i==1){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 }

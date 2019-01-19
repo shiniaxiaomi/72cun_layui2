@@ -34,5 +34,10 @@ public class User implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date lastLoginTime;//最后一次的登入时间
 
+    private String phoneNumber;
+
+    //验证码(不存在数据库中)
+    private String code;
+
 
 }

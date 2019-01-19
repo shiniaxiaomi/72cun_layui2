@@ -17,7 +17,7 @@ import java.util.List;
  * 要压缩的时候,吧static文件夹复制出来,在进行压缩,然后压缩完之后的文件直接就可以丢到nginx上即可
  *
  */
-public class Compressor {
+public class CompressorUtil {
 
     private static final String encoding = "utf-8";
     private static final String[] suffixArray = { ".js", ".css" };
@@ -37,7 +37,7 @@ public class Compressor {
     public static int count=0;
 
     public static void main(String[] args) {
-        new Compressor().compress();
+        new CompressorUtil().compress();
     }
 
     /**

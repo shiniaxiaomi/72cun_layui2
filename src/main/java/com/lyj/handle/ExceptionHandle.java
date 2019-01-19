@@ -1,7 +1,8 @@
-package com.lyj.util;
+package com.lyj.handle;
 
 import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
+import com.lyj.util.ResultUtil;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

@@ -41,7 +41,11 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/add")
-    public Result add(User user){
+    public Result add(HttpSession session,User user){
+        if(!session.getAttribute("code").equals(user.getCode())){
+            return ResultUtil.error("验证码输入错误!");
+        }
+
         if(!StringUtil.isEmpty(user.getUserName()) && !StringUtil.isEmpty(user.getPassword())){
             if(!userService.isExists(user)){//判断是否已经存在该用户名
                 if(userService.addUser(user)) {//保存成功
@@ -89,6 +93,21 @@ public class UserController {
             return ResultUtil.success(user1);
         }else{
             return ResultUtil.error("你还没有自定文件夹",user1);
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/updatePassword")
+    public Result updatePassword(HttpSession session,User user){
+        //检验验证码
+        if(!session.getAttribute("code").equals(user.getCode())){
+            return ResultUtil.error("验证码输入错误!");
+        }
+
+        if(userService.updatePassword(user)){
+            return ResultUtil.success("密码重置成功!");
+        }else{
+            return ResultUtil.error("密码重置失败!");
         }
     }
 
