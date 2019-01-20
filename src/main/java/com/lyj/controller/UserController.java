@@ -44,6 +44,8 @@ public class UserController {
     public Result add(HttpSession session,User user){
         if(!session.getAttribute("code").equals(user.getCode())){
             return ResultUtil.error("验证码输入错误!");
+        }else if(!session.getAttribute("phoneNumber").equals(user.getPhoneNumber())){
+            return ResultUtil.error("如更换手机号,请重新获取验证码!");
         }
 
         if(!StringUtil.isEmpty(user.getUserName()) && !StringUtil.isEmpty(user.getPassword())){
@@ -70,11 +72,9 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/updateCustomFolder")
-    public Result updateCustomFolder(int customFolderId,String customFolderName,HttpSession session){
+    public Result updateCustomFolder(int customFolderId,String customFolderName,User sessionUser){
 
-        User user = (User) session.getAttribute("user");
-
-        if(userService.updateCustomFolder(customFolderId,customFolderName,user.getId())){
+        if(userService.updateCustomFolder(customFolderId,customFolderName,sessionUser.getId())){
             return ResultUtil.success("自定义文件夹成功");
         }else{
             return ResultUtil.error("自定义文件夹失败");
@@ -83,11 +83,9 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/getCustomFolder")
-    public Result getCustomFolder(HttpSession session){
+    public Result getCustomFolder(User sessionUser){
 
-        User user = (User) session.getAttribute("user");
-
-        User user1=userService.getCustomFolder(user.getId());
+        User user1=userService.getCustomFolder(sessionUser.getId());
 
         if(user1.getCustomFolderName()!=null){
             return ResultUtil.success(user1);
@@ -102,16 +100,85 @@ public class UserController {
         //检验验证码
         if(!session.getAttribute("code").equals(user.getCode())){
             return ResultUtil.error("验证码输入错误!");
+        }else if(!session.getAttribute("phoneNumber").equals(user.getPhoneNumber())){
+            return ResultUtil.error("如更换手机号,请重新获取验证码!");
         }
 
         if(userService.updatePassword(user)){
+            session.removeAttribute("user");//清除用户缓存
             return ResultUtil.success("密码重置成功!");
         }else{
             return ResultUtil.error("密码重置失败!");
         }
     }
 
+    @ResponseBody
+    @RequestMapping("/isUserNameExist")
+    public Result isUserNameExist(String userName){
+        if(userService.isUserNameExist(userName)){
+            return ResultUtil.error("用户名已存在!");
+        }else{
+            return ResultUtil.success("用户名可用");
+        }
+    }
 
+    @ResponseBody
+    @RequestMapping("/isPhoneNumberExist")
+    public Result isPhoneNumberExist(User sessionUser){
+        if(sessionUser.getPhoneNumber()!=null && !sessionUser.getPhoneNumber().equals("")){
+            return ResultUtil.error("该用户已绑定手机,请进行更换手机号操作");
+        }else{
+            return ResultUtil.success("该用户未绑定手机,可以进行绑定");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/getUserInfo")
+    public Result getUserInfo(User sessionUser){
+        User user1 = userService.getUserByUserId(sessionUser);
+        return ResultUtil.success(user1);
+    }
+
+    @ResponseBody
+    @RequestMapping("/updateUserName")
+    public Result updateUserName(User user,User sessionUser){
+        user.setId(sessionUser.getId());
+        if(userService.updateUserName(user)){
+            return ResultUtil.success("用户名更改成功!");
+        }else{
+            return ResultUtil.error("用户名更改失败!");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/updatePhoneNumber")
+    public Result updatePhoneNumber(User user,User sessionUser,HttpSession session){
+        //检验验证码
+        if(!session.getAttribute("code").equals(user.getCode())){
+            return ResultUtil.error("验证码输入错误!");
+        }else if(!session.getAttribute("phoneNumber").equals(user.getPhoneNumber())){
+            return ResultUtil.error("如更换手机号,请重新获取验证码!");
+        }
+
+        user.setId(sessionUser.getId());
+        if(userService.updatePhoneNumber(user)){
+            return ResultUtil.success(null);
+        }else{
+            return ResultUtil.error(null);
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/checkPassword")
+    public Result checkPassword(User user,User sessionUser){
+        user.setId(sessionUser.getId());
+        if(userService.checkPassword(user)){
+            return ResultUtil.success("密码正确!");
+        }else{
+            return ResultUtil.error("密码错误!");
+        }
+    }
 
 
 

@@ -38,9 +38,21 @@ public interface UserDao{
     @Update("update user set password=#{password} where phoneNumber=#{phoneNumber}")
     int updatePassword(User user);
 
+    @Update("update user set userName=#{userName} where id=#{id}")
+    int updateUserName(User user);
+
+    @Update("update user set phoneNumber=#{phoneNumber} where id=#{id}")
+    int updatePhoneNumber(User user);
+
+//    @Update("update user set userName=#{userName} where id=#{userId}")
+//    int updateUserName(User user);
+//
+//    @Update("update user set phoneNumber=#{phoneNumber} where id=#{userId}")
+//    int updatePhoneNumber(User user);
+
     //查
     @Select("select count(1) from user where userName=#{userName}")
-    int isExists(String userName);
+    int isUserNameExist(String userName);
 
     @Select("select * from user where userName=#{userName}")
     User getUserByUserName(String userName);
@@ -51,5 +63,9 @@ public interface UserDao{
     @Select("select customFolderId,customFolderName from user where id=#{userId}")
     User getCustomFolder(Integer userId);
 
+    @Select("select * from user where id=#{id}")
+    User getUserByUserId(User user);
 
+    @Select("select count(0) from user where id=#{id} and password=#{password}")
+    int checkPassword(User user);
 }

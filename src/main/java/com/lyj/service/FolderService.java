@@ -3,7 +3,7 @@ package com.lyj.service;
 import com.lyj.dao.FolderDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
-import com.lyj.redisKey.FolderKey;
+import com.lyj.redisKey.key.FolderKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,19 +20,10 @@ public class FolderService {
 
     @Autowired
     FolderDao folderDao;
-
-
     @Autowired
     URLService urlService;
-
-
     @Autowired
     RedisService redisService;
-
-
-
-
-
 
     public Folder addRootFolder(int userId){
         Folder folder = new Folder("默认文件夹", 0, userId);
@@ -58,15 +49,9 @@ public class FolderService {
 
 
     public boolean addFolder(Folder folder) {
-        int flag=folderDao.addFolder(folder);//新增folder,并获取到了自增id
-
+        int i=folderDao.addFolder(folder);//新增folder,并获取到了自增id
         redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
-
-        if(flag==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
     @Transactional
@@ -83,27 +68,14 @@ public class FolderService {
         }
 
         redisService.deleteKey(FolderKey.getByUserId,userId);//删除key
-
-        if(num1==1){
-            return true;
-        }else{
-            return false;
-        }
-
-
+        return num1==1 ? true : false;
     }
 
     @Transactional
     public boolean updateFolder(Folder folder) {
         int i = folderDao.updateFolder(folder);
-
         redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
-
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
 
     }
 

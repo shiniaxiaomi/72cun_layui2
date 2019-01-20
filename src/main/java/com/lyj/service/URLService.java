@@ -26,14 +26,6 @@ public class URLService {
     @Autowired
     URLDao urlDao;
 
-
-    //1、设置分页信息，包括当前页数和每页显示的总计数
-//        PageHelper.startPage(0, 2);
-    //2、执行查询
-//    List<Folder> folders = folderDao.getFoldersByUserId(userId);
-    //3、获取分页查询后的数据
-//        PageInfo<Folder> pageInfo = new PageInfo<>(folders);
-
     public PageInfo<URL> getUrlsByPid(Integer userId, int pid, Integer page, Integer limit) {
         PageHelper.startPage(page, limit);
         List<URL> urls = urlDao.getUrlsByPid(userId, pid);
@@ -63,38 +55,22 @@ public class URLService {
 
     public boolean updateUrl(URL url) {
         int i = urlDao.updateUrl(url);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
     public boolean deleteUrl(Integer id) {
         int i = urlDao.deleteUrlByUrlId(id);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
     public boolean deleteUrlByPid(Integer id) {
         int i = urlDao.deleteUrlByPid(id);
-        if(i>=1){
-            return true;
-        }else{
-            return false;
-        }
+        return i>=1 ? true : false;
     }
 
     public boolean addUrl(URL url) {
         int i = urlDao.addUrl(url);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
     public boolean deleteUrlsInBatchesByIds(String id) {
@@ -104,30 +80,9 @@ public class URLService {
             ids.add(Integer.valueOf(split[i]));
         }
         int i = urlDao.deleteUrlsByIds_Batch(ids);
-        if(i>=1){
-            return true;
-        }else{
-            return false;
-        }
+        return i>=1 ? true : false;
     }
 
-//    public boolean updateUrlsInBatchesByIds(String id, int pid) {
-//        String[] split = id.split(",");
-//        List<Integer> ids=new ArrayList();
-//        for(int i=0;i<split.length;i++){
-//            ids.add(Integer.valueOf(split[i]));
-//        }
-//        Map map=new HashMap();
-//        map.put("ids",ids);
-//        map.put("pid",pid);
-//        int i = urlDao.updateUrlsByIds_Batch(map);
-//        if(i>=1){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//
-//    }
     public boolean updateUrlsInBatchesByIds(String id, int pid,String pidName) {
         String[] split = id.split(",");
         List<Integer> ids=new ArrayList();
@@ -135,11 +90,7 @@ public class URLService {
             ids.add(Integer.valueOf(split[i]));
         }
         int i = urlDao.updateUrlsByIds_Batch(ids,pid,pidName);
-        if(i>=1){
-            return true;
-        }else{
-            return false;
-        }
+        return i>=1 ? true : false;
 
     }
 

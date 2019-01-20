@@ -1,12 +1,14 @@
 package com.lyj.config.interceptor;
 
 import com.lyj.model.User;
+import com.lyj.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * Created by 陆英杰
@@ -16,7 +18,12 @@ import javax.servlet.http.HttpSession;
 /**
  * 登入拦截器
  */
+
+@Component
 public class LoginCheckInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    UserService userService;
 
     /**
      * 在请求前处理,如果返回true,则继续进行拦截器调用,否则,直接退出拦截器,返回对应的结果
@@ -24,11 +31,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        //如果用户没有登入,返回登入页面
-        if(user==null){
 
+        //根据session中获取user
+        User user = (User) request.getSession().getAttribute("user");
+
+        //如果还是没有user,则返回登入页面
+        if(user==null){
             String requestWith = request.getHeader("X-Requested-With");//获取头信息,用来判断是ajax请求还是页面请求
             if("XMLHttpRequest".equals(requestWith)){//如果是ajax
                 response.setStatus(309);//设置错误码,然后在客户端进行重定向
@@ -39,6 +47,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             System.out.println("intercept: "+request.getRequestURL().toString()+" request");
             return false;
         }
+
         System.out.println("pass: "+request.getRequestURL().toString()+" request");
         return true;
     }

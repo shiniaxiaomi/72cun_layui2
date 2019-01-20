@@ -35,6 +35,15 @@ public class PageController {
         return mv;
     }
 
+    @RequestMapping("/main")
+    public ModelAndView userMain(ModelAndView mv, HttpSession session){
+
+        mv.setViewName("main");
+        mv.addObject("user",session.getAttribute("user"));
+        return mv;
+    }
+
+
 
 
 

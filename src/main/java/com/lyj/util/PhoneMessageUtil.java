@@ -68,6 +68,7 @@ public class PhoneMessageUtil {
         code = vcode();
         if(session!=null){
             session.setAttribute("code",code);//保存验证码,在之后提交时进行验证
+            session.setAttribute("phoneNumber",phoneNumber);//保存手机号,保证不会在输入验证码的时候更换手机号,导致有漏洞
         }
 
         IAcsClient acsClient = new DefaultAcsClient(profile);

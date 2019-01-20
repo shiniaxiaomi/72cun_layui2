@@ -17,74 +17,329 @@
     <form class="layui-form" action="" lay-filter="example">
         <div class="layui-form-item">
             <label class="layui-form-label">用户名</label>
-            <div class="layui-input-block">
-                <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+            <div class="layui-input-inline">
+                <input type="text" name="userName" lay-verify="userName" autocomplete="off" placeholder="" class="layui-input" disabled>
             </div>
+            <a id="openReplaceUserNameDiv" href="javascript:;" class="layui-btn layui-btn-primary">更改用户名</a>
         </div>
-
-        <!--<div class="layui-form-item">-->
-            <!--<label class="layui-form-label">密码框</label>-->
-            <!--<div class="layui-input-block">-->
-                <!--<input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="layui-form-item layui-form-text">-->
-            <!--<label class="layui-form-label">文本域</label>-->
-            <!--<div class="layui-input-block">-->
-                <!--<textarea placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>-->
-            <!--</div>-->
-        <!--</div>-->
-
         <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="phoneNumber" lay-verify="phoneNumber" autocomplete="off" placeholder="" class="layui-input" disabled>
+            </div>
+            <a id="openBindPhoneNumberDiv" href="javascript:;" class="layui-btn layui-btn-primary">绑定手机号</a>
+            <a id="openReplacePhoneNumberDiv" href="javascript:;" class="layui-btn layui-btn-primary">更换手机号</a>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
             <div class="layui-input-block">
-                <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                <a href="/public/forgetPassword.html" class="layui-btn layui-btn-primary" target="_parent">重置密码</a>
             </div>
         </div>
+
     </form>
 
 </body>
 
+
+<!-- 更改用户名弹窗 -->
+<form class="layui-form form-dialog" style="display: none" id="updateUserNameDiv">
+    <div class="layui-row" style="margin-top: 15px">
+        <div class="layui-col-md11">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input lay-verify="userName" type="text" name="userName" placeholder="请输入要更改的用户名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin-top: 60px;text-align: center">
+            <button class="layui-btn" lay-submit lay-filter="updateUserNameSubmit">更改</button>
+        </div>
+    </div>
+</form>
+
+<!-- 绑定手机号弹窗 -->
+<form class="layui-form form-dialog" style="display: none" id="bindPhoneNumberDiv">
+    <div class="layui-row" style="margin-top: 15px">
+        <div class="layui-col-md11">
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input lay-verify="myPhoneNumber" id="phoneNumber" type="text" name="phoneNumber" placeholder="请输入要绑定的手机号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">验证码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="yzm" lay-verify="myYZM" name="code" placeholder="" autocomplete="off" class="layui-input" >
+            </div>
+            <a id="getCode" class="layui-btn layui-btn-primary" style="float: left">获取验证码</a>
+        </div>
+        <div class="layui-form-item" style="margin-top: 15px;text-align: center">
+            <button class="layui-btn" lay-submit lay-filter="bindPhoneNumberSubmit">绑定</button>
+        </div>
+    </div>
+</form>
+
+
+<!-- 更换手机号弹窗 -->
+<form class="layui-form form-dialog" style="display: none" id="replacePhoneNumberDiv">
+    <div class="layui-row" style="margin-top: 15px">
+        <div class="layui-col-md11">
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input lay-verify="myReplacePhoneNumber" id="replacePhoneNumber" type="text" name="phoneNumber" placeholder="请输入要更换的手机号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">验证码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="replaceyzm" lay-verify="myYZM" name="code" placeholder="" autocomplete="off" class="layui-input" >
+            </div>
+            <a id="getReplaceCode" class="layui-btn layui-btn-primary" style="float: left">获取验证码</a>
+        </div>
+        <div class="layui-form-item" style="margin-top: 15px;text-align: center">
+            <button class="layui-btn" lay-submit lay-filter="replacePhoneNumberSubmit">绑定</button>
+        </div>
+    </div>
+</form>
+
+
+
+<script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/js/util.js"></script>
 <script>
     layui.use(['form'], function(){
         var form = layui.form
             ,layer = layui.layer;
 
-
-
         //自定义验证规则
         form.verify({
-            title: function(value){
-                if(value.length < 5){
-                    return '标题至少得5个字符啊';
+            myPhoneNumber: function(value, item){ //value：表单的值、item：表单的DOM对象
+                if(!(/^1\d{10}$/.test($("#phoneNumber").val()))){
+                    return '请输入正确的手机号!';
                 }
-            }
-            ,pass: [
-                /^[\S]{6,12}$/
-                ,'密码必须6到12位，且不能出现空格'
-            ]
+            },
+            myReplacePhoneNumber: function(value, item){ //value：表单的值、item：表单的DOM对象
+                if(!(/^1\d{10}$/.test($("#replacePhoneNumber").val()))){
+                    return '请输入正确的手机号!';
+                }
+            },
+            myYZM: [/^\d{6}$/,'验证码为6为数字'],
+            userName: [/^.{1,20}$/,'长度在1~20之间'],
         });
 
+        //获取用户信息并填充
+        util.ajax("/user/getUserInfo",{},function (data) {
+            if(data.code==0){
+                //确定显示绑定按钮还是更改按钮
+                if(data.data.phoneNumber!=""){
+                    $("#openBindPhoneNumberDiv").remove();
+                }else{
+                    $("#openReplacePhoneNumberDiv").remove();
+                }
 
-        //监听提交
-        form.on('submit(demo1)', function(data){
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
+                //表单初始赋值
+                form.val('example', {
+                    "userName": data.data.userName,
+                    "phoneNumber": data.data.phoneNumber
+                })
+            }
+        })
+
+        //打开更改用户名窗口
+        var updateUserNameLayer;
+        $("#openReplaceUserNameDiv").click(function () {
+            updateUserNameLayer=layer.open({
+                type: 1,
+                shadeClose: true,
+                title:'更改用户名',
+                area: ['410px', '185px'], //宽高
+                content: $("#updateUserNameDiv")
+            });
+        })
+        //用户名修改提交
+        form.on('submit(updateUserNameSubmit)', function(formData){
+            util.ajax("/user/updateUserName",formData.field,function (data) {
+                layer.close(updateUserNameLayer);
+                if(data.code==0){
+                    layer.msg("用户名修改成功,请重新登入!", {offset: '50px', anim: 0});
+                    setTimeout(function () {
+                        window.parent.location.href="/exit";
+                    },500)
+                }else{
+                    layer.msg(data.message, {offset: '50px', anim: 0});
+                }
             })
             return false;
         });
 
-        //表单初始赋值
-        form.val('example', {
-            "username": "贤心" // "name": "value"
-            ,"password": "123456"
-            ,"interest": 1
-            ,"like[write]": true //复选框选中状态
-            ,"close": true //开关状态
-            ,"sex": "女"
-            ,"desc": "我爱 layui"
+
+        //打开绑定手机号窗口
+        var bindPhoneNumberLayer;
+        $("#openBindPhoneNumberDiv").click(function () {
+            bindPhoneNumberLayer=layer.open({
+                type: 1,
+                shadeClose: true,
+                title:'绑定手机号',
+                area: ['455px', '240px'], //宽高
+                content: $("#bindPhoneNumberDiv")
+            });
+        })
+        //绑定手机号提交
+        form.on('submit(bindPhoneNumberSubmit)', function(formData){
+            util.ajax("/user/updatePhoneNumber",formData.field,function (data) {
+
+                if(data.code==0){
+                    layer.msg("手机号绑定成功!", {offset: '50px', anim: 0});
+                    form.val('example', {
+                        "phoneNumber": formData.field.phoneNumber
+                    })
+                    layer.close(bindPhoneNumberLayer);
+                }else{
+                    layer.msg(data.message, {offset: '50px', anim: 0});
+                }
+            })
+            return false;
+        });
+
+
+        //打开更换手机号窗口
+        var replacePhoneNumberLayer;
+        $("#openReplacePhoneNumberDiv").click(function () {
+            layer.prompt({title: '请输入登入密码', formType: 1}, function(pass, index){
+                util.ajax("/user/checkPassword",{"password":pass},function (data) {
+                    if(data.code==0){
+                        layer.close(index);
+                        replacePhoneNumberLayer=layer.open({
+                            type: 1,
+                            shadeClose: true,
+                            title:'更换手机号',
+                            area: ['455px', '240px'], //宽高
+                            content: $("#replacePhoneNumberDiv")
+                        });
+                    }else{
+                        layer.msg("密码错误!", {offset: '50px', anim: 0});
+                    }
+                })
+            });
+        })
+        //更改手机号提交
+        form.on('submit(replacePhoneNumberSubmit)', function(formData){
+            util.ajax("/user/updatePhoneNumber",formData.field,function (data) {
+
+                if(data.code==0){
+                    layer.msg("手机号绑定成功!", {offset: '50px', anim: 0});
+                    form.val('example', {
+                        "phoneNumber": formData.field.phoneNumber
+                    })
+                    layer.close(replacePhoneNumberLayer);
+                }else{
+                    layer.msg(data.message, {offset: '50px', anim: 0});
+                }
+            })
+            return false;
+        });
+
+
+        //发送验证码后1分钟定时
+        var wait=60;
+        function time(id) {
+            if (wait == 0) {
+                $(id).attr("class","layui-btn layui-btn-primary");//按钮生效
+                $(id).text("获取验证码");
+                wait = 60;
+            } else {
+                $(id).attr("class","layui-btn layui-btn-disabled");//按钮失效
+                $(id).text("重新发送(" + wait + ")");
+                wait--;
+                setTimeout(function() {
+                    time(id)
+                },1000)
+            }
+        }
+        //获取手机验证码
+        $("#getCode").click(function () {
+            if($("#getCode").attr("class")=="layui-btn layui-btn-primary"){
+
+                //校验手机号
+                var phoneNumber=$("#phoneNumber").val();
+                if(phoneNumber==""){
+                    layer.msg("手机号不能为空!", {offset: '50px', anim: 0});
+                    return;
+                }
+                if(!(/^1\d{10}$/.test(phoneNumber))){
+                    layer.msg("请输入正确的手机号!", {offset: '50px', anim: 0});
+                    return false;
+                }
+
+                //判断手机号是否已经存在(注册)
+                util.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
+                    if(data=="0"){
+                        //发送获取验证码的请求
+                        util.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
+                            if(data.code==0){
+                                setTimeout(function () {
+                                    time("#getCode");//开始1分钟的定时
+                                    layer.msg("验证码已发送,请注意查收!", {offset: '50px', anim: 0});
+                                },250)
+                            }else{
+                                if(data.data=="isv.BUSINESS_LIMIT_CONTROL"){
+                                    layer.msg("验证码发送太频繁,请明天再试!", {offset: '50px', anim: 0});
+                                }else{
+                                    layer.msg("验证码发送失败,请稍后再试!", {offset: '50px', anim: 0});
+                                }
+
+                            }
+                        })
+                    }else{
+                        layer.msg("该手机已被注册", {offset: '50px', anim: 0});
+                    }
+                })
+            }
         })
 
+        //获取手机验证码
+        $("#getReplaceCode").click(function () {
+            if($("#getReplaceCode").attr("class")=="layui-btn layui-btn-primary"){
+
+                //校验手机号
+                var phoneNumber=$("#replacePhoneNumber").val();
+                if(phoneNumber==""){
+                    layer.msg("手机号不能为空!", {offset: '50px', anim: 0});
+                    return;
+                }
+                if(!(/^1\d{10}$/.test(phoneNumber))){
+                    layer.msg("请输入正确的手机号!", {offset: '50px', anim: 0});
+                    return false;
+                }
+
+                //判断手机号是否已经存在(注册)
+                util.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
+                    if(data=="0"){
+                        //发送获取验证码的请求
+                        util.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
+                            if(data.code==0){
+                                setTimeout(function () {
+                                    time("#getReplaceCode");//开始1分钟的定时
+                                    layer.msg("验证码已发送,请注意查收!", {offset: '50px', anim: 0});
+                                },250)
+                            }else{
+                                layer.msg("验证码发送失败,请稍后再试!", {offset: '50px', anim: 0});
+                            }
+                        })
+                    }else{
+                        layer.msg("该手机已被注册", {offset: '50px', anim: 0});
+                    }
+                })
+
+            }
+        })
 
     });
 </script>

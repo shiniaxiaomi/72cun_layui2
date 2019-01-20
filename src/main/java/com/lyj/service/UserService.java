@@ -35,7 +35,7 @@ public class UserService {
 
     public boolean isExists(User user){
         if(!StringUtil.isEmpty(user.getUserName())){
-            int num= userDao.isExists(user.getUserName());
+            int num= userDao.isUserNameExist(user.getUserName());
             if(num==1){
                 return true;
             }
@@ -45,20 +45,12 @@ public class UserService {
 
     public boolean addUser(User user){
         int i = userDao.addUser(user);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
     public boolean updateRootFolderIdByUserId(int rootFolderId,int userId){
         int i = userDao.updateRootFolderIdByUserId(rootFolderId, userId);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
     }
 
 
@@ -70,11 +62,19 @@ public class UserService {
             User one = userDao.getUserByUserName(user.getUserName());//先使用用户名查询
             if(one==null){
                 one = userDao.getUserByPhoneNumber(user.getUserName());//如果查不到用户,则是使用手机号登入
+                if(one==null){
+                    return false;
+                }
             }
 
             if(one.getPassword().equals(user.getPassword())){
                 user.setId(one.getId());
                 user.setUserName(one.getUserName());//重新更新用户名
+                user.setCustomFolderId(one.getCustomFolderId());
+                user.setCustomFolderName(one.getCustomFolderName());
+                user.setPhoneNumber(one.getPhoneNumber());
+                user.setRootFolderId(one.getRootFolderId());
+
                 //记录用户的登入时间
                 userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
                 return true;
@@ -86,11 +86,7 @@ public class UserService {
 
     public boolean updateCustomFolder(int customFolderId,String customFolderName, Integer userId) {
         int i = userDao.updateCustomFolder(customFolderId,customFolderName,userId);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
 
     }
 
@@ -114,11 +110,30 @@ public class UserService {
 
     public boolean updatePassword(User user) {
         int i = userDao.updatePassword(user);
-        if(i==1){
-            return true;
-        }else{
-            return false;
-        }
+        return i==1 ? true : false;
+    }
 
+    public boolean isUserNameExist(String userName) {
+        int i = userDao.isUserNameExist(userName);
+        return i==1 ? true : false;
+    }
+
+    public User getUserByUserId(User user) {
+       return userDao.getUserByUserId(user);
+    }
+
+    public boolean updateUserName(User user) {
+        int i = userDao.updateUserName(user);
+        return i==1 ? true : false;
+    }
+
+    public boolean updatePhoneNumber(User user) {
+        int i = userDao.updatePhoneNumber(user);
+        return i==1 ? true : false;
+    }
+
+    public boolean checkPassword(User user) {
+        int i = userDao.checkPassword(user);
+        return i==1 ? true : false;
     }
 }

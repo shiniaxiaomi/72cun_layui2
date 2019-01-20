@@ -2,6 +2,7 @@ package com.lyj.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +24,8 @@ public class User implements Serializable {
 
     private String userName;
 
-    private String password;
+    @JsonIgnore
+    private String password;//在返回json时不返回密码
 
     private int rootFolderId;
 

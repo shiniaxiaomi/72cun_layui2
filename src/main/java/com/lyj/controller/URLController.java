@@ -32,31 +32,28 @@ public class URLController {
 
     //需要分页
     @RequestMapping("/getUrlsByPid")
-    public PageEntity<URL> getUrlsByPid(int pid,Integer page, Integer limit, HttpSession session){
-        User user = (User) session.getAttribute("user");
-        PageInfo<URL> urls = urlService.getUrlsByPid(user.getId(), pid, page, limit);
+    public PageEntity<URL> getUrlsByPid(int pid,Integer page, Integer limit,User sessionUser){
+        PageInfo<URL> urls = urlService.getUrlsByPid(sessionUser.getId(), pid, page, limit);
         return new PageEntity<>(urls.getTotal(),urls.getList());
     }
 
     //需要分页
     @RequestMapping("/getUrlsLike")
-    public PageEntity<URL> queryAllLike(String keywords, Integer page, Integer limit, Integer searchType, HttpSession session){
-
-        User user = (User) session.getAttribute("user");
+    public PageEntity<URL> queryAllLike(String keywords, Integer page, Integer limit, Integer searchType,User sessionUser){
 
         PageInfo<URL> pageInfo=null;
         String[] split = keywords.split("=");
 
         if(searchType==0){//综合查询
             if(split.length==1){//没有等号,要查询的是 网址名称
-                pageInfo= urlService.getUrlsByLabel(user.getId(), split[0],page,limit);//直接调用 网址名称 查询
+                pageInfo= urlService.getUrlsByLabel(sessionUser.getId(), split[0],page,limit);//直接调用 网址名称 查询
             }else if(split.length==2){//有等号
-                pageInfo=urlService.getUrlsByLabelAndPidName(user.getId(),split[0],split[1],page,limit);
+                pageInfo=urlService.getUrlsByLabelAndPidName(sessionUser.getId(),split[0],split[1],page,limit);
             }
         }else if(searchType==1){//按照 网址名称 查询
-            pageInfo= urlService.getUrlsByLabel(user.getId(), keywords,page,limit);;
+            pageInfo= urlService.getUrlsByLabel(sessionUser.getId(), keywords,page,limit);;
         }else if(searchType==2){//按照 文件夹名称 查询
-            pageInfo= urlService.getUrlsByPidName(user.getId(),keywords,page,limit);
+            pageInfo= urlService.getUrlsByPidName(sessionUser.getId(),keywords,page,limit);
         }
 
         return new PageEntity<>(pageInfo.getTotal(),pageInfo.getList());
@@ -100,10 +97,8 @@ public class URLController {
     }
 
     @RequestMapping("/add")
-    public Result add(URL url, HttpSession session){
-        User user = (User) session.getAttribute("user");
-
-        url.setUserId(user.getId());
+    public Result add(URL url,User sessionUser){
+        url.setUserId(sessionUser.getId());
         url.setCreateTime(new Timestamp(new Date().getTime()));
 
         if(urlService.addUrl(url)){

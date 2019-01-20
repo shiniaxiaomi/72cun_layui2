@@ -1,6 +1,8 @@
 package com.lyj.config;
 
 import com.lyj.config.interceptor.LoginCheckInterceptor;
+import com.lyj.config.resolver.UserArgumentResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -16,7 +18,11 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    @Autowired
+    LoginCheckInterceptor loginInterceptor;//登入拦截器
 
+    @Autowired
+    UserArgumentResolver userArgumentResolver;//user参数解析器
 
     /**
      * 添加自定义的拦截器(用户登入验证)
@@ -31,10 +37,31 @@ public class WebConfig implements WebMvcConfigurer {
         //拦截的作用是判断是否已经登入(即判断session中是否已经有user对象)
 
         //这个拦截的要看的就是请求的url是否包含指定的内容
-        InterceptorRegistration loginCheckInterceptor = registry.addInterceptor(new LoginCheckInterceptor());//添加登入拦截器
-        loginCheckInterceptor.addPathPatterns("/**").excludePathPatterns( "/", "/login","/user/add","/exit", "/fast/saveAndLogi","/admin","/phone/isPhoneNumberExist","/phone/sendCode","/user/updatePassword");
+        InterceptorRegistration loginCheckInterceptor = registry.addInterceptor(loginInterceptor);//添加登入拦截器
+        loginCheckInterceptor.addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/",
+                        "/login",
+                        "/user/add",
+                        "/exit",
+                        "/fast/saveAndLogi",
+                        "/admin",
+                        "/phone/isPhoneNumberExist",
+                        "/phone/sendCode",
+                        "/user/updatePassword",
+                        "/user/isUserNameExist"
+                );
 
-        loginCheckInterceptor.excludePathPatterns("/css/**","/icon/**","/images/**","/js/**","/layui/**","/myjs/**","/public/**");//排除static下的静态文件(在本地访问的时候)
+        loginCheckInterceptor
+                .excludePathPatterns(
+                        "/css/**",
+                        "/icon/**",
+                        "/images/**",
+                        "/js/**",
+                        "/layui/**",
+                        "/myjs/**",
+                        "/public/**"
+                );//排除static下的静态文件(在本地访问的时候)
 
 
     }
@@ -67,10 +94,7 @@ public class WebConfig implements WebMvcConfigurer {
     //配置请求带过来的参数,如果在这个配置了的话,以后请求就可以在参数中直接使用
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        //添加自定义的ModelAndViewArgumentResolver,这样,之后出现在参数中的ModelAndView都会有一个变量:baseCssAndJs(用来引入css和js)
-        //如果静态资源发生改变,只需在ModelAndViewArgumentResolver类中修改静态资源的名字和静态资源本身的名字即可
-        //这样实现的效果就是静态资源可以缓存时间可以设置成无穷大
-//        resolvers.add(new ModelAndViewArgumentResolver());//添加自定义的ModelAndViewArgumentResolver
+        resolvers.add(userArgumentResolver);//添加自定义的userArgumentResolver
     }
 
 

@@ -1,4 +1,6 @@
-package com.lyj.redisKey;
+package com.lyj.redisKey.key;
+
+import com.lyj.redisKey.BasePrefix;
 
 /**
  * Created by 陆英杰
@@ -11,7 +13,7 @@ public class FolderKey extends BasePrefix {
     }
 
 
-    public static FolderKey getByUserId =new FolderKey(-1,"userId");
+    public static FolderKey getByUserId =new FolderKey(-1,"getByUserId");
 
 
 }
