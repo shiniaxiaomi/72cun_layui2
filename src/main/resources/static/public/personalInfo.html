@@ -138,10 +138,10 @@
         util.ajax("/user/getUserInfo",{},function (data) {
             if(data.code==0){
                 //确定显示绑定按钮还是更改按钮
-                if(data.data.phoneNumber!=""){
-                    $("#openBindPhoneNumberDiv").remove();
-                }else{
+                if(data.data.phoneNumber=="" || data.data.phoneNumber==null){
                     $("#openReplacePhoneNumberDiv").remove();
+                }else{
+                    $("#openBindPhoneNumberDiv").remove();
                 }
 
                 //表单初始赋值

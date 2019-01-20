@@ -20,11 +20,11 @@ import java.util.List;
 public class CompressorUtil {
 
     private static final String encoding = "utf-8";
-    private static final String[] suffixArray = { ".js", ".css" };
+    private static final String[] suffixArray = { ".js", ".css" };//只会压缩js和css文件类型
 
     //需要压缩的文件夹(会压缩此文件夹下的所有js、css文件)
 //    private String filePath="F:\\lyj_CodeArea\\72cun_buff\\static";//个人
-    private String filePath="F:\\code\\72cun_buff\\static";
+    private String filePath="D:\\code\\72cun_buff\\static";
 //    private String filePath="C:\\Users\\lyj80\\Desktop\\eleTree.js";
 //    private String filePath="C:\\Users\\Yingjie.lu\\Desktop\\eleTree.js";
 
