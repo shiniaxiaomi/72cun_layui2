@@ -165,17 +165,24 @@
         })
         //用户名修改提交
         form.on('submit(updateUserNameSubmit)', function(formData){
-            util.ajax("/user/updateUserName",formData.field,function (data) {
-                layer.close(updateUserNameLayer);
+            util.ajax("/user/isUserNameExist",{"userName":formData.field.userName},function (data) {
                 if(data.code==0){
-                    layer.msg("用户名修改成功,请重新登入!", {offset: '50px', anim: 0});
-                    setTimeout(function () {
-                        window.parent.location.href="/exit";
-                    },500)
+                    util.ajax("/user/updateUserName",formData.field,function (data) {
+                        layer.close(updateUserNameLayer);
+                        if(data.code==0){
+                            layer.msg("用户名修改成功,请重新登入!", {offset: '50px', anim: 0});
+                            setTimeout(function () {
+                                window.parent.location.href="/exit";
+                            },500)
+                        }else{
+                            layer.msg(data.message, {offset: '50px', anim: 0});
+                        }
+                    })
                 }else{
                     layer.msg(data.message, {offset: '50px', anim: 0});
                 }
             })
+
             return false;
         });
 
