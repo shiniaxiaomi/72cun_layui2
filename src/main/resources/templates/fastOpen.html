@@ -123,6 +123,9 @@
         $ = layui.jquery;
         form=layui.form;
 
+        //示范一个公告层
+        <#if showNotice?? > ${showNotice} </#if>
+
         //绑定点击搜索
         $("#searchBtn").on("click",function () {
             var buff = $.extend(true,{},tableOption) //值赋值

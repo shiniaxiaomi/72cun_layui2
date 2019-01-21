@@ -70,7 +70,6 @@
                 dataType:"json",
                 data:formData.field,
                 complete:function (data) {
-                    console.dir(data)
                     if(data.responseJSON!=undefined && data.responseJSON.code==1){
                         layer.msg(data.responseJSON.message, {offset: '50px', anim: 0});
                     }else if(data.responseText!=undefined){

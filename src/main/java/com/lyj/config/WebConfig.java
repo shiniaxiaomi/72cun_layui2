@@ -44,7 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login",
                         "/user/add",
                         "/exit",
-                        "/fast/saveAndLogi",
+                        "/fast/saveAndLogin",
                         "/admin",
                         "/phone/isPhoneNumberExist",
                         "/phone/sendCode",
