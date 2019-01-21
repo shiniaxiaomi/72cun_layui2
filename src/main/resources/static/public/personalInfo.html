@@ -155,12 +155,21 @@
         //打开更改用户名窗口
         var updateUserNameLayer;
         $("#openReplaceUserNameDiv").click(function () {
-            updateUserNameLayer=layer.open({
-                type: 1,
-                shadeClose: true,
-                title:'更改用户名',
-                area: ['410px', '185px'], //宽高
-                content: $("#updateUserNameDiv")
+            layer.prompt({title: '请输入登入密码', formType: 1}, function(pass, index){
+                util.ajax("/user/checkPassword",{"password":pass},function (data) {
+                    if(data.code==0){
+                        layer.close(index);
+                        updateUserNameLayer=layer.open({
+                            type: 1,
+                            shadeClose: true,
+                            title:'更改用户名',
+                            area: ['410px', '185px'], //宽高
+                            content: $("#updateUserNameDiv")
+                        });
+                    }else{
+                        layer.msg("密码错误!", {offset: '50px', anim: 0});
+                    }
+                })
             });
         })
         //用户名修改提交
