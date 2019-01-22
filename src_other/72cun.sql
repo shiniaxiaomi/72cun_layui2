@@ -28,6 +28,21 @@ CREATE TABLE `folder` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `message` */
+
+DROP TABLE IF EXISTS `message`;
+
+CREATE TABLE `message` (
+  `id` int(11) NOT NULL auto_increment,
+  `detail` varchar(200) default NULL,
+  `userId` int(11) default NULL COMMENT '发布消息的用户id',
+  `sendTime` timestamp NULL default NULL COMMENT '发送时间',
+  `rootId` int(11) default '0' COMMENT '根节点id',
+  `parentId` int(11) default '0' COMMENT '父节点id',
+  `userName` varchar(20) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `url` */
 
 DROP TABLE IF EXISTS `url`;
@@ -55,6 +70,7 @@ CREATE TABLE `user` (
   `customFolderId` int(11) default NULL,
   `customFolderName` varchar(20) default NULL,
   `lastLoginTime` timestamp NULL default NULL,
+  `phoneNumber` char(11) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
