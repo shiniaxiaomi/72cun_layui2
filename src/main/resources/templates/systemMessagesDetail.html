@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系统消息</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+
+    <style type="text/css">
+        .talk_show{
+            width:580px;
+            height:420px;
+            border:1px solid #666;
+            background:#fff;
+            margin:10px auto 0;
+            overflow:auto;
+        }
+        .talk_input{
+            width:580px;
+            margin:10px auto 0;
+        }
+        .talk_word{
+            width:420px;
+            height:26px;
+            padding:0px;
+            float:left;
+            margin-left:10px;
+            outline:none;
+            text-indent:10px;
+        }
+        .talk_sub{
+            width:56px;
+            height:30px;
+            float:left;
+            margin-left:10px;
+        }
+        .atalk{
+            margin:10px;
+        }
+        .atalk span{
+            display:inline-block;
+            background:#0181cc;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+        .btalk{
+            margin:10px;
+            text-align:right;
+        }
+        .btalk span{
+            display:inline-block;
+            background:#ef8201;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+        /* 时间 */
+        dt {
+            padding-top: .3rem;
+            padding-bottom: .3rem;
+            padding-left: .6rem;
+            padding-right: .6rem;
+            border-radius: .2rem;
+            color: white;
+            background-color: #D4D4D4;
+            display: inline-block;
+            margin-left: 50%;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            transform: translateX(-50%);
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="layui-container">
+        <div class="layui-row" class="talk_show" id="words" style="height: 600px;width:80%;overflow: auto;margin:0 auto;">
+            <#list messages as message>
+                <dt>${message.sendTime?string('yyyy-MM-dd hh:mm:ss')}</dt>
+                <#if message.userName == user.userName>
+                    <div class="btalk">${user.userName} : <span id="bsay">${message.detail}</span></div>
+                <#else>
+                    <div class="atalk">管理员 : <span id="asay">${message.detail}</span></div>
+                </#if>
+            </#list>
+        </div>
+
+        <div class="layui-row">
+            <div class="talk_input">
+                <input type="text" class="talk_word" id="talkwords">
+                <input type="button" value="发送" class="talk_sub" id="talksub">
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/util.js"></script>
+
+<script>
+
+    var Words = document.getElementById("words");
+    var TalkWords = document.getElementById("talkwords");
+
+    layui.use(['form','table'], function(){
+
+        var TalkSub = document.getElementById("talksub");
+
+        //点击发送
+        TalkSub.onclick = function(){
+            sendMessage();
+        }
+
+        //回车发送
+        $('#talkwords').on('keypress',function(event){
+            if(event.keyCode == 13){
+                sendMessage();
+            }
+        });
+
+    });
+
+    function sendMessage() {
+        //定义空字符串
+        var str = "";
+        if(TalkWords.value == ""){
+            layer.msg("消息不能为空", {offset: '50px', anim: 0});
+            return;
+        }
+
+        str = '<dt>'+getNowFormatDate()+'</dt> <div class="btalk">${user.userName} : <span>' + TalkWords.value +'</span></div>' ;
+        Words.innerHTML = Words.innerHTML + str;
+
+        TalkWords.value = "";//清空
+    }
+
+    //获取当前时间
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + date.getMinutes()
+            + seperator2 + date.getSeconds();
+        return currentdate;
+    }
+
+</script>
+
+
+
+</html>

@@ -112,6 +112,14 @@
 			<version>1.1.0</version>
 		</dependency>
 
+		<!-- jsr303校验 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+
+
 
 	</dependencies>
 

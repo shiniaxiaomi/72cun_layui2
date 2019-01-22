@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>用户反馈</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <form id="form" class="layui-form" action="" style="margin-top: 40px">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">反馈描述</label>
+                    <div class="layui-input-block">
+                        <textarea name="detail" placeholder="请输入详细描述" class="layui-textarea" rows="20"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</body>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/util.js"></script>
+<script>
+
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+
+            data.field.isRoot=1;//设置是根节点
+            //发送消息
+            util.ajax("/message/send",data.field,function (data) {
+                layer.msg(data.message, {offset: '50px', anim: 0});
+                if(data.code==0){
+                    $("#reset").click();//清空表单
+                }
+            })
+
+            return false;
+        });
+    });
+
+</script>
+
+</html>

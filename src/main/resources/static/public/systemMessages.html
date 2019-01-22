@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系统消息</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <table id="demo" lay-filter="test"></table>
+        </div>
+    </div>
+
+</body>
+
+
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="/message/getMessageDetail?id={{d.id}}" class="layui-table-link" target="_self" onclick="">{{ d.detail }}</a>
+</script>
+
+<!-- 工具栏模板： -->
+<script type="text/html" id="toolbarDemo" lay-event="tool">
+    <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/util.js"></script>
+
+<script>
+
+    layui.use(['form','table'], function(){
+        var form = layui.form;
+        var table = layui.table;
+
+        //配置table选项
+        tableOption={
+            elem: '#demo'
+            ,height: $(window).height()*0.85
+            ,page: true //开启分页
+            ,url:'/message/getRootMessage'
+            ,where:{}
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'detail', title: '消息详情',templet: '#urlTpl', align:'center',unresize:true}
+                ,{field: 'userName', title: '发送者', align:'center',unresize:true}
+                ,{field: 'sendTime', title: '发送时间' ,align:'center',unresize:true}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',unresize:true} //这里的toolbar值是模板元素的选择器
+            ]],
+        };
+
+
+        //首次渲染表格,拿到对象
+        tableIns = table.render(tableOption);//传入参数进行渲染
+
+        //table的编辑和删除事件
+        table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            if(layEvent === 'delete'){ //删除
+                //确认弹窗
+                layer.confirm('您确定要删除该消息吗', {
+                    btn: ['确定','取消'], //按钮
+                    shadeClose: true,
+                }, function(){
+                    layer.msg("删除成功");
+//                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+//                        if(data.code==0){
+//                            tableIns.reload(tableOption);//刷新表格
+//                            layer.msg("删除成功");
+//                        }
+//                    })
+                }, function(){
+                });
+
+            }
+        });
+
+    });
+
+</script>
+
+
+
+</html>
