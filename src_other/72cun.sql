@@ -38,7 +38,7 @@ CREATE TABLE `message` (
   `userId` int(11) default NULL COMMENT '发布消息的用户id',
   `sendTime` timestamp NULL default NULL COMMENT '发送时间',
   `rootId` int(11) default '0' COMMENT '根节点id',
-  `parentId` int(11) default '0' COMMENT '父节点id',
+  `isMark` int(11) default '0' COMMENT '标记在根节点上的更改该节点下的消息的用户id',
   `userName` varchar(20) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
