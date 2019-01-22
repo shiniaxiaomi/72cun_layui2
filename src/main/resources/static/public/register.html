@@ -106,14 +106,14 @@
                     //发送获取验证码的请求
                     util.ajax("/phone/sendCode",{phoneNumber:$("#phoneNumber").val()},function (data) {
                         if(data.code==0){
-                            setTimeout(function () {
-                                layer.close(checkLayer);//关闭划动验证窗口
-                                layer.msg("验证码已发送,请注意查收!", {offset: '50px', anim: 0});
-                                slideVerify2.resetVerify();//重置划动验证
-                                time();//开始1分钟的定时
-                            },500)
+                            layer.close(checkLayer);//关闭划动验证窗口
+                            layer.msg("验证码已发送,请注意查收!", {offset: '50px', anim: 0});
+                            slideVerify2.resetVerify();//重置划动验证
+                            time();//开始1分钟的定时
                         }else{
+                            layer.close(checkLayer);//关闭划动验证窗口
                             layer.msg("验证码已发送失败,请稍后再试!", {offset: '50px', anim: 0});
+                            slideVerify2.resetVerify();//重置划动验证
                         }
                     })
                 }
