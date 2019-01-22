@@ -77,7 +77,7 @@
 <body>
 
     <div class="layui-container">
-        <div class="layui-row" class="talk_show" id="words" style="height: 600px;width:80%;overflow: auto;margin:0 auto;">
+        <div class="layui-row" class="talk_show" id="words" style="width:80%;overflow: auto;margin:0 auto;">
             <#list messages as message>
                 <dt>${message.sendTime?string('yyyy-MM-dd hh:mm:ss')}</dt>
                 <#if message.userName == user.userName>
@@ -87,12 +87,18 @@
                 </#if>
             </#list>
         </div>
-
-        <div class="layui-row">
-            <div class="talk_input">
-                <input type="text" class="talk_word" id="talkwords">
-                <input type="button" value="发送" class="talk_sub" id="talksub">
-            </div>
+        <div class="layui-row" style="text-align: center">
+            <form id="form" class="layui-form" action="">
+                <div class="layui-inline layui-form-text">
+                    <label class="layui-form-label">回复消息</label>
+                    <div class="layui-input-inline" style="width: 500px">
+                        <input type="text" lay-verify="required" name="detail" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="formDemo">提交</button>
+                    <a class="layui-btn layui-btn-primary" href="javascript:history.go(-1)">返回</a>
+                    <button style="display: none" id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </form>
         </div>
 
 
@@ -107,39 +113,36 @@
 <script>
 
     var Words = document.getElementById("words");
-    var TalkWords = document.getElementById("talkwords");
 
     layui.use(['form','table'], function(){
 
-        var TalkSub = document.getElementById("talksub");
+        var form = layui.form;
 
-        //点击发送
-        TalkSub.onclick = function(){
-            sendMessage();
-        }
+        //初始化
+        $("#words").height($(window).height()*0.80);//设置div高度为窗口大小的80%
+        Words.scrollTop = Words.scrollHeight;//将滚动条滚动到最末端
 
-        //回车发送
-        $('#talkwords').on('keypress',function(event){
-            if(event.keyCode == 13){
-                sendMessage();
-            }
+        //监听反馈主题的提交
+        form.on('submit(formDemo)', function(data){
+            data.field.rootId=${rootId};//设置这条消息的根节点
+
+            //发送消息
+            util.ajax("/message/send",data.field,function (data2) {
+                if(data2.code==0){
+                    layer.msg(data2.message, {offset: '50px', anim: 0});
+                    var str = '<dt>'+getNowFormatDate()+'</dt> <div class="btalk">${user.userName} : <span>' + data.field.detail +'</span></div>';
+                    Words.innerHTML = Words.innerHTML + str;
+                    Words.scrollTop = Words.scrollHeight;//将滚动条滚动到最末端
+                    $("#reset").click();//清空表单
+                }else{
+                    layer.msg(data2.message, {offset: '50px', anim: 0});
+                }
+            })
+
+            return false;
         });
 
     });
-
-    function sendMessage() {
-        //定义空字符串
-        var str = "";
-        if(TalkWords.value == ""){
-            layer.msg("消息不能为空", {offset: '50px', anim: 0});
-            return;
-        }
-
-        str = '<dt>'+getNowFormatDate()+'</dt> <div class="btalk">${user.userName} : <span>' + TalkWords.value +'</span></div>' ;
-        Words.innerHTML = Words.innerHTML + str;
-
-        TalkWords.value = "";//清空
-    }
 
     //获取当前时间
     function getNowFormatDate() {
@@ -154,9 +157,12 @@
         if (strDate >= 0 && strDate <= 9) {
             strDate = "0" + strDate;
         }
+
+        var seconds=date.getSeconds()<=9?"0"+date.getSeconds():date.getSeconds();
+
         var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
             + " " + date.getHours() + seperator2 + date.getMinutes()
-            + seperator2 + date.getSeconds();
+            + seperator2 + seconds;
         return currentdate;
     }
 

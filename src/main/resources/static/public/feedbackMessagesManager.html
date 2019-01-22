@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>系统消息</title>
+    <title>用户反馈消息管理</title>
 
     <link rel="stylesheet" href="/layui/css/layui.css">
 
@@ -10,7 +10,19 @@
 <body>
 
     <div class="layui-container">
-        <div class="layui-row">
+        <!--<div class="layui-row">-->
+            <!--<form id="form" class="layui-form" action="">-->
+                <!--<div class="layui-inline layui-form-text">-->
+                    <!--<label class="layui-form-label">反馈主题</label>-->
+                    <!--<div class="layui-input-inline" style="width: 500px">-->
+                        <!--<input type="text" name="detail" placeholder="" autocomplete="off" class="layui-input">-->
+                    <!--</div>-->
+                    <!--<button class="layui-btn layui-btn-primary" lay-submit lay-filter="formDemo">提交</button>-->
+                    <!--<button style="display: none" id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+                <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+        <div class="layui-row" style="margin-top: 0px">
             <table id="demo" lay-filter="test"></table>
         </div>
     </div>
@@ -20,7 +32,17 @@
 
 <!-- 网址链接列的templet -->
 <script type="text/html" id="urlTpl">
-    <a href="/message/getMessageDetail?id={{d.id}}" class="layui-table-link" target="_self" onclick="">{{ d.detail }}</a>
+    <a href="/message/getMessageDetailManager?id={{d.id}}&userId={{d.userId}}&userName={{d.userName}}" class="layui-table-link" target="_self" onclick="">{{ d.detail }}</a>
+</script>
+
+<script type="text/html" id="markTpl">
+    {{#  if(d.isMark ==1){ }}
+        已发送
+    {{#  } else if(d.isMark ==0){ }}
+        新消息
+    {{#  } else { }}
+        已读
+    {{#  } }}
 </script>
 
 <!-- 工具栏模板： -->
@@ -38,17 +60,33 @@
         var form = layui.form;
         var table = layui.table;
 
+        //监听反馈主题的提交
+//        form.on('submit(formDemo)', function(data){
+//            data.field.isRoot=1;//设置是根节点
+//            //发送消息
+//            util.ajax("/message/send",data.field,function (data) {
+//                layer.msg(data.message, {offset: '50px', anim: 0});
+//                if(data.code==0){
+//                    tableIns.reload();
+//                    $("#reset").click();//清空表单
+//                }
+//            })
+//            return false;
+//        });
+
+
         //配置table选项
         tableOption={
             elem: '#demo'
             ,height: $(window).height()*0.85
             ,page: true //开启分页
-            ,url:'/message/getRootMessage'
+            ,url:'/message/getSendedMessages'
             ,where:{}
             ,skin: 'line' //行边框风格
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'isMark', title: '是否已读',templet:"#markTpl", align:'center'}//隐藏id
                 ,{field: 'detail', title: '消息详情',templet: '#urlTpl', align:'center',unresize:true}
                 ,{field: 'userName', title: '发送者', align:'center',unresize:true}
                 ,{field: 'sendTime', title: '发送时间' ,align:'center',unresize:true}
@@ -71,13 +109,12 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    layer.msg("删除成功");
-//                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
-//                        if(data.code==0){
-//                            tableIns.reload(tableOption);//刷新表格
-//                            layer.msg("删除成功");
-//                        }
-//                    })
+                    util.ajax("/message/delete",{id:obj.data.id},function (data) {
+                        if(data.code==0){
+                            tableIns.reload(tableOption);//刷新表格
+                        }
+                        layer.msg(data.message);
+                    })
                 }, function(){
                 });
 

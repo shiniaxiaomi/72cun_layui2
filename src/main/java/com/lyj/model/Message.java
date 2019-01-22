@@ -37,6 +37,6 @@ public class Message implements Serializable {
 
     int rootId;//根节点id
 
-    int parentId;//父节点id
+    int isMark;//标记在根节点上的更改该节点下的消息的用户id
 
 }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户反馈消息</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <form id="form" class="layui-form" action="">
+                <div class="layui-inline layui-form-text">
+                    <label class="layui-form-label">反馈主题</label>
+                    <div class="layui-input-inline" style="width: 500px">
+                        <input type="text" name="detail" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="formDemo">提交</button>
+                    <button style="display: none" id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </form>
+        </div>
+        <div class="layui-row" style="margin-top: 0px">
+            <table id="demo" lay-filter="test"></table>
+        </div>
+    </div>
+
+</body>
+
+
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="/message/getMessageDetail?id={{d.id}}&isMark={{d.isMark}}" class="layui-table-link" target="_self" onclick="">{{ d.detail }}</a>
+</script>
+
+<script type="text/html" id="markTpl">
+    {{#  if(d.isMark ==1){ }}
+        新消息
+    {{#  } else if(d.isMark ==0){ }}
+        已发送
+    {{#  } else { }}
+        已读
+    {{#  } }}
+</script>
+
+<!-- 工具栏模板： -->
+<script type="text/html" id="toolbarDemo" lay-event="tool">
+    <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">标记已读</button>
+</script>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/util.js"></script>
+
+<script>
+
+    layui.use(['form','table'], function(){
+        var form = layui.form;
+        var table = layui.table;
+
+        //监听反馈主题的提交
+        form.on('submit(formDemo)', function(data){
+            data.field.isRoot=1;//设置是根节点
+            data.field.isMark=0;//标记未读
+            //发送消息
+            util.ajax("/message/send",data.field,function (data) {
+                layer.msg(data.message, {offset: '50px', anim: 0});
+                if(data.code==0){
+                    tableIns.reload();
+                    $("#reset").click();//清空表单
+                }
+            })
+            return false;
+        });
+
+
+        //配置table选项
+        tableOption={
+            elem: '#demo'
+            ,height: $(window).height()*0.85
+            ,page: true //开启分页
+            ,url:'/message/getRootMessage'
+            ,where:{}
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'isMark', title: '是否已读',templet:'#markTpl', align:'center'}//隐藏字段
+                ,{field: 'detail', title: '消息详情',templet: '#urlTpl', align:'center',unresize:true}
+                ,{field: 'userName', title: '发送者', align:'center',unresize:true}
+                ,{field: 'sendTime', title: '发送时间' ,align:'center',unresize:true}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',unresize:true} //这里的toolbar值是模板元素的选择器
+            ]],
+        };
+
+
+        //首次渲染表格,拿到对象
+        tableIns = table.render(tableOption);//传入参数进行渲染
+
+        //table的编辑和删除事件
+        table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            if(layEvent === 'delete'){ //删除
+                //确认弹窗
+                layer.confirm('您确定要将该消息标记为已读吗', {
+                    btn: ['确定','取消'], //按钮
+                    shadeClose: true,
+                }, function(){
+                    util.ajax("/message/markRead",{id:obj.data.id},function (data) {
+                        if(data.code==0){
+                            tableIns.reload(tableOption);//刷新表格
+                        }
+                        layer.msg(data.message);
+                    })
+                }, function(){
+                });
+
+            }
+        });
+
+    });
+
+</script>
+
+
+
+</html>
