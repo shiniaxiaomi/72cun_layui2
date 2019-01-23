@@ -167,4 +167,18 @@ public class MessageController {
         }
     }
 
+    //获取管理者的未读消息条数
+    @RequestMapping("/getSendedMessagesCount")
+    @ResponseBody
+    public int getSendedMessagesCount(){
+        return messageService.getSendedMessagesCount();
+    }
+
+    //获取用户的未读消息条数
+    @RequestMapping("/getMessagesCount")
+    @ResponseBody
+    public int getMessagesCount(User sessionUser){
+        return messageService.getMessagesCount(sessionUser);
+    }
+
 }

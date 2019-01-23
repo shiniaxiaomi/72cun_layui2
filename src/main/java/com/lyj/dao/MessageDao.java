@@ -41,14 +41,23 @@ public interface MessageDao {
     @Select("select * from message where userId=#{userId} and rootId=#{rootId} order by isMark desc,sendTime desc")
     List<Message> getMessages(Message message);
 
+    //获取用户未处理的消息总数
+    @Select("select count(0) from message where userId=#{userId} and rootId=#{rootId} and isMark=1")
+    int getMessagesCount(Message message);
+
     @Select("select * from message where rootId=#{rootId} order by sendTime")
     List<Message> getMessagesByRootId(Message message);
 
     @Select("select * from message where rootId=0 and (isMark=0 or isMark=1) order by isMark asc,sendTime desc")
     List<Message> getSendedMessages();
 
+    //获取管理者未处理的消息总数
+    @Select("select count(0) from message where rootId=0 and isMark=0")
+    int getSendedMessagesCount();
+
     @Select("select * from message where id=#{id}")
     Message getMessageById(int id);
+
 
 
 }

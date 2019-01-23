@@ -92,6 +92,17 @@
                 ,{field: 'sendTime', title: '发送时间' ,align:'center',unresize:true}
                 ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',unresize:true} //这里的toolbar值是模板元素的选择器
             ]],
+            done: function(res, curr, count){
+                //如果是异步请求数据成功之后
+                var buff=top.window.document.getElementById("feedback");
+                util.ajax("/message/getSendedMessagesCount",{},function (data) {
+                    if(data==0){
+                        $(buff).remove();
+                    }else{
+                        $(buff).text(data);
+                    }
+                })
+            }
         };
 
 

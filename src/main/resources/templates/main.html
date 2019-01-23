@@ -61,7 +61,19 @@
                         <dd><a href="javascript:;" url="/public/fastCollectionPage.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>快速工具</cite></a></dd>
                         <dd><a href="javascript:;" url="/public/quickStart.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>快速入门</cite></a></dd>
                         <dd><a href="javascript:;" url="/public/aboutMe.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>关于本站</cite></a></dd>
-                        <dd><a href="javascript:;" url="/public/feedbackMessages.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite></a></dd>
+                        <#if user.userName=='陆英杰'>
+                            <dd><a href="javascript:;" url="/public/feedbackMessagesManager.html">
+                                    <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
+                                    <#if count!=0><span id="feedback" class="layui-badge">${count}</span></#if>
+                                </a>
+                            </dd>
+                        <#else>
+                            <dd><a href="javascript:;" url="/public/feedbackMessages.html">
+                                    <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
+                                    <#if count!=0><span id="feedback" class="layui-badge">${count}</span></#if>
+                                </a>
+                            </dd>
+                        </#if>
                     </dl>
                 </li>
 

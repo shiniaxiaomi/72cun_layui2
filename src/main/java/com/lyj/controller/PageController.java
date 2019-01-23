@@ -1,6 +1,9 @@
 package com.lyj.controller;
 
+import com.lyj.model.Message;
 import com.lyj.model.User;
+import com.lyj.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +17,9 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class PageController {
+
+    @Autowired
+    MessageService messageService;
 
     //后台管理系统的路由
     @RequestMapping("/admin")
@@ -36,12 +42,25 @@ public class PageController {
     }
 
     @RequestMapping("/main")
-    public ModelAndView userMain(ModelAndView mv, HttpSession session){
+    public ModelAndView userMain(ModelAndView mv, HttpSession session,User sessionUser){
 
         mv.setViewName("main");
         mv.addObject("user",session.getAttribute("user"));
+
+        if(sessionUser.getUserName().equals("陆英杰")){
+            int count = messageService.getSendedMessagesCount();//获取所有管理员未读信息的总数
+            mv.addObject("count",count);//添加未处理消息的总数
+        }else{
+            int count = messageService.getMessagesCount(sessionUser);//获取所有用户未读信息的总数
+            mv.addObject("count",count);//添加未处理消息的总数
+        }
+
+
         return mv;
     }
+
+
+
 
 
 
