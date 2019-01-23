@@ -11,3 +11,7 @@ nohup java -jar /72cun/72cun-layui-0.0.4-SNAPSHOT.jar --spring.profiles.active=p
 
 查看输出日志
 tail -f /72cun/temp.log
+
+
+现在使用shell脚本之后的命令就可以重启应用
+/bin/bash /72cun.sh
