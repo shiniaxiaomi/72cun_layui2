@@ -2,7 +2,8 @@
 SQLyog 企业版 - MySQL GUI v8.14 
 MySQL - 5.0.27-community-nt : Database - 72cun
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -38,7 +39,7 @@ CREATE TABLE `message` (
   `userId` int(11) default NULL COMMENT '发布消息的用户id',
   `sendTime` timestamp NULL default NULL COMMENT '发送时间',
   `rootId` int(11) default '0' COMMENT '根节点id',
-  `isMark` int(11) default '0' COMMENT '标记在根节点上的更改该节点下的消息的用户id',
+  `isMark` int(11) default '0' COMMENT '标记在消息状态',
   `userName` varchar(20) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
