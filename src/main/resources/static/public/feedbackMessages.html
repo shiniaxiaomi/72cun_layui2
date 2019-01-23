@@ -98,9 +98,10 @@
                 var buff=top.window.document.getElementById("feedback");
                 util.ajax("/message/getMessagesCount",{},function (data) {
                     if(data==0){
-                        $(buff).remove();
+                        $(buff).hide();
                     }else{
                         $(buff).text(data);
+                        $(buff).show();
                     }
                 })
             }
