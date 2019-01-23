@@ -10,7 +10,7 @@
 <body>
 
     <div class="layui-container">
-        <div class="layui-row">
+        <div class="layui-row" style="text-align: center">
             <form id="form" class="layui-form" action="">
                 <div class="layui-inline layui-form-text">
                     <label class="layui-form-label">反馈主题</label>
@@ -37,7 +37,7 @@
 
 <script type="text/html" id="markTpl">
     {{#  if(d.isMark ==1){ }}
-        新消息
+        新消息<span class="layui-badge-dot" style="position: fixed"></span>
     {{#  } else if(d.isMark ==0){ }}
         已发送
     {{#  } else { }}
@@ -87,9 +87,9 @@
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
-                ,{field: 'isMark', title: '是否已读',templet:'#markTpl', align:'center'}//隐藏字段
-                ,{field: 'detail', title: '消息详情',templet: '#urlTpl', align:'center',unresize:true}
-                ,{field: 'userName', title: '发送者', align:'center',unresize:true}
+                ,{field: 'isMark', title: '主题消息状态',templet:'#markTpl', align:'center',unresize:true}//隐藏字段
+                ,{field: 'detail', title: '反馈主题',templet: '#urlTpl', align:'center',unresize:true}
+                ,{field: 'userName', title: '发送者', align:'center',unresize:true,hide:"true"}
                 ,{field: 'sendTime', title: '发送时间' ,align:'center',unresize:true}
                 ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',unresize:true} //这里的toolbar值是模板元素的选择器
             ]],
