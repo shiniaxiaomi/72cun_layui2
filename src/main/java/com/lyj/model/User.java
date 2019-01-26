@@ -20,7 +20,7 @@ import java.util.Date;
 @Setter
 public class User implements Serializable {
 
-    private Integer id;
+    private int id;
 
     private String userName;
 

@@ -55,7 +55,6 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     //对请求进行处理
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
     }
 
     //在请求后处理

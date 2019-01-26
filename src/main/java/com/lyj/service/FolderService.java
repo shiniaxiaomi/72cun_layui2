@@ -87,4 +87,13 @@ public class FolderService {
     public int getRootFolderIdByUserId(Integer userId) {
         return folderDao.getRootFolderIdByUserId(userId);
     }
+
+    public boolean isExistFolderName(Folder folder){
+        return folderDao.isExistFolderName(folder)==1;
+    }
+
+
+    public Folder getFolderByFolderName(Folder folder) {
+        return folderDao.getFolderByFolderNameAndUserId(folder);
+    }
 }

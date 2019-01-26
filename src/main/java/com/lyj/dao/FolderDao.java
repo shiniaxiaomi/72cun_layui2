@@ -61,4 +61,10 @@ public interface FolderDao{
 
     @Select("select rootFolderId from user where id=#{userId}")
     int getRootFolderIdByUserId(Integer userId);
+
+    @Select("select count(0) from folder where userId=#{userId} and name=#{name}")
+    int isExistFolderName(Folder folder);
+
+    @Select("select * from folder where name=#{name} and userId=#{userId}")
+    Folder getFolderByFolderNameAndUserId(Folder folder);
 }

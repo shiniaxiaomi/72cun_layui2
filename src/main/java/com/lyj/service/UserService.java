@@ -74,7 +74,7 @@ public class UserService {
                 user.setCustomFolderName(one.getCustomFolderName());
                 user.setPhoneNumber(one.getPhoneNumber());
                 user.setRootFolderId(one.getRootFolderId());
-                user.setLastLoginTime(one.getLastLoginTime());
+                user.setLastLoginTime(new Timestamp(new Date().getTime()));
 
                 //记录用户的登入时间
                 userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());

@@ -54,4 +54,6 @@ public interface URLDao{
     @Select("select * from url where userId=#{userId} and pidName like CONCAT('%',#{pidName},'%') order by createTime desc")
     List<URL> getUrlsByPidName(@Param("userId") Integer userId, @Param("pidName") String pidName);
 
+    //xml
+    void addUrlBatch(List<URL> list);
 }

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>72cun 网址收藏</title>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css" />
+
+    <style>
+        .layui-col-md3{
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>网址导入</legend>
+</fieldset>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test10">
+                <i class="layui-icon">&#xe681;</i>
+                <p>从<strong>谷歌浏览器</strong>导入</p>
+                <p>点击或拖拽导入</p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test11">
+                <i class="layui-icon">&#xe681;</i>
+                <p>从<strong>火狐浏览器</strong>导入</p>
+                <p>点击或拖拽导入</p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test12">
+                <i class="layui-icon">&#xe681;</i>
+                <p>从<strong>IE浏览器</strong>导入</p>
+                <p>点击或拖拽导入</p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test13">
+                <i class="layui-icon">&#xe681;</i>
+                <p>从<strong>360浏览器</strong>导入</p>
+                <p>点击或拖拽导入</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>网址导出到</legend>
+</fieldset>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test20">
+                <i class="layui-icon">&#xe601;</i>
+                <p><strong>谷歌浏览器</strong></p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test21">
+                <i class="layui-icon">&#xe601;</i>
+                <p><strong>火狐浏览器</strong></p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test22">
+                <i class="layui-icon">&#xe601;</i>
+                <p><strong>IE浏览器</strong></p>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-upload-drag" id="test23">
+                <i class="layui-icon">&#xe601;</i>
+                <p><strong>360浏览器</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script src="/js/util.js"></script>
+<script>
+    layui.use(['layer','form',"jquery",'upload'], function() {
+        var layer = layui.layer;
+        var form = layui.form;
+        var $=layui.jquery;
+        var upload = layui.upload;
+
+
+        //拖拽上传
+        upload.render({
+            elem: '#test10'
+            ,url: '/importChrome'
+            ,size: 1024 //限制文件大小，单位 KB
+            ,exts: 'html' //只允许上传html文件
+            ,done: function(res){
+                if(res.code==0){
+                    layer.msg(res.message, {offset: '50px', anim: 0});
+                }else{
+                    var confirmLayer=layer.confirm(res.message, {
+                        btn: ['确定'] //按钮
+                    }, function(){
+                        layer.close(confirmLayer);
+                    });
+                }
+
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

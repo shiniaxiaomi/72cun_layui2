@@ -341,17 +341,25 @@
         javascript:(function (x, sc, width, height) {
             var newWin = window.open('', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
             var formStr = '';
-            formStr = "<form style='visibility:hidden;' method='POST' action='`+product_url+`/fast/saveAndLogin'>"+
-                        "<input type='hidden' name='url' value='[url]' />"+
-                        "<input type='hidden' name='title' value='[title]' />"+
-                      "</form>";
-            formStr=formStr.replace('[url]', encodeURIComponent(location.href))
-                .replace('[title]', encodeURIComponent(x.title));
-            newWin.document.body.innerHTML = formStr;
+            var form = document.createElement('form');
+            form.action = '`+product_url+`/fast/saveAndLogin';
+            form.method = 'post';
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'url';
+            input.value = encodeURIComponent(location.href);
+            form.appendChild(input);
+            var input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = 'title';
+            input1.value = encodeURIComponent(x.title);
+            form.appendChild(input1);
+
+            newWin.document.body.appendChild(form);
             newWin.document.forms[0].submit();
         })(document, screen, 1420, 760);
     `;
-    document.getElementById('collection').href=str;
+    document.getElementById('collection').href=middleTrim(str);
 
     //快速打开
     var str2 = `
@@ -359,5 +367,24 @@
             window.open('`+product_url+`/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
         })(document, screen, 1420, 760);
     `;
-    document.getElementById('open').href=str2;
+    document.getElementById('open').href=middleTrim(str2);
+
+    //去除中间的空格
+    function middleTrim(str)
+    {
+        var repStr="";
+        for(var i=0;i<str.length;i++)
+        {
+            if(str.substring(i,i+1)!=" ")
+                repStr=repStr+str.substring(i,i+1);
+            else
+            {
+                if(repStr.substring(repStr.length-1,repStr.length)!=" ")
+                {
+                    repStr=repStr+" ";
+                }
+            }
+        }
+        return repStr;
+    }
 </script>
