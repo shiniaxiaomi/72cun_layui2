@@ -3,6 +3,7 @@ package com.lyj.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyj.dao.URLDao;
+import com.lyj.model.Folder;
 import com.lyj.model.URL;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,13 @@ public class URLService {
 
     public PageInfo<URL> getUrlsByPid(Integer userId, int pid, Integer page, Integer limit) {
         PageHelper.startPage(page, limit);
-        List<URL> urls = urlDao.getUrlsByPid(userId, pid);
+        List<URL> urls = urlDao.getUrlsByPidPage(userId, pid);
         return new PageInfo<>(urls);
+    }
+
+
+    public List<URL> getUrlsByFolderId(Folder folder) {
+        return urlDao.getUrlsByFolderId(folder);
     }
 
     //根据label查询url
@@ -101,4 +107,5 @@ public class URLService {
     public void addUrlBatch(List<URL> list) {
         urlDao.addUrlBatch(list);
     }
+
 }

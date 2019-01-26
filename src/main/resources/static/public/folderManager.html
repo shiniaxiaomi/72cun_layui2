@@ -516,7 +516,7 @@
                     var parentDataArrBuff=$.extend(true,[],parentDataArr)
                     var searchTableDataObjBuff=parentDataArrBuff[0];
                     filterTree(searchTableDataObjBuff,$("#searchFolder").val(),parentDataArrBuff,0);
-                    console.dir(parentDataArrBuff)
+//                    console.dir(parentDataArrBuff)
                     el.reload(parentDataArrBuff);//重新渲染filter文件夹后的数据
                 }else{
                     el.reload(parentDataArr);//重新渲染原始数据

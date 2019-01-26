@@ -67,4 +67,7 @@ public interface FolderDao{
 
     @Select("select * from folder where name=#{name} and userId=#{userId}")
     Folder getFolderByFolderNameAndUserId(Folder folder);
+
+    @Select("select * from folder where pid=#{pid} and userId=#{userId}")
+    List<Folder> getFoldersByPid(Folder folder);
 }

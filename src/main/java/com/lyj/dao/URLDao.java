@@ -1,5 +1,6 @@
 package com.lyj.dao;
 
+import com.lyj.model.Folder;
 import com.lyj.model.URL;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.session.RowBounds;
@@ -43,7 +44,10 @@ public interface URLDao{
 
     //查
     @Select("select * from url where userId=#{userId} and pid=#{pid} order by createTime desc")
-    List<URL> getUrlsByPid(@Param("userId") Integer userId, @Param("pid") int pid);//分页
+    List<URL> getUrlsByPidPage(@Param("userId") Integer userId, @Param("pid") int pid);//分页
+
+    @Select("select * from url where userId=#{userId} and pid=#{id}")
+    List<URL> getUrlsByFolderId(Folder folder);
 
     @Select("select * from url where userId=#{userId} and label like CONCAT('%',#{label},'%') order by createTime desc")
     List<URL> getUrlsByLabel(@Param("userId") Integer userId, @Param("label") String label);
@@ -56,4 +60,5 @@ public interface URLDao{
 
     //xml
     void addUrlBatch(List<URL> list);
+
 }

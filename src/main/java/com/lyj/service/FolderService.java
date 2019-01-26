@@ -96,4 +96,8 @@ public class FolderService {
     public Folder getFolderByFolderName(Folder folder) {
         return folderDao.getFolderByFolderNameAndUserId(folder);
     }
+
+    public List<Folder> getFoldersByPid(Folder folder) {
+        return folderDao.getFoldersByPid(folder);
+    }
 }
