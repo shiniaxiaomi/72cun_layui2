@@ -49,20 +49,23 @@ public class ChromeBuildHtml extends BuildHtml{
     public void buildFolderAndUrl(StringBuilder sb, List<Folder> folderTree) {
         for(Folder folder:folderTree){
             //不添加根文件夹(即默认文件夹)
-            sb.append("<DT><H3 ADD_DATE=\"1545845245\" LAST_MODIFIED=\"1548434080\">"+folder.getName()+"</H3>\n");
+            if(folder.getPid()!=0){
+                sb.append("<DT><H3 ADD_DATE=\"1545845245\" LAST_MODIFIED=\"1548434080\">"+folder.getName()+"</H3>\n");
+            }
 
-            //先添加属于该文件夹下的url
-            List<URL> urls = urlService.getUrlsByFolderId(folder);
             sb.append("<DL><p>\n");//集合开始
             //================================================
-            //添加该文件夹下的所有url
-            for(URL url:urls){
-                sb.append("<DT><A HREF=\""+url.getUrl()+"\" ADD_DATE=\""+url.getCreateTime().getTime()/1000+"\">"+url.getLabel()+"</A>\n");
-            }
-            //添加该文件夹下的所有文件夹文件夹
+            //先加该文件夹下的所有文件夹文件夹
             if(folder.getChildrenList()!=null){
                 buildFolderAndUrl(sb,folder.getChildrenList());
             }
+
+            //再添加属于该文件夹下的url
+            List<URL> urls = urlService.getUrlsByFolderId(folder);
+            for(URL url:urls){
+                sb.append("<DT><A HREF=\""+url.getUrl()+"\" ADD_DATE=\""+url.getCreateTime().getTime()/1000+"\">"+url.getLabel()+"</A>\n");
+            }
+
             //================================================
             sb.append("</DL><p>\n");//集合结束
         }
