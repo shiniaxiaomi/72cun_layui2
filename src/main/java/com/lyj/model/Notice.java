@@ -12,7 +12,7 @@ import java.util.Date;
 public class Notice {
 
     //记录发布公告的时间
-    public static final Long AnnounceTime=1548190022457L;
+    public static final Long AnnounceTime=1548573246973L;
 
     //发布公告的js
     public static final String AnnounceJs="" +
@@ -36,6 +36,7 @@ public class Notice {
             "               3.支持用户名更改</br></br>\n" +
             "               4.支持绑定手机号和更改手机号</br></br>\n" +
             "               <span style='font-weight:bold'>5.新增用户反馈通道</span></br></br>\n" +
+            "               <span style='font-weight:bold'>6.新增网址导入导出功能</span></br></br>\n" +
             "           </div>`\n" +
             "     ,success: function(layero){\n" +
             "     }\n" +
