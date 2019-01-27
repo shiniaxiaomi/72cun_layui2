@@ -4,10 +4,8 @@ import com.lyj.model.Folder;
 import com.lyj.model.Result;
 import com.lyj.model.URL;
 import com.lyj.model.User;
-import com.lyj.other.exporthtml.BuildHtml;
-import com.lyj.other.exporthtml.ChromeBuildHtml;
-import com.lyj.other.importhtml.ChromeParser;
-import com.lyj.other.importhtml.ParseNode;
+import com.lyj.other.exporthtml.*;
+import com.lyj.other.importhtml.*;
 import com.lyj.service.FolderService;
 import com.lyj.service.URLService;
 import org.jsoup.Jsoup;
@@ -46,6 +44,7 @@ public class ImportAndExportController {
     @Autowired
     URLService urlService;
 
+    //谷歌浏览器
     @RequestMapping("/importChrome")
     @ResponseBody
     @Transactional
@@ -58,6 +57,55 @@ public class ImportAndExportController {
     @RequestMapping("/exportChrome")
     public void exportChorme(HttpServletResponse response,User sessionUser){
         BuildHtml buildHtml=new ChromeBuildHtml(urlService,folderService,sessionUser,response);
+        buildHtml.build();//生成html文件并发送给客户端
+    }
+
+    //火狐浏览器
+    @RequestMapping("/importFirefox")
+    @ResponseBody
+    @Transactional
+    public Result importFirefox(MultipartFile file, User sessionUser){
+        ParseNode parseNode=new FirefoxParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        Result result = parseNode.start(file);
+        return result;
+    }
+
+    @RequestMapping("/exportFirefox")
+    public void exportFirefox(HttpServletResponse response,User sessionUser){
+        BuildHtml buildHtml=new FirefoxBuildHtml(urlService,folderService,sessionUser,response);
+        buildHtml.build();//生成html文件并发送给客户端
+    }
+
+    //IE浏览器
+    @RequestMapping("/importIE")
+    @ResponseBody
+    @Transactional
+    public Result importIE(MultipartFile file, User sessionUser){
+        ParseNode parseNode=new IEParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        Result result = parseNode.start(file);
+        return result;
+    }
+
+    @RequestMapping("/exportIE")
+    public void importIE(HttpServletResponse response,User sessionUser){
+        BuildHtml buildHtml=new IEBuildHtml(urlService,folderService,sessionUser,response);
+        buildHtml.build();//生成html文件并发送给客户端
+    }
+
+
+    //360浏览器
+    @RequestMapping("/import360")
+    @ResponseBody
+    @Transactional
+    public Result import360(MultipartFile file, User sessionUser){
+        ParseNode parseNode=new _360Parser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        Result result = parseNode.start(file);
+        return result;
+    }
+
+    @RequestMapping("/export360")
+    public void import360(HttpServletResponse response,User sessionUser){
+        BuildHtml buildHtml=new _360BuildHtml(urlService,folderService,sessionUser,response);
         buildHtml.build();//生成html文件并发送给客户端
     }
 

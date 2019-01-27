@@ -63,7 +63,6 @@ public abstract class ParseNode {
                 }catch (DataIntegrityViolationException e){
                     String s = e.getCause().toString();
                     int index=Integer.parseInt(s.substring(s.length()-1))-1;
-                    System.out.println(list.get(index).getUrl().length());
                     throw new MessageException("标题为<"+list.get(index).getLabel()+">的网址过长,请检查网址后再试:");
                 }
             } catch (IOException e) {

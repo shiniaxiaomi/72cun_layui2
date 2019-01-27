@@ -18,7 +18,7 @@
 <body>
 
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-    <legend>书签上传</legend>
+    <legend>书签上传到本站</legend>
 </fieldset>
 
 <div class="layui-container">
@@ -27,28 +27,28 @@
             <div class="layui-upload-drag" id="test10">
                 <i class="layui-icon">&#xe681;</i>
                 <p><strong>谷歌浏览器</strong></p>
-                <p>点击或拖拽上传</p>
+                <p>点击上传</p>
             </div>
         </div>
         <div class="layui-col-md3">
             <div class="layui-upload-drag" id="test11">
                 <i class="layui-icon">&#xe681;</i>
                 <p><strong>火狐浏览器</strong></p>
-                <p>点击或拖拽上传</p>
+                <p>点击上传</p>
             </div>
         </div>
         <div class="layui-col-md3">
             <div class="layui-upload-drag" id="test12">
                 <i class="layui-icon">&#xe681;</i>
                 <p><strong>IE浏览器</strong></p>
-                <p>点击或拖拽上传</p>
+                <p>点击上传</p>
             </div>
         </div>
         <div class="layui-col-md3">
             <div class="layui-upload-drag" id="test13">
                 <i class="layui-icon">&#xe681;</i>
                 <p><strong>360浏览器</strong></p>
-                <p>点击或拖拽上传</p>
+                <p>点击上传</p>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
 
 
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-    <legend>书签下载</legend>
+    <legend>从本站下载书签</legend>
 </fieldset>
 
 <div class="layui-container">
@@ -71,25 +71,31 @@
             </a>
         </div>
         <div class="layui-col-md3">
-            <div class="layui-upload-drag">
-                <i class="layui-icon">&#xe601;</i>
-                <p><strong>火狐浏览器</strong></p>
-                <p>点击下载</p>
-            </div>
+            <a href="/exportFirefox">
+                <div class="layui-upload-drag" id="firefox">
+                    <i class="layui-icon">&#xe601;</i>
+                    <p><strong>火狐浏览器</strong></p>
+                    <p>点击下载</p>
+                </div>
+            </a>
         </div>
         <div class="layui-col-md3">
-            <div class="layui-upload-drag">
-                <i class="layui-icon">&#xe601;</i>
-                <p><strong>IE浏览器</strong></p>
-                <p>点击下载</p>
-            </div>
+            <a href="/exportIE">
+                <div class="layui-upload-drag">
+                    <i class="layui-icon">&#xe601;</i>
+                    <p><strong>IE浏览器</strong></p>
+                    <p>点击下载</p>
+                </div>
+            </a>
         </div>
         <div class="layui-col-md3">
-            <div class="layui-upload-drag">
-                <i class="layui-icon">&#xe601;</i>
-                <p><strong>360浏览器</strong></p>
-                <p>点击下载</p>
-            </div>
+            <a href="/export360">
+                <div class="layui-upload-drag">
+                    <i class="layui-icon">&#xe601;</i>
+                    <p><strong>360浏览器</strong></p>
+                    <p>点击下载</p>
+                </div>
+            </a>
         </div>
     </div>
 </div>
@@ -105,11 +111,81 @@
         var $=layui.jquery;
         var upload = layui.upload;
 
+        //滑过显示提示信息
+        $('#firefox').hover(
+            function(){
+                layer.tips("注意,将下载后的html导入火狐浏览器时,导入的书签存在书签菜单中,而不是直接存在书签工具栏中!",this,{time: -1});
+            },
+            function(){
+                layer.closeAll('tips');
+            }
+        )
 
-        //拖拽上传
+
+        //谷歌浏览器书签上传到本站
         upload.render({
             elem: '#test10'
             ,url: '/importChrome'
+            ,size: 1024 //限制文件大小，单位 KB
+            ,exts: 'html' //只允许上传html文件
+            ,done: function(res){
+                if(res.code==0){
+                    layer.msg(res.message, {offset: '50px', anim: 0});
+                }else{
+                    var confirmLayer=layer.confirm(res.message, {
+                        btn: ['确定'] //按钮
+                    }, function(){
+                        layer.close(confirmLayer);
+                    });
+                }
+
+            }
+        });
+
+        //火狐浏览器上传书签上传到本站
+        upload.render({
+            elem: '#test11'
+            ,url: '/importFirefox'
+            ,size: 1024 //限制文件大小，单位 KB
+            ,exts: 'html' //只允许上传html文件
+            ,done: function(res){
+                if(res.code==0){
+                    layer.msg(res.message, {offset: '50px', anim: 0});
+                }else{
+                    var confirmLayer=layer.confirm(res.message, {
+                        btn: ['确定'] //按钮
+                    }, function(){
+                        layer.close(confirmLayer);
+                    });
+                }
+
+            }
+        });
+
+        //IE浏览器上传书签上传到本站
+        upload.render({
+            elem: '#test12'
+            ,url: '/importIE'
+            ,size: 1024 //限制文件大小，单位 KB
+            ,exts: 'html' //只允许上传html文件
+            ,done: function(res){
+                if(res.code==0){
+                    layer.msg(res.message, {offset: '50px', anim: 0});
+                }else{
+                    var confirmLayer=layer.confirm(res.message, {
+                        btn: ['确定'] //按钮
+                    }, function(){
+                        layer.close(confirmLayer);
+                    });
+                }
+
+            }
+        });
+
+        //360浏览器上传书签上传到本站
+        upload.render({
+            elem: '#test13'
+            ,url: '/import360'
             ,size: 1024 //限制文件大小，单位 KB
             ,exts: 'html' //只允许上传html文件
             ,done: function(res){
