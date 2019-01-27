@@ -4,6 +4,8 @@ package com.lyj.model;
  * Created by Administrator on 2019/1/21.
  */
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -11,8 +13,17 @@ import java.util.Date;
  */
 public class Notice {
 
-    //记录发布公告的时间
-    public static final Long AnnounceTime=1548573246973L;
+    public static Long AnnounceTime=0L;
+    public static final String AnnounceStringTime="2019-01-27 15:19:00";//公告更新字符串时间
+
+    static {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            AnnounceTime=sdf.parse(AnnounceStringTime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     //发布公告的js
     public static final String AnnounceJs="" +

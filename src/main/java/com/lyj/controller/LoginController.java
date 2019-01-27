@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.Formatter;
 
 /**
  * Created by 陆英杰
@@ -91,7 +92,7 @@ public class LoginController {
         }
 
         //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
-       if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()< Notice.AnnounceTime){
+       if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<Notice.AnnounceTime){
             mv.addObject("showNotice",Notice.AnnounceJs);
         }
 

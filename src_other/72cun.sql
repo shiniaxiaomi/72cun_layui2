@@ -2,8 +2,7 @@
 SQLyog 企业版 - MySQL GUI v8.14 
 MySQL - 5.0.27-community-nt : Database - 72cun
 *********************************************************************
-*/
-
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -37,9 +36,9 @@ CREATE TABLE `message` (
   `id` int(11) NOT NULL auto_increment,
   `detail` varchar(200) default NULL,
   `userId` int(11) default NULL COMMENT '发布消息的用户id',
-  `sendTime` timestamp NULL default NULL COMMENT '发送时间',
+  `sendTime` datetime default NULL COMMENT '发送时间',
   `rootId` int(11) default '0' COMMENT '根节点id',
-  `isMark` int(11) default '0' COMMENT '标记在消息状态',
+  `isMark` int(11) default '0' COMMENT '标记在根节点上的更改该节点下的消息的用户id',
   `userName` varchar(20) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -50,10 +49,10 @@ DROP TABLE IF EXISTS `url`;
 
 CREATE TABLE `url` (
   `id` int(11) NOT NULL auto_increment,
-  `url` varchar(500) default NULL,
+  `url` varchar(1500) default NULL,
   `label` varchar(150) default NULL,
   `pid` int(11) default NULL,
-  `createTime` timestamp NULL default NULL,
+  `createTime` datetime default NULL,
   `userId` int(11) default NULL,
   `pidName` varchar(20) default NULL,
   PRIMARY KEY  (`id`)
@@ -70,7 +69,7 @@ CREATE TABLE `user` (
   `rootFolderId` int(11) default NULL,
   `customFolderId` int(11) default NULL,
   `customFolderName` varchar(20) default NULL,
-  `lastLoginTime` timestamp NULL default NULL,
+  `lastLoginTime` datetime default NULL,
   `phoneNumber` char(11) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
