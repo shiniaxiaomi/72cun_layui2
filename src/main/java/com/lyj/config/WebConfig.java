@@ -60,7 +60,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/js/**",
                         "/layui/**",
                         "/myjs/**",
-                        "/public/**"
+                        "/html/**"
                 );//排除static下的静态文件(在本地访问的时候)
 
 
