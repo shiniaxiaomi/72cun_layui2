@@ -23,6 +23,9 @@ import java.util.Formatter;
 public class LoginController {
 
     @Autowired
+    Notice notice;//公告类
+
+    @Autowired
     UserService userService;
 
     @RequestMapping("/")
@@ -92,7 +95,7 @@ public class LoginController {
         }
 
         //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
-       if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<Notice.AnnounceTime){
+       if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<notice.getNoticeTime()){
             mv.addObject("showNotice",Notice.AnnounceJs);
         }
 
