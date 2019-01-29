@@ -3,8 +3,10 @@ package com.lyj.service;
 import com.lyj.dao.FolderDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
-import com.lyj.redisKey.key.FolderKey;
+import com.lyj.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,9 @@ public class FolderService {
     FolderDao folderDao;
     @Autowired
     URLService urlService;
+
     @Autowired
-    RedisService redisService;
+    UserService userService;
 
     public Folder addRootFolder(int userId){
         Folder folder = new Folder("默认文件夹", 0, userId);
@@ -32,28 +35,22 @@ public class FolderService {
     }
 
 
+    //如果缓存有,则从缓存中取
+    @Cacheable(value = "folder",key = "'folders-userId:'+#userId")
     public List<Folder> getFoldersByUserId(Integer userId){
-        //先查询redis
-        List<Folder> list = redisService.getList(FolderKey.getByUserId, userId, Folder.class);
-        if(list!=null){
-            return list;
-        }
-
-        List<Folder> folders = folderDao.getFoldersByUserId(userId);
-
-        //吧查询结果放入redis中
-        redisService.set(FolderKey.getByUserId,userId,folders);
-
-        return folders;
+        return folderDao.getFoldersByUserId(userId);
     }
 
 
+    //该操作后,清除缓存
+    @CacheEvict(value = "folder",key = "'folders-userId:'+#folder.userId")
     public boolean addFolder(Folder folder) {
         int i=folderDao.addFolder(folder);//新增folder,并获取到了自增id
-        redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
         return i==1 ? true : false;
     }
 
+    //该操作后,清除缓存
+    @CacheEvict(value = "folder",key = "'folders-userId:'+#userId")
     @Transactional
     public boolean deleteFolderByFolderId(int folderId, int userId) {
         int num1=0;
@@ -61,31 +58,31 @@ public class FolderService {
         if(count>=1){
             throw new MessageException("该文件夹下还有子文件夹,请先删除子文件夹");
         }else{
+            User customFolder = userService.getCustomFolder(userId);
+            if(customFolder.getCustomFolderId()==folderId){
+                throw new MessageException("该文件夹是自定义文件夹,请先更换自定义文件夹后再进行删除!");
+            }
+
             num1 = folderDao.deleteByFolderId(folderId);//删除文件夹
 
             //删除文件夹下的网址
             urlService.deleteUrlByPid(folderId);
         }
 
-        redisService.deleteKey(FolderKey.getByUserId,userId);//删除key
         return num1==1 ? true : false;
     }
 
+    //该操作后,清除缓存
+    @CacheEvict(value = "folder",key = "'folders-userId:'+#folder.userId")
     @Transactional
     public boolean updateFolder(Folder folder) {
         int i = folderDao.updateFolder(folder);
-        redisService.deleteKey(FolderKey.getByUserId,folder.getUserId());//删除key
         return i==1 ? true : false;
-
     }
 
 
     public int deleteFolderByUserId(Integer userId) {
         return folderDao.deleteByUserId(userId);
-    }
-
-    public int getRootFolderIdByUserId(Integer userId) {
-        return folderDao.getRootFolderIdByUserId(userId);
     }
 
     public boolean isExistFolderName(Folder folder){

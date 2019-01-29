@@ -84,19 +84,10 @@
 			<version>1.1.8</version>
 		</dependency>
 
-
-		<!-- fastjson依赖 -->
+		<!-- redis依赖 -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.2.47</version>
-		</dependency>
-
-		<!-- jedis依赖 -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 
@@ -124,7 +115,6 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.11.3</version>
 		</dependency>
-
 
 
 	</dependencies>

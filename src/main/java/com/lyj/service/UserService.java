@@ -6,6 +6,8 @@ import com.lyj.model.User;
 import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +30,6 @@ public class UserService {
 
     @Autowired
     URLService urlService;
-
-    @Autowired
-    RedisService redisService;
 
 
     public boolean isExists(User user){
@@ -85,13 +84,14 @@ public class UserService {
     }
 
 
-    public boolean updateCustomFolder(int customFolderId,String customFolderName, Integer userId) {
-        int i = userDao.updateCustomFolder(customFolderId,customFolderName,userId);
-        return i==1 ? true : false;
-
+    @CachePut(value = "user",key = "'customFolder-userId:'+#user.id")
+    public User updateCustomFolder(User user) {
+        int i = userDao.updateCustomFolder(user);
+        return i==1 ? user : null;
     }
 
 
+    @Cacheable(value = "user",key = "'customFolder-userId:'+#userId")
     public User getCustomFolder(Integer userId) {
         return userDao.getCustomFolder(userId);
     }
@@ -136,5 +136,10 @@ public class UserService {
     public boolean checkPassword(User user) {
         int i = userDao.checkPassword(user);
         return i==1 ? true : false;
+    }
+
+    @Cacheable(value = "user",key = "'rootFolder-userId:'+#userId")
+    public int getRootFolderIdByUserId(Integer userId) {
+        return userDao.getRootFolderIdByUserId(userId);
     }
 }

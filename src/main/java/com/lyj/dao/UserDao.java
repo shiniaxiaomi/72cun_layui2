@@ -1,10 +1,10 @@
 package com.lyj.dao;
 
+import com.lyj.model.Folder;
 import com.lyj.model.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -26,8 +26,8 @@ public interface UserDao{
     int deleteById(Integer userId);
 
     //改
-    @Update("update user set customFolderId=#{customFolderId},customFolderName=#{customFolderName} where id=#{userId}")
-    int updateCustomFolder(@Param("customFolderId")int customFolderId,@Param("customFolderName")String customFolderName,  @Param("userId")Integer userId);
+    @Update("update user set customFolderId=#{customFolderId},customFolderName=#{customFolderName} where id=#{id}")
+    int updateCustomFolder(User user);
 
     @Update("update user set rootFolderId=#{rootFolderId} where id=#{userId}")
     int updateRootFolderIdByUserId(@Param("rootFolderId") int rootFolderId, @Param("userId") Integer userId);
@@ -43,12 +43,6 @@ public interface UserDao{
 
     @Update("update user set phoneNumber=#{phoneNumber} where id=#{id}")
     int updatePhoneNumber(User user);
-
-//    @Update("update user set userName=#{userName} where id=#{userId}")
-//    int updateUserName(User user);
-//
-//    @Update("update user set phoneNumber=#{phoneNumber} where id=#{userId}")
-//    int updatePhoneNumber(User user);
 
     //查
     @Select("select count(1) from user where userName=#{userName}")
@@ -68,4 +62,7 @@ public interface UserDao{
 
     @Select("select count(0) from user where id=#{id} and password=#{password}")
     int checkPassword(User user);
+
+    @Select("select rootFolderId from user where id=#{userId}")
+    int getRootFolderIdByUserId(Integer userId);
 }

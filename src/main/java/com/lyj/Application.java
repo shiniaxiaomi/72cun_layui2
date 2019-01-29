@@ -3,10 +3,12 @@ package com.lyj;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @MapperScan("com/lyj/dao") //扫描mybatis注解
 @EnableTransactionManagement    //开启事务
+@EnableCaching	//开启基于注解的缓存
 @SpringBootApplication
 public class Application {
 

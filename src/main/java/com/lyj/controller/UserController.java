@@ -69,31 +69,6 @@ public class UserController {
         return ResultUtil.error("注册失败");
     }
 
-
-    @ResponseBody
-    @RequestMapping("/updateCustomFolder")
-    public Result updateCustomFolder(int customFolderId,String customFolderName,User sessionUser){
-
-        if(userService.updateCustomFolder(customFolderId,customFolderName,sessionUser.getId())){
-            return ResultUtil.success("自定义文件夹成功");
-        }else{
-            return ResultUtil.error("自定义文件夹失败");
-        }
-    }
-
-    @ResponseBody
-    @RequestMapping("/getCustomFolder")
-    public Result getCustomFolder(User sessionUser){
-
-        User user1=userService.getCustomFolder(sessionUser.getId());
-
-        if(user1.getCustomFolderName()!=null){
-            return ResultUtil.success(user1);
-        }else{
-            return ResultUtil.error("你还没有自定文件夹",user1);
-        }
-    }
-
     @ResponseBody
     @RequestMapping("/updatePassword")
     public Result updatePassword(HttpSession session,User user){
@@ -181,15 +156,41 @@ public class UserController {
     }
 
 
+    //获取用户的更文件夹
+    @RequestMapping("/getRootFolderId")
+    @ResponseBody
+    public int getRootFolderId(User sessionUser){
+        return userService.getRootFolderIdByUserId(sessionUser.getId());
+    }
 
 
+    //获取用户的自定义文件夹
+    @ResponseBody
+    @RequestMapping("/getCustomFolder")
+    public Result getCustomFolder(User sessionUser){
 
+        User user1=userService.getCustomFolder(sessionUser.getId());
 
+        if(user1.getCustomFolderName()!=null){
+            return ResultUtil.success(user1);
+        }else{
+            return ResultUtil.error("你还没有自定文件夹",user1);
+        }
+    }
 
+    //更改用户的自定义文件夹
+    @ResponseBody
+    @RequestMapping("/updateCustomFolder")
+    public Result updateCustomFolder(User user,User sessionUser){
 
+        user.setId(sessionUser.getId());
 
-
-
+        if(userService.updateCustomFolder(user)!=null){
+            return ResultUtil.success("自定义文件夹成功");
+        }else{
+            return ResultUtil.error("自定义文件夹失败");
+        }
+    }
 
 
 }

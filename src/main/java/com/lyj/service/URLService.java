@@ -5,14 +5,11 @@ import com.github.pagehelper.PageInfo;
 import com.lyj.dao.URLDao;
 import com.lyj.model.Folder;
 import com.lyj.model.URL;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -22,7 +19,6 @@ import java.util.Map;
 
 @Service
 public class URLService {
-
 
     @Autowired
     URLDao urlDao;

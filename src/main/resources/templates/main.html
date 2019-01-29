@@ -65,13 +65,13 @@
                         <#if user.userName=='陆英杰'>
                             <dd><a href="javascript:;" url="/html/feedbackMessagesManager.html">
                                     <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
-                                    <span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span>
+                                    <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
                             </dd>
                         <#else>
                             <dd><a href="javascript:;" url="/html/feedbackMessages.html">
                                     <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
-                                    <span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span>
+                                    <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
                             </dd>
                         </#if>

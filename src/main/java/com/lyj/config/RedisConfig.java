@@ -1,10 +1,13 @@
 package com.lyj.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 /**
  * Created by 陆英杰
@@ -12,84 +15,17 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 
 @Configuration
-@ConfigurationProperties(prefix="redis")
 public class RedisConfig {
 
-    private String host;
-    private int port;
-    private int timeout;//秒
-    private int poolMaxTotal;
-    private int poolMaxdle;
-    private int poolMaxWait;//秒
-    private int database;//连几号库
-
-    //创建一个JedisPool
+    //自定义配置redisTemplate的序列化规则json格式
     @Bean
-    public JedisPool jedisPoolFactory(){
-        JedisPoolConfig poolConfig=new JedisPoolConfig();
-
-        poolConfig.setMaxIdle(poolMaxdle);
-        poolConfig.setMaxTotal(poolMaxWait);
-        poolConfig.setMaxWaitMillis(poolMaxWait*1000);
-
-        JedisPool jp=new JedisPool(poolConfig,host,port,timeout*1000,"lyjLYJ123",database);
-
-        return jp;
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        serializer.setObjectMapper(objectMapper);
+        return RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public int getPoolMaxTotal() {
-        return poolMaxTotal;
-    }
-
-    public void setPoolMaxTotal(int poolMaxTotal) {
-        this.poolMaxTotal = poolMaxTotal;
-    }
-
-    public int getPoolMaxdle() {
-        return poolMaxdle;
-    }
-
-    public void setPoolMaxdle(int poolMaxdle) {
-        this.poolMaxdle = poolMaxdle;
-    }
-
-    public int getPoolMaxWait() {
-        return poolMaxWait;
-    }
-
-    public void setPoolMaxWait(int poolMaxWait) {
-        this.poolMaxWait = poolMaxWait;
-    }
-
-    public int getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(int database) {
-        this.database = database;
-    }
 }

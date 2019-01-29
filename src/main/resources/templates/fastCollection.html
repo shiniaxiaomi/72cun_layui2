@@ -51,7 +51,7 @@
         layer_folderTree=layui.layer;//文件夹树显示层
 
         //查询默认文件夹id
-        util.ajax("/folder/getRootFolderId",[],function (data) {
+        util.ajax("/user/getRootFolderId",[],function (data) {
             //清空表单
             form.val("addText", {
                 "pidName": "默认文件夹",
