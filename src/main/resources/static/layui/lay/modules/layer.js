@@ -137,7 +137,7 @@ var layer = {
     if(type) end = options;
     return layer.open($.extend({
       content: content,
-      time: 1000,
+      time: 1500,//提示层的显示时间(修改为自定义时间)
       shade: false,
       skin: skin,
       title: false,
