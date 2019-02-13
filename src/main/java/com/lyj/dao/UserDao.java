@@ -45,7 +45,7 @@ public interface UserDao{
     int updatePhoneNumber(User user);
 
     //查
-    @Select("select count(1) from user where userName=#{userName}")
+    @Select("select count(*) from user where userName=#{userName}")
     int isUserNameExist(String userName);
 
     @Select("select * from user where userName=#{userName}")
@@ -60,7 +60,7 @@ public interface UserDao{
     @Select("select * from user where id=#{id}")
     User getUserByUserId(User user);
 
-    @Select("select count(0) from user where id=#{id} and password=#{password}")
+    @Select("select count(*) from user where id=#{id} and password=#{password}")
     int checkPassword(User user);
 
     @Select("select rootFolderId from user where id=#{userId}")

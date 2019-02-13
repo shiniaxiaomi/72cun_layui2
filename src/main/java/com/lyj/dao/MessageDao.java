@@ -52,7 +52,7 @@ public interface MessageDao {
     List<Message> getSendedMessages();
 
     //获取管理者未处理的消息总数
-    @Select("select count(0) from message where rootId=0 and isMark=0")
+    @Select("select count(*) from message where rootId=0 and isMark=0")
     int getSendedMessagesCount();
 
     @Select("select * from message where id=#{id}")

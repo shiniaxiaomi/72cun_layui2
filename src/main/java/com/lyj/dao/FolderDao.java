@@ -36,7 +36,7 @@ public interface FolderDao{
 
     //查
     //查询该文件夹下还有几个子文件夹
-    @Select("select count(1) from folder where userId=#{userId} and pid=#{id}")
+    @Select("select count(*) from folder where userId=#{userId} and pid=#{id}")
     int getChildrenFoldersCountByFolderId(@Param("userId") int userId,@Param("id")Integer id);
 
     //根据userId和pid获取folder
@@ -59,7 +59,7 @@ public interface FolderDao{
     @Select("select name from folder where id=#{id}")
     String getFolderNameByFolderId(int id);
 
-    @Select("select count(0) from folder where userId=#{userId} and name=#{name}")
+    @Select("select count(*) from folder where userId=#{userId} and name=#{name}")
     int isExistFolderName(Folder folder);
 
     @Select("select * from folder where userId=#{userId} and name=#{name}")
