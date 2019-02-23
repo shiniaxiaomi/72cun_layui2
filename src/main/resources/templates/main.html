@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>72cun - 网址收藏</title>
+    <title>后台管理</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
 
     <!-- 右键菜单 -->
@@ -52,6 +52,8 @@
                     <a href="javascript:;"><i class="fa fa-table"></i> <cite>个人</cite><span class="layui-nav-more"></span></a>
                     <dl class="layui-nav-child">
                         <!--<dd><a href="javascript:;" url="/searchUrl"> <cite><i class="layui-icon layui-icon-triangle-r"></i>网址管理</cite></a></dd>-->
+                        <dd><a href="/" > <cite><i class="layui-icon layui-icon-triangle-r"></i>网站首页</cite></a></dd>
+                        <dd><a href="/home/${user.userName}" target="_blank"> <cite><i class="layui-icon layui-icon-triangle-r"></i>个人主页</cite></a></dd>
                         <dd><a href="javascript:;" url="/html/folderManager.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>文件夹管理</cite></a></dd>
                         <dd><a href="javascript:;" url="/html/importAndExport.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>导入导出</cite></a></dd>
                     </dl>
@@ -63,13 +65,13 @@
                         <dd><a href="javascript:;" url="/html/quickStart.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>快速入门</cite></a></dd>
                         <dd><a href="javascript:;" url="/html/aboutMe.html"> <cite><i class="layui-icon layui-icon-triangle-r"></i>关于本站</cite></a></dd>
                         <#if user.userName=='陆英杰'>
-                            <dd><a href="javascript:;" url="/html/feedbackMessagesManager.html">
+                            <dd><a href="javascript:;" url="/html/admin/feedbackMessagesManager.html">
                                     <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
                                     <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
                             </dd>
                         <#else>
-                            <dd><a href="javascript:;" url="/html/feedbackMessages.html">
+                            <dd><a href="javascript:;" url="/html/admin/feedbackMessages.html">
                                     <cite><i class="layui-icon layui-icon-triangle-r"></i>用户反馈</cite>
                                     <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
@@ -100,7 +102,7 @@
         </div>
     </div>
 
-    <!-- 底部固定区域 -->
+     <!--底部固定区域 -->
     <div class="layui-footer">
         <div style="width:300px;margin:0 auto; padding:20px 0;">
             <a href="javascript:;" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">浙公网安备 33010802009661号</p></a>

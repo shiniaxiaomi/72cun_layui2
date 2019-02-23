@@ -7,6 +7,7 @@ import com.lyj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,12 +32,11 @@ public class LoginController {
     @RequestMapping("/")
     public ModelAndView login(HttpSession session, ModelAndView mv){
 
-        mv.setViewName("index");
+        mv.setViewName("homePage");//网站主页
 
         User user = (User) session.getAttribute("user");
         if(user!=null){//说明用户已经存在
             mv.addObject("user",user);
-            mv.setViewName("forward:/main");
         }
 
         //从session中获取值并放入mv
@@ -64,7 +64,6 @@ public class LoginController {
     @RequestMapping("/login")
     public ModelAndView login(User user,HttpSession session, HttpServletResponse response, ModelAndView mv){
 
-
         User sessionUser = (User) session.getAttribute("user");
 
         boolean seccessFlag=false;//标记是否登入成功
@@ -88,7 +87,7 @@ public class LoginController {
             }else if(url!=null && !"".equals((String)url)){
                 mv.setViewName("forward:/fast/collection");
             }else{
-                mv.setViewName("forward:/main");
+                mv.setViewName("forward:/");//重定向到首页
             }
         }else {
             throw new MessageException("用户名或密码错误");
@@ -122,6 +121,12 @@ public class LoginController {
         }else{
             mv.addObject(name,obj);
         }
+    }
+
+    @RequestMapping("/getUserFromSession")
+    @ResponseBody
+    public User getUserFromSession(HttpSession session){
+        return (User) session.getAttribute("user");
     }
 
 

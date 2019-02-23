@@ -1,12 +1,10 @@
 package com.lyj.controller;
 
-import com.lyj.model.Message;
 import com.lyj.model.User;
 import com.lyj.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +18,15 @@ public class PageController {
 
     @Autowired
     MessageService messageService;
+
+    //网站首页路由
+    @RequestMapping("/homePage")
+    public ModelAndView homePage(ModelAndView mv, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        mv.setViewName("homePage");
+        mv.addObject("user",user);
+        return mv;
+    }
 
     //后台管理系统的路由
     @RequestMapping("/admin")
@@ -38,6 +45,13 @@ public class PageController {
     @RequestMapping("/admin/userManager")
     public ModelAndView userManager(ModelAndView mv){
         mv.setViewName("admin/userManager");
+        return mv;
+    }
+
+    @RequestMapping("/admin/getUserUrlDetail")
+    public ModelAndView getUserUrl(int userId){
+        ModelAndView mv=new ModelAndView("admin/userUrlDetail");
+        mv.addObject("userId",userId);
         return mv;
     }
 

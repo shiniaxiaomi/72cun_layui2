@@ -31,6 +31,9 @@ public class FolderService {
     public Folder addRootFolder(int userId){
         Folder folder = new Folder("默认文件夹", 0, userId);
         folderDao.addFolder(folder);
+        if(folder==null){
+            throw new MessageException("默认文件夹生成失败");
+        }
         return folder;//这里返回的folder是有id的
     }
 

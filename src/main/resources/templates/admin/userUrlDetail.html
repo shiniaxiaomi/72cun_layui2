@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body>
+
+    <div ><a class="layui-btn layui-btn-primary" href="javascript:history.go(-1)">返回</a></div>
+
+
+    <div class="layui-row" style="height: 90%">
+        <table id="demo" lay-filter="test"></table>
+    </div>
+
+</body>
+
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="">{{ d.url }}</a>
+</script>
+
+</html>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="/js/util.js"></script>
+
+<script>
+
+    layui.use(['table','layer','form',"jquery"], function() {
+        table = layui.table;
+        layer = layui.layer;
+        $ = layui.jquery;
+        form = layui.form;
+
+        //配置table选项
+        tableOption={
+            elem: '#demo'
+            ,height: $(window).height()*0.85
+            ,page: true //开启分页
+            ,url:'/admin/getUserUrl'
+            ,where:{userId:'${userId}'}
+            ,skin: 'line' //行边框风格
+            ,limits:[10,20,30]//分页的数量选择
+            ,cols: [[ //表头
+                {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
+                ,{field: 'label', title: '网址名称', align:'center',unresize:true,width:'25%'}
+                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'30%'}
+                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true,width:'20%'}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"20%"}
+            ]],
+        };
+
+
+        //首次渲染表格,拿到对象
+        tableIns = table.render(tableOption);//传入参数进行渲染
+
+
+    })
+</script>

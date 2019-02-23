@@ -41,7 +41,13 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             if("XMLHttpRequest".equals(requestWith)){//如果是ajax
                 response.setStatus(309);//设置错误码,然后在客户端进行重定向
             }else{//如果是页面请求
-                response.sendRedirect("/");//重新请求到登入页面
+
+                if(request.getRequestURI().contains("/main")){
+                    response.sendRedirect("/html/index.html");//重新请求到登入页面
+                }else{
+                    response.sendRedirect("/");//重新请求到登入页面
+                }
+
             }
 
             System.out.println("intercept: "+request.getRequestURL().toString()+" request");

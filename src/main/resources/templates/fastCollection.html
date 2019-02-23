@@ -62,7 +62,7 @@
             addLayer=layer.open({
                 type: 1,
                 shadeClose: true,
-                area: ['515px', '351px'], //宽高
+                area: ['515px', '400px'], //宽高
                 content: $("#addText")
             });
 
@@ -72,6 +72,13 @@
 
         //url添加事件
         form.on('submit(addSubmit)', function(data){
+            //判断链接是否共享
+            if(data.field.isShare!=undefined && data.field.isShare=="on"){
+                data.field.isShare="true";
+            }else{
+                data.field.isShare="false";
+            }
+
             util.ajax("/url/add",data.field,function (data) {
                 layer.close(addLayer);
 
@@ -98,7 +105,7 @@
 </script>
 
 <!-- url 添加 弹窗 -->
-<div class="layui-form form-dialog" style="text-align: center" id="addText" lay-filter="addText">
+<div class="layui-form form-dialog"  id="addText" lay-filter="addText">
     <div class="layui-row">
         <div class="layui-col-md11">
             <div class="layui-form-item">
@@ -120,10 +127,15 @@
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>
                     <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid" >
-
                 </div>
             </div>
-            <div class="layui-form-item" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">链接状态</label>
+                <div id="isShare" class="layui-input-block">
+                    <input type="checkbox" name="isShare" lay-skin="switch" checked lay-text="共享|私有"><!-- 默认是共享 -->
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align: center;margin-left: 30px;">
                 <div class="">
                     <button class="layui-btn " lay-submit lay-filter="addSubmit">添加</button>
                 </div>

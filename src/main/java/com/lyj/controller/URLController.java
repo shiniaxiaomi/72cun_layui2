@@ -108,15 +108,12 @@ public class URLController {
         }
     }
 
-
-public static void main(String[] args) {
-    String str="";
-
-    String[] split = str.split("=");
-    for(int i=0;i<split.length;i++){
-        System.out.println(split[i]);
+    @RequestMapping("/changeShareStatus")
+    public Result changeShareStatus(int id,boolean isShare){
+        urlService.changeShareStatus(id,isShare);
+        return ResultUtil.success("状态更新成功");
     }
-}
+
 
 
 }

@@ -36,7 +36,7 @@
                 </form>
             </div>
             <div class="layui-col-md4">
-                <input type="text" id="keywords" name="title" placeholder="输入关键字进行搜索" autocomplete="off" class="layui-input" style="float: left">
+                <input type="text" id="keywords" name="title" placeholder="输入关键字回车进行搜索" autocomplete="off" class="layui-input" style="float: left">
             </div>
             <div class="layui-col-md4">
                 <div class="layui-btn-group">
@@ -63,6 +63,11 @@
 <script type="text/html" id="toolbarDemo" lay-event="tool">
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">编辑</button>
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<!-- 链接状态模板： -->
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="isShare" lay-skin="switch" lay-text="共享|私有" lay-filter="isShare" {{ d.isShare == true ? 'checked' : '' }}><!-- 加上这个就是打开的状态checked -->
 </script>
 
 <!-- 网址链接列的templet -->
@@ -107,7 +112,6 @@
         $ = layui.jquery;
         form=layui.form;
 
-
         //绑定点击搜索
         $("#searchBtn").on("click",function () {
             var buff = $.extend(true,{},tableOption) //值赋值
@@ -118,7 +122,7 @@
         })
 
         //绑定回车搜索
-        $("#keywords").keydown(function(event){
+        $("#keywords").keyup(function(event){
             if(event.keyCode==13){
                 $("#searchBtn").click();//调用点击事件
             }
@@ -137,9 +141,10 @@
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
                 ,{field: 'label', title: '网址名称', align:'center',unresize:true,width:'25%'}
                 ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'25%'}
-                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true,width:'15%'}
-                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"20%"}
-                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"15%"} //这里的toolbar值是模板元素的选择器
+                ,{field: 'pidName', title: '文件夹' ,align:'center',unresize:true,width:'13%'}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"18%"}
+                ,{field:'isShare', title:'状态', templet: '#switchTpl',align:'center', unresize: true, width:"8%"}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"11%"} //这里的toolbar值是模板元素的选择器
             ]],
         };
 
@@ -176,7 +181,6 @@
                     content: $("#editText")
                 });
 
-
                 form.val("editText", {
                     "id": obj.data.id
                     ,"label": obj.data.label
@@ -185,6 +189,16 @@
                     ,"pid": obj.data.pid
                 })
             }
+        });
+
+        //监听链接状态事件
+        form.on('switch(isShare)', function(obj){
+            var tr=$(obj.elem).closest("tr").find("td").get(0);
+            var id=$(tr).find("div").text();
+            //修改链接共享的状态
+            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+                layer.msg(data.message);
+            })
         });
 
         //打开添加弹窗
@@ -213,6 +227,12 @@
 
         //url添加事件
         form.on('submit(addSubmit)', function(data){
+            //判断链接是否共享
+            if(data.field.isShare!=undefined && data.field.isShare=="on"){
+                data.field.isShare="true";
+            }else{
+                data.field.isShare="false";
+            }
 
             util.ajax("/url/add",data.field,function (data) {
                 tableIns.reload(tableOption);//刷新表格
@@ -264,13 +284,18 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>
                     <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
                     <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid"   style="" >
-
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">链接状态</label>
+                <div id="isShare" class="layui-input-block">
+                    <input type="checkbox" name="isShare" lay-skin="switch" checked lay-text="共享|私有"><!-- 默认是共享 -->
                 </div>
             </div>
             <div class="layui-form-item" >
@@ -302,7 +327,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>

@@ -56,6 +56,11 @@
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
 </script>
 
+<!-- 网址链接列的templet -->
+<script type="text/html" id="urlTpl">
+    <a href="/admin/getUserUrlDetail?userId={{d.id}}" class="layui-table-link" target="_self" onclick="">{{ d.userName }}</a>
+</script>
+
 
 <script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script><!-- 需要首先加载 -->
@@ -114,7 +119,7 @@
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {field: 'id', title: 'id', align:'center'}
-                ,{field: 'userName', title: '用户名称', align:'center',unresize:true}
+                ,{field: 'userName', title: '用户名称',templet: '#urlTpl', align:'center',unresize:true}
                 ,{field: 'lastLoginTime', title: '登入时间' ,align:'center',unresize:true}
                 ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo'} //这里的toolbar值是模板元素的选择器
             ]],

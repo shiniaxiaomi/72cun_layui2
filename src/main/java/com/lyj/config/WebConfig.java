@@ -39,17 +39,19 @@ public class WebConfig implements WebMvcConfigurer {
         //这个拦截的要看的就是请求的url是否包含指定的内容
         InterceptorRegistration loginCheckInterceptor = registry.addInterceptor(loginInterceptor);//添加登入拦截器
         loginCheckInterceptor.addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/",
-                        "/login",
-                        "/user/add",
-                        "/exit",
-                        "/fast/saveAndLogin",
-                        "/admin",
-                        "/phone/isPhoneNumberExist",
-                        "/phone/sendCode",
-                        "/user/updatePassword",
-                        "/user/isUserNameExist"
+                .excludePathPatterns(//------以下请求不进行拦截
+                        "/",        //首页
+                        "/login",   //登入请求
+                        "/user/add",//用户添加
+                        "/exit",    //退出
+                        "/fast/saveAndLogin",   //快捷工具登入
+                        "/admin",   //后台管理
+                        "/phone/isPhoneNumberExist",    //查看手机是否存在
+                        "/phone/sendCode",      //发送验证码
+                        "/user/updatePassword", //更新用户密码
+                        "/user/isUserNameExist",//查看用户名是否存在
+//                        "/index",//登入页面
+                        "/home/**"  //个人主页
                 );
 
         loginCheckInterceptor

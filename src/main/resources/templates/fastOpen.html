@@ -78,6 +78,11 @@
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
 </script>
 
+<!-- 链接状态模板： -->
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="isShare" lay-skin="switch" lay-text="共享|私有" lay-filter="isShare" {{ d.isShare == true ? 'checked' : '' }}><!-- 加上这个就是打开的状态checked -->
+</script>
+
 <!-- 网址链接列的templet -->
 <script type="text/html" id="urlTpl">
     <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="isClose()">{{ d.url }}</a>
@@ -154,9 +159,10 @@
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
                 ,{field: 'label', title: '网址名称', align:'center',unresize:true,width:'25%'}
                 ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'25%'}
-                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true,width:'15%'}
-                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"20%"}
-                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"15%"} //这里的toolbar值是模板元素的选择器
+                ,{field: 'pidName', title: '文件夹' ,align:'center',unresize:true,width:'13%'}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"18%"}
+                ,{field:'isShare', title:'状态', templet: '#switchTpl',align:'center', unresize: true, width:"8%"}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"11%"} //这里的toolbar值是模板元素的选择器
             ]],
         };
 
@@ -203,6 +209,16 @@
                     ,"pid": obj.data.pid
                 })
             }
+        });
+
+        //监听链接状态事件
+        form.on('switch(isShare)', function(obj){
+            var tr=$(obj.elem).closest("tr").find("td").get(0);
+            var id=$(tr).find("div").text();
+            //修改链接共享的状态
+            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+                layer.msg(data.message);
+            })
         });
 
         //打开添加弹窗
@@ -293,7 +309,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>
@@ -332,7 +348,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>

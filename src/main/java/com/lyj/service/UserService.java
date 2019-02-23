@@ -1,6 +1,7 @@
 package com.lyj.service;
 
 import com.lyj.dao.UserDao;
+import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
 import com.lyj.model.User;
 import com.lyj.util.ResultUtil;
@@ -44,7 +45,11 @@ public class UserService {
 
     public boolean addUser(User user){
         int i = userDao.addUser(user);
-        return i==1 ? true : false;
+        if(i==1){
+            return true;
+        }else{
+            throw new MessageException("用户添加失败!");
+        }
     }
 
     public boolean updateRootFolderIdByUserId(int rootFolderId,int userId){
@@ -141,5 +146,10 @@ public class UserService {
     @Cacheable(value = "user",key = "'rootFolder-userId:'+#userId")
     public int getRootFolderIdByUserId(Integer userId) {
         return userDao.getRootFolderIdByUserId(userId);
+    }
+
+    public User getUserByUserName(String userName) {
+        User user = userDao.getUserByUserName(userName);
+        return user;
     }
 }

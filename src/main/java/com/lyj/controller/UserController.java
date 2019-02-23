@@ -2,6 +2,7 @@ package com.lyj.controller;
 
 import com.lyj.model.Folder;
 import com.lyj.model.Result;
+import com.lyj.model.URL;
 import com.lyj.model.User;
 import com.lyj.service.FolderService;
 import com.lyj.service.URLService;
@@ -10,10 +11,14 @@ import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 陆英杰
@@ -41,6 +46,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/add")
+    @Transactional  //添加事务
     public Result add(HttpSession session,User user){
         if(!session.getAttribute("code").equals(user.getCode())){
             return ResultUtil.error("验证码输入错误!");
@@ -50,16 +56,16 @@ public class UserController {
 
         if(!StringUtil.isEmpty(user.getUserName()) && !StringUtil.isEmpty(user.getPassword())){
             if(!userService.isExists(user)){//判断是否已经存在该用户名
-                if(userService.addUser(user)) {//保存成功
+                userService.addUser(user);//添加用户
+                Folder folder = folderService.addRootFolder(user.getId());//创建一个默认的文件夹
 
-                    Folder folder = folderService.addRootFolder(user.getId());//创建一个默认的文件夹
-                    if(folder!=null){
-                        if(userService.updateRootFolderIdByUserId(folder.getId(),user.getId())){
-                            return ResultUtil.success("注册成功");
-                        }
-                    }else{
-                        return ResultUtil.error("默认文件夹生成失败");
-                    }
+                //添加默认的收藏网址
+                List<URL> urls=new ArrayList<>();
+                urls.add(new URL("https://www.72cun.cn", "72cun 网址收藏", 0,"默认文件夹", user.getId(), new Date()));
+                urlService.addUrlBatch(urls);
+
+                if(userService.updateRootFolderIdByUserId(folder.getId(),user.getId())){
+                    return ResultUtil.success("注册成功");
                 }
             }else{
                 return ResultUtil.error("该用户名已存在");

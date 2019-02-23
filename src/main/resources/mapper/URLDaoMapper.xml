@@ -14,7 +14,7 @@
 
 
     <sql id="url_list">
-        u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName
+        u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName,isShare
     </sql>
 
     <update id="updateUrl">
@@ -32,15 +32,18 @@
             <if test="pidName!=null and pidName!='' ">
                 pidName=#{pidName},
             </if>
+            <if test="isShare!=null and isShare!='' ">
+                isShare=#{isShare},
+            </if>
         </trim>
         where id = #{id}
     </update>
 
 
     <insert id="addUrlBatch">
-        insert into url (url,label,pid,createTime,userId,pidName) values
+        insert into url (url,label,pid,createTime,userId,pidName,isShare) values
         <foreach collection="list" item="itemId" index="no" separator=",">
-            ( #{itemId.url},#{itemId.label},#{itemId.pid},#{itemId.createTime},#{itemId.userId},#{itemId.pidName} )
+            ( #{itemId.url},#{itemId.label},#{itemId.pid},#{itemId.createTime},#{itemId.userId},#{itemId.pidName},#{itemId.isShare} )
         </foreach>
     </insert>
 
@@ -54,7 +57,7 @@
         </foreach>
     </delete>
 
-    <!-- 批量删除 -->
+    <!-- 批量更新链接的位置 -->
     <update id="updateUrlsByIds_Batch">
         update url set pid=#{pid},pidName=#{pidName} where id in
         <foreach collection="ids" item="itemId" index="no" open="(" separator="," close=")">

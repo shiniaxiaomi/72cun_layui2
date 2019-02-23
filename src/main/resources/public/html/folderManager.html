@@ -28,14 +28,14 @@
 </head>
 <body>
 <div class="layui-row">
-    <div class="layui-col-md3">
+    <div class="layui-col-md2">
         <div>
-            <input id='searchFolder_left' type='text' autocomplete='off' placeholder='输入关键字进行文件夹过滤' class='layui-input' >
+            <input id='searchFolder_left' type='text' autocomplete='off' placeholder='输入关键字进行过滤' class='layui-input' >
             <div id="ele_left" class="eleTree ele1" lay-filter="data1"></div>
         </div>
     </div>
 
-    <div class="layui-col-md9">
+    <div class="layui-col-md10">
         <div>
             <label class="layui-form-label" style="font-size: 20px">批量操作</label>
             <div class="layui-btn-container">
@@ -56,6 +56,11 @@
 <script type="text/html" id="toolbarDemo" lay-event="tool">
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">编辑</button>
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
+</script>
+
+<!-- 链接状态模板： -->
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="isShare" lay-skin="switch" lay-text="共享|私有" lay-filter="isShare" {{ d.isShare == true ? 'checked' : '' }}><!-- 加上这个就是打开的状态checked -->
 </script>
 
 <!-- 网址链接列的templet -->
@@ -242,10 +247,10 @@
             }
             util.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
                 if(data.code==0){
-                    layer.msg('文件夹位置更改成功');
+                    layer.msg('文件夹更改成功');
                     d.move();//成功之后页面上才移动
                 }else{
-                    layer.msg('文件夹位置更改失败');
+                    layer.msg('文件夹更改失败');
                     el_left.reload();//发生错误时,重新加载
                 }
             })
@@ -310,16 +315,17 @@
             ,url: '/url/getUrlsByPid' //数据接口
             ,where:{pid:-1}
             ,page: true //开启分页
-            ,skin: 'line' //行边框风格
+//            ,skin: 'line' //行边框风格
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {type:'checkbox',width:"5%"},
                 {field: 'id', title: 'id', align:'center',hide:"true"}//隐藏id
                 ,{field: 'label', title: '网址名称', align:'center',unresize:true,width:'25%'}
-                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'25%'}
-                ,{field: 'pidName', title: '链接地址' ,align:'center',unresize:true,width:'15%'}
-                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"15%"}
-                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"15%"} //这里的toolbar值是模板元素的选择器
+                ,{field: 'url', title: '网址链接',templet: '#urlTpl', align:'center',unresize:true,width:'20%'}
+                ,{field: 'pidName', title: '文件夹' ,align:'center',unresize:true,width:'11%'}
+                ,{field: 'createTime', title: '创建时间' ,align:'center',unresize:true,width:"17%"}
+                ,{field:'isShare', title:'状态', templet: '#switchTpl',align:'center', unresize: true, width:"9%"}
+                ,{fixed: 'handle',title: '操作', align:'center', toolbar: '#toolbarDemo',width:"13%"} //这里的toolbar值是模板元素的选择器
             ]],
         }
 
@@ -367,6 +373,16 @@
                     ,"pid": obj.data.pid
                 })
             }
+        });
+
+        //监听链接状态事件
+        form.on('switch(isShare)', function(obj){
+            var tr=$(obj.elem).closest("tr").find("td").get(0);
+            var id=$(tr).find("div").text();
+            //修改链接共享的状态
+            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+                layer.msg(data.message);
+            })
         });
 
 
@@ -457,7 +473,7 @@
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_edit" class="layui-input-block">
                     <input id="folderName_edit" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>
@@ -482,7 +498,7 @@
     <div class="layui-row">
         <div class="layui-col-md11">
             <div class="layui-form-item">
-                <label class="layui-form-label">文件夹位置</label>
+                <label class="layui-form-label">文件夹</label>
                 <div id="location_move" class="layui-input-block">
                     <input id="folderName_move" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>

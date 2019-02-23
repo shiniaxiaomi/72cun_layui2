@@ -17,14 +17,22 @@ import java.util.List;
 @Setter
 public class PageEntity<T> {
 
-    private int code=0;
+    private int code=0;//标志位
 
-    private Long count;
+    private Long count;//总数
 
-    private List<T> data;
+    private List<T> data;//数据
+
+    private int pages;//总页数
 
     public PageEntity(Long count, List<T> data) {
         this.count = count;
         this.data = data;
+    }
+
+    public PageEntity(Long count, List<T> data,int pages) {
+        this.count = count;
+        this.data = data;
+        this.pages=pages;
     }
 }

@@ -3,8 +3,11 @@ package com.lyj.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyj.dao.URLDao;
+import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
+import com.lyj.model.Result;
 import com.lyj.model.URL;
+import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +55,20 @@ public class URLService {
     public PageInfo<URL> getUrlsByPidName(Integer userId, String pidName, Integer page, Integer limit) {
         PageHelper.startPage(page, limit);
         List<URL> urls = urlDao.getUrlsByPidName(userId, pidName);
+        return new PageInfo<>(urls);
+    }
+
+    //根据userId和时间查询url
+    public PageInfo<URL> getShareUrlsByUserIdLike(String keywords,Integer userId, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        List<URL> urls = urlDao.getShareUrlsByUserIdLike(keywords,userId);
+        return new PageInfo<>(urls);
+    }
+
+    //根据keywords和时间查询所有已经分享的url
+    public PageInfo<URL> getShareUrlsLike(String keywords, Integer page, int limit) {
+        PageHelper.startPage(page, limit);
+        List<URL> urls = urlDao.getShareUrlsLike(keywords);
         return new PageInfo<>(urls);
     }
 
@@ -103,5 +120,18 @@ public class URLService {
     public void addUrlBatch(List<URL> list) {
         urlDao.addUrlBatch(list);
     }
+
+    public Result getUrlsByUserId(int userId) {
+        List<URL> urls = urlDao.getUrlsByUserId(userId);
+        return ResultUtil.success(urls);
+    }
+
+    public void changeShareStatus(int id,boolean isShare) {
+        int i = urlDao.changeShareStatus(id, isShare);
+        if(i!=1){//失败
+            throw new MessageException("状态更新失败，请稍后再试！");
+        }
+    }
+
 
 }

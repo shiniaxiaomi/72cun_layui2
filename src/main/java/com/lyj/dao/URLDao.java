@@ -18,7 +18,7 @@ public interface URLDao{
 
     //add,delete.update,get
     //增
-    @Insert("insert into url (url,label,pid,createTime,userId,pidName) values (#{url},#{label},#{pid},#{createTime},#{userId},#{pidName})")
+    @Insert("insert into url (url,label,pid,createTime,userId,pidName,isShare) values (#{url},#{label},#{pid},#{createTime},#{userId},#{pidName},#{isShare})")
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id") //数据插入成功后，id值被反填到user对象中，调用getId()就可以获取
     int addUrl(URL url);
 
@@ -42,6 +42,9 @@ public interface URLDao{
     //xml---批量更新
     int updateUrlsByIds_Batch(@Param("ids")List<Integer> ids,@Param("pid")int pid,@Param("pidName")String pidName);
 
+    @Update("update url set isShare=#{isShare} where id=#{id}")//修改链接的分享状态
+    int changeShareStatus(@Param("id")int id,@Param("isShare")boolean isShare);
+
     //查
     @Select("select * from url where userId=#{userId} and pid=#{pid} order by createTime desc")
     List<URL> getUrlsByPidPage(@Param("userId") Integer userId, @Param("pid") int pid);//分页
@@ -57,6 +60,15 @@ public interface URLDao{
 
     @Select("select * from url where userId=#{userId} and pidName like CONCAT('%',#{pidName},'%') order by createTime desc")
     List<URL> getUrlsByPidName(@Param("userId") Integer userId, @Param("pidName") String pidName);
+
+    @Select("select * from url where userId=#{userId} and label like CONCAT('%',#{keywords},'%') and isShare=true order by createTime desc")
+    List<URL> getShareUrlsByUserIdLike(@Param("keywords")String keywords,@Param("userId")int userId);
+
+    @Select("select url.*,user.userName from url left join user on url.userId=user.id where label like CONCAT('%',#{keywords},'%') and isShare=true order by createTime desc")
+    List<URL> getShareUrlsLike(@Param("keywords")String keywords);
+
+    @Select("select * from url where userId=#{userId} order by createTime desc")
+    List<URL> getUrlsByUserId(int userId);
 
     //xml
     void addUrlBatch(List<URL> list);

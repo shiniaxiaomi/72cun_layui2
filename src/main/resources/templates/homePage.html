@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>72cun - 网址收藏</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/layui/style/template.css" media="all">
+    <link rel="stylesheet" href="/css/global.css" media="all">
+
+    <style type="text/css">
+        .longtext{overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
+    </style>
+</head>
+
+<body>
+
+<div class="fly-header layui-bg-black">
+    <div class="layui-container">
+
+        <a class="fly-logo" href="javascript:;">
+            <img src="/images/logo.png">
+        </a>
+
+        <ul class="layui-nav fly-nav layui-hide-xs">
+            <li class="layui-nav-item">
+                <a href="/"><i class="iconfont icon-jiaoliu"></i>首页</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="/html/quickStart.html" target="_blank"><i class="iconfont icon-iconmingxinganli"></i>功能预览</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="/main"><i class="iconfont icon-ui"></i>后台管理</a>
+            </li>
+        </ul>
+
+        <!-- 搜索框 -->
+        <input type="text" name="title" id="keywords" placeholder="搜共享链接" autocomplete="off" class="layui-input" style="position: absolute; left: 60%; top: 11px;width: 260px;">
+
+        <ul class="layui-nav fly-nav-user">
+            <#if user??>
+                <!-- 登入后的状态 -->
+                <li class="layui-nav-item">
+                    <a class="fly-nav-avatar" href="javascript:;">
+                        <img src="/images/code.png" style="margin-right: 10px">
+                        <cite class="layui-hide-xs" style="margin-right: 5px">${user.userName}</cite>
+                        <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+                        <dd><a href="user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
+                        <dd><a href="user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+                        <hr style="margin: 5px 0;">
+                        <dd><a href="/exit" style="text-align: center;">退出</a></dd>
+                    </dl>
+                </li>
+            <#else>
+                <!-- 未登入的状态 -->
+                <li class="layui-nav-item">
+                    <a class="iconfont icon-touxiang layui-hide-xs" href="javascript:;"></a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" id="login">登入</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/html/register.html">注册</a>
+                </li>
+            </#if>
+        </ul>
+    </div>
+</div>
+
+<div class="layui-fluid layadmin-homepage-fluid">
+    <div class="layui-row layui-col-space8">
+        <div class="layui-col-md2">
+            <div class="layadmin-homepage-panel layadmin-homepage-shadow" style="min-height:500px">
+                <div class="layui-card text-center">
+                    <h1>72cun - 网址收藏</h1>
+                </div>
+                <p class="layadmin-homepage-about">关于我</p>
+                <div class="layadmin-homepage-pad-hor">
+                    <mdall>作者很懒！</mdall>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md10">
+            <div class="layui-fluid layadmin-homepage-content">
+                <div class="layui-row layui-col-space20 layadmin-homepage-list-imgtxt">
+                    <div class="layui-col-md9">
+
+                        <div class="layui-card">
+                            <div class="layui-tab layui-tab-brief layadmin-latestData">
+                                <ul class="layui-tab-title">
+                                    <li class="layui-this">今日热搜</li>
+                                    <li class="">今日热帖</li>
+                                </ul>
+                                <div class="layui-tab-content">
+                                    <div class="layui-tab-item layui-show" style="">
+                                        111
+                                    </div>
+                                    <div class="layui-tab-item" style="">
+                                        222
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="grid-demo">
+                            <div class="layui-card homepage-top">
+                                <div class="layui-card-header">
+                                    <h3 class="panel-title">
+                                        <i class="layui-icon layui-icon-picture"></i>
+                                        分享达人
+                                    </h3>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row layui-col-space15">
+                                        <div class="layui-col-md4">
+                                            <p>1111</p>
+                                        </div>
+                                        <div class="layui-col-md12 margin-top10">
+                                            <a href="javascript:;"  class="layui-btn layui-btn-primary">更多</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card homepage-bottom">
+                                <div class="layui-card-header">
+                                    <h3 class="panel-title">
+                                        <i class="layui-icon layui-icon-user"></i>
+                                        私信
+                                    </h3>
+                                </div>
+                                <div class="layui-card-body">
+                                    <a href="javascript:;" class="layadmin-privateletterlist-item">
+                                        <div class="meida-left">
+                                            <!--<img src="../../layuiadmin/style/res/template/portrait.png">-->
+                                        </div>
+                                        <div class="meida-right">
+                                            <p>Hugo</p>
+                                            <mdall>人生是一场修行,不要轻易交白卷</mdall>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script src="/js/util.js"></script>
+<script>
+
+    //动态添加数据
+    function addData(url,param,next) {
+        util.ajax(url,param,function (data) {
+
+            var o = document.getElementById("LAY_demo1");
+            var width = o.offsetWidth-200; //div的宽度
+
+            var lis = [];
+            var list=data.data;
+            for(var i = 0; i < list.length; i++){
+                lis.push(`
+                                <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px"></a>
+                                <div class="media-body">
+                                    <div class="pad-btm">
+                                        <p class="fontColo "><a target="_blank" href="/home/`+userName+`"><b>`+userName+`</b></a><span>共享了一个链接</span></p>
+                                        <p>`+list[i].createTime+`</p>
+                                    </div>
+                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span onclick="urlClick()">`+list[i].label+`</span></a></span></p></b>
+                                    <p>位置：<span>`+list[i].pidName+`</span></p>
+                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick()">`+list[i].url+`</span></a></div>
+
+                                    <div class="media">
+                                        <div class="media-right">
+
+                                            <ul class="list-inline">
+                                                <li><span>点击量：</span><span>107</span></li>
+                                                <li><span>点赞量：</span><span>107</span></li>
+                                                <li onclick="goodClick(this)"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
+                                            </ul>
+
+                                        </div>
+                                        <!--<div class="media-left"></div>-->
+                                    </div>
+                                </div>
+                                <hr>
+                        `)
+            }
+
+            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+            next(lis.join(''), param.page < data.pages); //假设总页数为 10
+        })
+    }
+
+    //访问链接的点击事件
+    function urlClick() {
+        console.log(22222222);
+    }
+
+    //点赞的点击事件
+    function goodClick(arg) {
+        var li=$(arg).closest("ul").find("li").get(1);
+        var span=$(li).find("span").get(1);
+        $(span).text(Number($(span).text())+1);
+    }
+
+    var userName=undefined;
+    <#if user??>
+        userName="${user.userName}";
+    </#if>
+
+
+    layui.use(['flow','util','element'], function() {
+        var flow = layui.flow;
+        var utils = layui.util;
+
+        //输入框获得焦点
+        window.onload=function() {
+            $("#keywords").focus();
+        }
+
+        //返回页面最上方
+        utils.fixbar({
+            showHeight:200,
+        });
+
+        //使用ajax请求登入页面(静态资源)
+        $("#login").click(function () {
+            $.ajax({
+                url:"/html/index.html",
+                type:'get',
+                complete:function (data) {
+                    if(data.responseJSON!=undefined && data.responseJSON.code==1){
+                        layer.msg(data.responseJSON.message, {offset: '50px', anim: 0});
+                    }else if(data.responseText!=undefined){
+                        document.write(data.responseText);
+                        document.close()
+                    }
+                },
+            })
+        })
+
+        //绑定回车搜索
+        $("#keywords").keyup(function(event){
+            if(event.keyCode==13){
+//                $("#LAY_demo1").empty();
+//                flow.load({
+//                    elem: '#LAY_demo1', //流加载容器
+//                    isAuto: false,
+//                    done: function(page, next){ //执行下一页的回调
+//                        addData("/home/getShareUrlsLike",{userId:userId,page:page,keywords:$("#keywords")[0].value},next);
+//                    }
+//                });
+                window.open("http://localhost:8087/html/homePageSearch.html?search="+encodeURI($("#keywords")[0].value+"&userName="+userName) , "_blank");
+                $('#keywords').val('');//清空搜索框
+            }
+        });
+
+//        flow.load({
+//            elem: '#LAY_demo1', //流加载容器
+//            isAuto: false,
+//            done: function(page, next){ //执行下一页的回调
+//                addData("/home/getShareUrlsLike",{userId:userId,page:page,keywords:$("#keywords")[0].value},next);
+//            }
+//        });
+    })
+</script>
+</body>
+</html>
