@@ -1608,6 +1608,8 @@ layui.define(['laytpl', 'laypage', 'layer', 'form', 'util'], function(exports){
       } else if(elemCell.prop('scrollWidth') > elemCell.outerWidth()){
         if(elemCell.find('.'+ ELEM_GRID_DOWN)[0]) return;
         if(elemCell.find("a")[0]) return;//去除a标签提示
+        if(elemCell.find("button")[0]) return;//去除按钮提示
+        if(elemCell.find("input")[0]) return;//去除输入框提示
         // othis.append('<div class="'+ ELEM_GRID_DOWN +'"><i class="layui-icon layui-icon-down"></i></div>');
           layer.tips("<span style='word-wrap: break-word;'>"+othis[0].innerText+"</span>", othis,{tips: 1,time:0,isOutAnim: false,anim:-1});//加上换行样式,关闭所有动画
       }
