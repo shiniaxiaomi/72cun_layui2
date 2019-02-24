@@ -34,6 +34,8 @@ public class ChromeParser extends ParseNode {
                 url.setUrl(el.attr("href"));
                 url.setLabel(el.text());
                 url.setPid(pid);
+                url.setIsShare(true);//批量操纵默认共享链接
+                url.setShareTime(new Date());
                 //谷歌浏览器记录的时间时以秒来算的,换成成毫秒要*1000
                 url.setCreateTime(new Date(Long.parseLong(el.attr("add_date"))*1000));
                 url.setPidName(pidName);
