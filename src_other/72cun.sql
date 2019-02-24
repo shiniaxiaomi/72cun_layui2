@@ -1,6 +1,6 @@
 /*
 SQLyog 企业版 - MySQL GUI v8.14 
-MySQL - 5.6.40 : Database - 72cun
+MySQL - 5.0.27-community-nt : Database - 72cun
 *********************************************************************
 */
 
@@ -21,64 +21,88 @@ USE `72cun`;
 DROP TABLE IF EXISTS `folder`;
 
 CREATE TABLE `folder` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `pid` int(11) DEFAULT NULL,
-  `userId` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) default NULL,
+  `pid` int(11) default NULL,
+  `userId` int(11) default NULL,
+  PRIMARY KEY  (`id`),
   KEY `index_userId_pid` (`userId`,`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+
+/*Table structure for table `hoturl` */
+
+DROP TABLE IF EXISTS `hoturl`;
+
+CREATE TABLE `hoturl` (
+  `id` int(11) NOT NULL auto_increment,
+  `urlId` int(11) default NULL COMMENT '链接的id',
+  `clickNumber` int(11) default NULL COMMENT '点击量',
+  `goodNumber` int(11) default NULL COMMENT '点赞量',
+  PRIMARY KEY  (`id`),
+  KEY `index_urlId` (`urlId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `message` */
 
 DROP TABLE IF EXISTS `message`;
 
 CREATE TABLE `message` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `detail` varchar(200) DEFAULT NULL,
-  `userId` int(11) DEFAULT NULL COMMENT '发布消息的用户id',
-  `sendTime` datetime DEFAULT NULL COMMENT '发送时间',
-  `rootId` int(11) DEFAULT '0' COMMENT '根节点id',
-  `isMark` tinyint(1) DEFAULT '0' COMMENT '标记在消息状态',
-  `userName` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `id` int(11) NOT NULL auto_increment,
+  `detail` varchar(200) default NULL,
+  `userId` int(11) default NULL COMMENT '发布消息的用户id',
+  `sendTime` datetime default NULL COMMENT '发送时间',
+  `rootId` int(11) default '0' COMMENT '根节点id',
+  `isMark` tinyint(1) default '0' COMMENT '标记在消息状态',
+  `userName` varchar(20) default NULL,
+  PRIMARY KEY  (`id`),
   KEY `index_rootId_userId` (`rootId`,`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `url` */
 
 DROP TABLE IF EXISTS `url`;
 
 CREATE TABLE `url` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(600) DEFAULT NULL,
-  `label` varchar(100) DEFAULT NULL,
-  `pid` int(11) DEFAULT NULL,
-  `userId` int(11) DEFAULT NULL,
-  `createTime` datetime DEFAULT NULL,
-  `pidName` varchar(20) DEFAULT NULL,
-  `isShare` tinyint(1) DEFAULT NULL COMMENT '标记是否共享',
-  PRIMARY KEY (`id`),
+  `id` int(11) NOT NULL auto_increment,
+  `url` varchar(600) default NULL,
+  `label` varchar(100) default NULL,
+  `pid` int(11) default NULL,
+  `userId` int(11) default NULL,
+  `createTime` datetime default NULL,
+  `pidName` varchar(20) default NULL,
+  `isShare` tinyint(1) default NULL COMMENT '标记是否共享',
+  `shareTime` datetime default NULL COMMENT '链接共享时间',
+  PRIMARY KEY  (`id`),
   KEY `index_userId_pid` (`userId`,`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `user` */
 
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `password` varchar(100) DEFAULT NULL,
-  `userName` varchar(100) DEFAULT NULL,
-  `rootFolderId` int(11) DEFAULT NULL,
-  `customFolderId` int(11) DEFAULT '0',
-  `customFolderName` varchar(40) DEFAULT NULL,
-  `lastLoginTime` datetime DEFAULT NULL,
-  `phoneNumber` char(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `id` int(11) NOT NULL auto_increment,
+  `password` varchar(100) default NULL,
+  `userName` varchar(100) default NULL,
+  `rootFolderId` int(11) default NULL,
+  `customFolderId` int(11) default '0',
+  `customFolderName` varchar(40) default NULL,
+  `lastLoginTime` datetime default NULL,
+  `phoneNumber` char(11) default NULL,
+  PRIMARY KEY  (`id`),
   UNIQUE KEY `UK_hl8fftx66p59oqgkkcfit3eay` (`userName`),
   UNIQUE KEY `index_phoneNumber` (`phoneNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+
+/*Table structure for table `user_hoturl` */
+
+DROP TABLE IF EXISTS `user_hoturl`;
+
+CREATE TABLE `user_hoturl` (
+  `userId` int(11) default NULL COMMENT '用户id',
+  `likeUrlId` int(11) default NULL COMMENT '点赞的urlId',
+  KEY `index_userId_likeUrlId` (`userId`,`likeUrlId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
