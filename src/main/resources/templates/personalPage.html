@@ -13,6 +13,9 @@
 
     <style type="text/css">
         .longtext{overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
+        .fly-header .fly-nav a {
+            padding: 0 0px 0 60px;
+        }
     </style>
 
 </head>
@@ -28,48 +31,32 @@
 
         <ul class="layui-nav fly-nav layui-hide-xs">
             <li class="layui-nav-item">
-                <a href="/"><i class="iconfont icon-jiaoliu"></i>首页</a>
+                <a href="/"><i class="layui-icon layui-icon-home"></i>首页</a>
             </li>
             <li class="layui-nav-item">
-                <a href="/html/quickStart.html" target="_blank"><i class="iconfont icon-iconmingxinganli"></i>功能预览</a>
+                <a href="javascript:;" id="personalPage"><i class="layui-icon layui-icon-username"></i>个人首页</a>
             </li>
             <li class="layui-nav-item">
-                <a href="/main"><i class="iconfont icon-ui"></i>后台管理</a>
+                <a href="/main"><i class="layui-icon layui-icon-set"></i>后台管理</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="/html/quickStart.html" target="_blank"><i class="layui-icon layui-icon-chart-screen"></i>功能预览</a>
             </li>
         </ul>
 
         <!-- 搜索框 -->
         <input type="text" name="title" id="keywords" placeholder="搜个人共享链接" autocomplete="off" class="layui-input" style="position: absolute; left: 60%; top: 11px;width: 260px;">
 
-        <ul class="layui-nav fly-nav-user">
-            <#if user??>
-                <!-- 登入后的状态 -->
-                <li class="layui-nav-item">
-                    <a class="fly-nav-avatar" href="javascript:;">
-                        <img src="/images/code.png" style="margin-right: 10px">
-                        <cite class="layui-hide-xs" style="margin-right: 5px">${user.userName}</cite>
-                        <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
-                    </a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
-                        <dd><a href="user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-                        <dd><a href="user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
-                        <hr style="margin: 5px 0;">
-                        <dd><a href="/exit" style="text-align: center;">退出</a></dd>
-                    </dl>
-                </li>
-                <#else>
-                    <!-- 未登入的状态 -->
-                    <li class="layui-nav-item">
-                        <a class="iconfont icon-touxiang layui-hide-xs" href="javascript:;"></a>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="javascript:;" id="login">登入</a>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="/html/register.html">注册</a>
-                    </li>
-            </#if>
+        <ul class="layui-nav fly-nav-user" id="user">
+            <li class="layui-nav-item">
+                <a class="iconfont icon-touxiang layui-hide-xs" href="javascript:;"></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;" id="login">登入</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="/html/register.html">注册</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -166,6 +153,23 @@
 <script src="/js/util.js"></script>
 <script>
 
+    var layer=undefined;
+    var user=undefined;
+
+    //修改登入的状态
+    function changeLoginStatus(data) {
+        $("#user").html(`
+             <li class="layui-nav-item">
+                <a class="fly-nav-avatar" href="javascript:;">
+                    <img src="/images/code.png" style="margin-right: 10px">
+                    <cite class="layui-hide-xs" style="margin-right: 5px">`+data.userName+`</cite>
+                    <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="/exit" style="text-align: center;">退出</a></li>
+        `);
+    }
+
     //动态添加数据
     function addData(url,param,next) {
         util.ajax(url,param,function (data) {
@@ -180,20 +184,20 @@
                                 <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px"></a>
                                 <div class="media-body">
                                     <div class="pad-btm">
-                                        <p class="fontColo "><a href="javascript:;"><b>`+userName+`</b></a><span>共享了一个链接</span></p>
+                                        <p class="fontColo "><a target="_blank" href="/home/`+list[i].userName+`"><b>`+list[i].userName+`</b></a><span>共享了一个链接</span></p>
                                         <p>`+list[i].createTime+`</p>
                                     </div>
-                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span style="color: #01AAED" onclick="urlClick()">`+list[i].label+`</span></a></span></p></b>
+                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span style="color: #01AAED" onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].label+`</span></a></span></p></b>
                                     <p>位置：<span>`+list[i].pidName+`</span></p>
-                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick()">`+list[i].url+`</span></a></div>
+                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].url+`</span></a></div>
 
                                     <div class="media">
                                         <div class="media-right">
 
                                             <ul class="list-inline">
-                                                <li><span>点击量：</span><span>107</span></li>
-                                                <li><span>点赞量：</span><span>107</span></li>
-                                                <li onclick="goodClick(this)"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
+                                                <li><span>点击量：</span><span>`+list[i].clickNumber+`</span></li>
+                                                <li><span>点赞量：</span><span>`+list[i].goodNumber+`</span></li>
+                                                <li onclick="goodClick(this)" urlId="`+list[i].id+`"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
                                             </ul>
 
                                         </div>
@@ -211,24 +215,76 @@
     }
 
     //访问链接的点击事件
-    function urlClick() {
-        console.log(22222222);
+    function urlClick(arg) {
+        util.ajax("/hotUrl/incrClickNumber",{urlId:$(arg).attr("urlId")},function (data) {
+            if(data.code==0){//增加点击量
+                var li=$(arg).closest(".media-body").find(".list-inline li").get(0);
+                var span=$(li).find("span").get(1);
+                $(span).text(Number($(span).text())+1);
+            }else{
+                layer.msg(data.message);
+            }
+        })
     }
 
     //点赞的点击事件
     function goodClick(arg) {
-        var li=$(arg).closest("ul").find("li").get(1);
-        var span=$(li).find("span").get(1);
-        $(span).text(Number($(span).text())+1);
-//        console.log(a);
+        //检查是否登入
+        if(user==undefined){
+            layer.msg("请登入后再操作！");
+            return;
+        }
+        //检查用户是否已经点赞过
+        util.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
+            if(data.code==0){//增加点赞量
+                //点赞递增
+                util.ajax("/hotUrl/incrGoodNumber",{urlId:$(arg).attr("urlId")},function (data) {
+                    if(data.code==0){//增加点赞量
+                        var li=$(arg).closest("ul").find("li").get(1);
+                        var span=$(li).find("span").get(1);
+                        $(span).text(Number($(span).text())+1);
+
+                        layer.msg("点赞成功！");
+
+                        //标记该用户以点赞
+                        util.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
+                            if(data.code==1){
+                                console.log(data.message);//标记失败的话，静默打印
+                            }
+                        })
+                    }else{
+                        layer.msg(data.message);
+                    }
+                })
+            }else{
+                layer.msg(data.message);
+            }
+        })
     }
 
     var userName="${userName!''}";
     var userId=${userId!0};
 
-    layui.use(['flow','util'], function() {
+    layui.use(['flow','util','element','layer','form'], function() {
         var flow = layui.flow;
         var utils = layui.util;
+        layer=layui.layer;
+        var form=layui.form;
+
+        //查询是否已经登入
+        util.ajax("/getUserFromSession",{},function (data) {
+            if(data.userName!=null){
+                user=data;//保存user的信息
+                changeLoginStatus(data);//修改登入状态
+            }
+        })
+
+        $("#personalPage").click(function () {
+            layer.prompt({title: '输入用户名就可以直接访问个人主页', formType: 0,maxlength: 15,shadeClose: true}, function(pass, index){
+                window.location.href="/home/"+pass;
+            });
+        })
+
 
         ////输入框获得焦点
         window.onload=function() {
@@ -261,7 +317,88 @@
                 addData("/home/getShareUrlsLike",{userId:userId,page:page,keywords:$("#keywords")[0].value},next);
             }
         });
+
+        var addLayer=undefined;
+        //使用ajax请求登入页面(静态资源)
+        $("#login").click(function () {
+            //页面层
+            addLayer=layer.open({
+                type: 1,
+                title:'用户登入',
+                shadeClose: true,
+                area: ['515px', '351px'], //宽高]
+                content: $("#loginDiv")
+            });
+
+        })
+
+        //绑定回车搜索
+        $("#keywords").keyup(function(event){
+            if(event.keyCode==13){
+                $("#LAY_demo1").empty();
+                flow.load({
+                    elem: '#LAY_demo1', //流加载容器
+                    isAuto: false,
+                    done: function(page, next){ //执行下一页的回调
+                        addData("/home/getShareUrlsLike",{page:page,keywords:$("#keywords")[0].value},next);
+                    }
+                });
+            }
+        });
+
+        //表单参数检验
+        form.verify({
+            myUserName: [/^.{1,20}$/,'长度在1~20之间']
+            ,myPassword: [/^.{1,20}$/,'长度在1~20之间']
+        });
+
+        //登入事件
+        form.on('submit(loginSubmit)', function(formData){
+            //在主页的登入操作
+            util.ajax("/homeLogin",formData.field,function (data) {
+                if(data.code==0){
+                    user=data.data;//保存user信息
+                    layer.close(addLayer);//关闭登入弹窗
+                    layer.msg("登入成功！");
+                    if(data.message!=null){
+                        eval(data.message);//展示公告
+                    }
+                    changeLoginStatus(data.data);//修改登入状态
+                }else {
+                    layer.msg(data.message);
+                }
+            })
+            return false;
+        });
+
     })
 </script>
 </body>
 </html>
+
+<!-- url 添加 弹窗 -->
+<div class="layui-form form-dialog" id="loginDiv" lay-filter="loginDiv" style="display: none;">
+    <div class="layui-row">
+        <div class="layui-col-md11">
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-block">
+                    <input id="userName" lay-verify="myUserName" type="text" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="password" lay-verify="myPassword" type="text" name="password"  placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="loginSubmit">登入</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

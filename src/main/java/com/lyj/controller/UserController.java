@@ -61,7 +61,9 @@ public class UserController {
 
                 //添加默认的收藏网址
                 List<URL> urls=new ArrayList<>();
-                urls.add(new URL("https://www.72cun.cn", "72cun 网址收藏", 0,"默认文件夹", user.getId(), new Date()));
+                Date time = new Date();
+                //批量添加的时候默认是共享的
+                urls.add(new URL("https://www.72cun.cn", "72cun 网址收藏", 0,"默认文件夹", user.getId(),user.getUserName(), time,true,time));
                 urlService.addUrlBatch(urls);
 
                 if(userService.updateRootFolderIdByUserId(folder.getId(),user.getId())){

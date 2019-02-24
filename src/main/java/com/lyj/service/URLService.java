@@ -126,8 +126,8 @@ public class URLService {
         return ResultUtil.success(urls);
     }
 
-    public void changeShareStatus(int id,boolean isShare) {
-        int i = urlDao.changeShareStatus(id, isShare);
+    public void changeShareStatus(URL url) {
+        int i = urlDao.changeShareStatus(url);
         if(i!=1){//失败
             throw new MessageException("状态更新失败，请稍后再试！");
         }

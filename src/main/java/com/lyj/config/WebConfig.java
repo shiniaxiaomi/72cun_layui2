@@ -42,6 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(//------以下请求不进行拦截
                         "/",        //首页
                         "/login",   //登入请求
+                        "/homeLogin",//从主页的登入请求
                         "/user/add",//用户添加
                         "/exit",    //退出
                         "/fast/saveAndLogin",   //快捷工具登入
@@ -50,7 +51,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/phone/sendCode",      //发送验证码
                         "/user/updatePassword", //更新用户密码
                         "/user/isUserNameExist",//查看用户名是否存在
-//                        "/index",//登入页面
+                        "/hotUrl/incrClickNumber",//记录共享链接的点击量
+                        "/getUserFromSession",//询问是否已经登入
                         "/home/**"  //个人主页
                 );
 

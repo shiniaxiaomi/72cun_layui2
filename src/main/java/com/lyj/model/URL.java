@@ -38,7 +38,16 @@ public class URL implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;//创建时间
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    private Date shareTime;//链接共享的时间
+
     private Boolean isShare=true;//标记该网址是否分享(默认分享)
+
+    //不属于数据库字段
+    private int clickNumber;//点击量
+
+    //不属于数据库字段
+    private int goodNumber;//点赞量
 
     public URL(String url, String label, int pid, String pidName, int userId, Date createTime) {
         this.url = url;
@@ -68,5 +77,17 @@ public class URL implements Serializable {
         this.userName=userName;
         this.createTime = createTime;
         this.isShare=isShare;
+    }
+
+    public URL(String url, String label, int pid, String pidName, int userId,String userName, Date createTime,boolean isShare,Date shareTime) {
+        this.url = url;
+        this.label = label;
+        this.pid = pid;
+        this.pidName = pidName;
+        this.userId = userId;
+        this.userName=userName;
+        this.createTime = createTime;
+        this.isShare=isShare;
+        this.shareTime=shareTime;
     }
 }

@@ -14,7 +14,7 @@
 
 
     <sql id="url_list">
-        u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName,isShare
+        u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName,isShare,shareTime
     </sql>
 
     <update id="updateUrl">

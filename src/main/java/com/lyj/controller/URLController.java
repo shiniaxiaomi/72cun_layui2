@@ -99,7 +99,11 @@ public class URLController {
     @RequestMapping("/add")
     public Result add(URL url,User sessionUser){
         url.setUserId(sessionUser.getId());
-        url.setCreateTime(new Timestamp(new Date().getTime()));
+        Date time=new Timestamp(new Date().getTime());//记录生成时间
+        url.setCreateTime(time);
+        if(url.getIsShare()==true){
+            url.setCreateTime(time);
+        }
 
         if(urlService.addUrl(url)){
             return ResultUtil.success("保存成功!",url);
@@ -109,8 +113,11 @@ public class URLController {
     }
 
     @RequestMapping("/changeShareStatus")
-    public Result changeShareStatus(int id,boolean isShare){
-        urlService.changeShareStatus(id,isShare);
+    public Result changeShareStatus(URL url){
+        if(url.getIsShare()==true){
+            url.setShareTime(new Timestamp(new Date().getTime()));
+        }
+        urlService.changeShareStatus(url);
         return ResultUtil.success("状态更新成功");
     }
 

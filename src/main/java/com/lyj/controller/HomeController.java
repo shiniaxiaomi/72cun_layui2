@@ -1,9 +1,11 @@
 package com.lyj.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.lyj.model.HotUrl;
 import com.lyj.model.Result;
 import com.lyj.model.URL;
 import com.lyj.model.User;
+import com.lyj.service.HotUrlService;
 import com.lyj.service.URLService;
 import com.lyj.service.UserService;
 import com.lyj.util.PageEntity;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2019/2/17.
@@ -29,6 +34,9 @@ public class HomeController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    HotUrlService hotUrlService;
 
     //个人主页
     @RequestMapping("/{userName}")
@@ -55,7 +63,7 @@ public class HomeController {
         }else{
             pageInfo = urlService.getShareUrlsByUserIdLike(keywords,userId, page, 10);
         }
-        return new PageEntity<>(pageInfo.getTotal(),pageInfo.getList(),pageInfo.getPages());
+        return new PageEntity<>(pageInfo.getTotal(),pageInfo.getList(),pageInfo.getPages());//直接放入组装好的urls
     }
 
 

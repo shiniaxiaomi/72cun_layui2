@@ -42,8 +42,8 @@ public interface URLDao{
     //xml---批量更新
     int updateUrlsByIds_Batch(@Param("ids")List<Integer> ids,@Param("pid")int pid,@Param("pidName")String pidName);
 
-    @Update("update url set isShare=#{isShare} where id=#{id}")//修改链接的分享状态
-    int changeShareStatus(@Param("id")int id,@Param("isShare")boolean isShare);
+    @Update("update url set isShare=#{isShare} and shareTime=#{shareTime} where id=#{id}")//修改链接的分享状态和分享时间
+    int changeShareStatus(URL url);
 
     //查
     @Select("select * from url where userId=#{userId} and pid=#{pid} order by createTime desc")
@@ -61,10 +61,18 @@ public interface URLDao{
     @Select("select * from url where userId=#{userId} and pidName like CONCAT('%',#{pidName},'%') order by createTime desc")
     List<URL> getUrlsByPidName(@Param("userId") Integer userId, @Param("pidName") String pidName);
 
-    @Select("select * from url where userId=#{userId} and label like CONCAT('%',#{keywords},'%') and isShare=true order by createTime desc")
+    //通过userId来查询共享链接
+    @Select("select url.*,user.userName,hotUrl.clickNumber,hotUrl.goodNumber from url " +
+            "left join user on url.userId=user.id " +
+            "left join hotUrl on url.id=hotUrl.urlId " +
+            "where userId=#{userId} and label like CONCAT('%',#{keywords},'%') and isShare=true order by shareTime desc")
     List<URL> getShareUrlsByUserIdLike(@Param("keywords")String keywords,@Param("userId")int userId);
 
-    @Select("select url.*,user.userName from url left join user on url.userId=user.id where label like CONCAT('%',#{keywords},'%') and isShare=true order by createTime desc")
+    //公共的查询共享链接
+    @Select("select url.*,user.userName,hotUrl.clickNumber,hotUrl.goodNumber from url " +
+            "left join user on url.userId=user.id " +
+            "left join hotUrl on url.id=hotUrl.urlId " +
+            "where label like CONCAT('%',#{keywords},'%') and isShare=true order by shareTime desc")
     List<URL> getShareUrlsLike(@Param("keywords")String keywords);
 
     @Select("select * from url where userId=#{userId} order by createTime desc")
