@@ -28,10 +28,19 @@ public class HotUrl implements Serializable {
 
     private int goodNumber;//点赞量
 
+    private int score;//分值
+
 
     public HotUrl(int urlId, int clickNumber, int goodNumber) {
         this.urlId = urlId;
         this.clickNumber = clickNumber;
         this.goodNumber = goodNumber;
+    }
+
+    public HotUrl(int urlId, int clickNumber, int goodNumber, int score) {
+        this.urlId = urlId;
+        this.clickNumber = clickNumber;
+        this.goodNumber = goodNumber;
+        this.score = score;
     }
 }

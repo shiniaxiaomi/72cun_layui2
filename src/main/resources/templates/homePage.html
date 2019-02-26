@@ -16,6 +16,10 @@
         .fly-header .fly-nav a {
             padding: 0 0px 0 60px;
         }
+        .layadmin-homepage-list-imgtxt .media-body .media {
+            margin-top: 0px;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -80,16 +84,20 @@
 
                         <div class="layui-card">
                             <div class="layui-tab layui-tab-brief layadmin-latestData">
-                                <ul class="layui-tab-title">
-                                    <li class="layui-this">今日热搜</li>
-                                    <li class="">今日热帖</li>
+                                <ul class="layui-tab-title" style="text-align: center">
+                                    <li class="layui-this">热帖</li>
+                                    <li class="">热搜</li>
                                 </ul>
                                 <div class="layui-tab-content">
                                     <div class="layui-tab-item layui-show" style="">
-                                        111
+                                        <div class="flow-default" id="LAY_demo1">
+                                            <!--动态生成-->
+                                        </div>
                                     </div>
                                     <div class="layui-tab-item" style="">
-                                        222
+                                        <div class="flow-default" id="LAY_demo2">
+                                            还在开发中。。。
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -149,34 +157,37 @@
 <script src="/js/util.js"></script>
 <script>
 
+    var layer=undefined;
+    var user=undefined;
+
     //动态添加数据
-    function addData(url,param,next) {
+    function addData(id,url,param,next) {
         util.ajax(url,param,function (data) {
 
-            var o = document.getElementById("LAY_demo1");
+            var o = document.getElementById(id);
             var width = o.offsetWidth-200; //div的宽度
 
             var lis = [];
             var list=data.data;
             for(var i = 0; i < list.length; i++){
                 lis.push(`
-                                <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px"></a>
+                                <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px" style="display: block;float: left;vertical-align: top;padding-right: 10px;"></a>
                                 <div class="media-body">
                                     <div class="pad-btm">
-                                        <p class="fontColo "><a target="_blank" href="/home/`+userName+`"><b>`+userName+`</b></a><span>共享了一个链接</span></p>
+                                        <p class="fontColo "><a target="_blank" href="/home/`+list[i].userName+`"><b>`+list[i].userName+`</b></a><span>共享了一个链接</span></p>
                                         <p>`+list[i].createTime+`</p>
                                     </div>
-                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span onclick="urlClick()">`+list[i].label+`</span></a></span></p></b>
+                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span style="color: #01AAED" onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].label+`</span></a></span></p></b>
                                     <p>位置：<span>`+list[i].pidName+`</span></p>
-                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick()">`+list[i].url+`</span></a></div>
+                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].url+`</span></a></div>
 
                                     <div class="media">
                                         <div class="media-right">
 
                                             <ul class="list-inline">
-                                                <li><span>点击量：</span><span>107</span></li>
-                                                <li><span>点赞量：</span><span>107</span></li>
-                                                <li onclick="goodClick(this)"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
+                                                <li><span>点击量：</span><span>`+list[i].clickNumber+`</span></li>
+                                                <li><span>点赞量：</span><span>`+list[i].goodNumber+`</span></li>
+                                                <li onclick="goodClick(this)" urlId="`+list[i].id+`"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
                                             </ul>
 
                                         </div>
@@ -194,15 +205,51 @@
     }
 
     //访问链接的点击事件
-    function urlClick() {
-        console.log(22222222);
+    function urlClick(arg) {
+        util.ajax("/hotUrl/incrClickNumber",{urlId:$(arg).attr("urlId")},function (data) {
+            if(data.code==0){//增加点击量
+                var li=$(arg).closest(".media-body").find(".list-inline li").get(0);
+                var span=$(li).find("span").get(1);
+                $(span).text(Number($(span).text())+1);
+            }else{
+                layer.msg(data.message);
+            }
+        })
     }
 
     //点赞的点击事件
     function goodClick(arg) {
-        var li=$(arg).closest("ul").find("li").get(1);
-        var span=$(li).find("span").get(1);
-        $(span).text(Number($(span).text())+1);
+        //检查是否登入
+        if(user==undefined){
+            layer.msg("请登入后再操作！");
+            return;
+        }
+        //检查用户是否已经点赞过
+        util.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
+            if(data.code==0){//增加点赞量
+                //点赞递增
+                util.ajax("/hotUrl/incrGoodNumber",{urlId:$(arg).attr("urlId")},function (data) {
+                    if(data.code==0){//增加点赞量
+                        var li=$(arg).closest("ul").find("li").get(1);
+                        var span=$(li).find("span").get(1);
+                        $(span).text(Number($(span).text())+1);
+
+                        layer.msg("点赞成功！");
+
+                        //标记该用户以点赞
+                        util.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
+                            if(data.code==1){
+                                console.log(data.message);//标记失败的话，静默打印
+                            }
+                        })
+                    }else{
+                        layer.msg(data.message);
+                    }
+                })
+            }else{
+                layer.msg(data.message);
+            }
+        })
     }
 
     //修改登入的状态
@@ -282,6 +329,7 @@
             //在主页的登入操作
             util.ajax("/homeLogin",formData.field,function (data) {
                 if(data.code==0){
+                    user=data.data;
                     layer.close(addLayer);//关闭登入弹窗
                     layer.msg("登入成功！");
                     if(data.message!=null){
@@ -293,6 +341,14 @@
                 }
             })
             return false;
+        });
+
+        flow.load({
+            elem: '#LAY_demo1', //热帖
+            isAuto: false,
+            done: function(page, next){ //执行下一页的回调
+                addData("LAY_demo1","/hotUrl/getHotUrlByHot",{page:page},next);
+            }
         });
 
     })

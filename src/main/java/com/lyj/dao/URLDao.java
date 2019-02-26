@@ -81,4 +81,5 @@ public interface URLDao{
     //xml
     void addUrlBatch(List<URL> list);
 
+
 }

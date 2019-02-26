@@ -53,6 +53,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/isUserNameExist",//查看用户名是否存在
                         "/hotUrl/incrClickNumber",//记录共享链接的点击量
                         "/getUserFromSession",//询问是否已经登入
+                        "/hotUrl/getHotUrlByHot",//查询首页的热点排行
                         "/home/**"  //个人主页
                 );
 

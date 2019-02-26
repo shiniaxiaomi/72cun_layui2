@@ -16,6 +16,10 @@
         .fly-header .fly-nav a {
             padding: 0 0px 0 60px;
         }
+        .layadmin-homepage-list-imgtxt .media-body .media {
+            margin-top: 0px;
+            overflow: hidden;
+        }
     </style>
 
 </head>
@@ -358,7 +362,6 @@
             util.ajax("/homeLogin",formData.field,function (data) {
                 if(data.code==0){
                     user=data.data;//保存user信息
-                    layer.close(addLayer);//关闭登入弹窗
                     layer.msg("登入成功！");
                     if(data.message!=null){
                         eval(data.message);//展示公告
@@ -383,13 +386,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">账号</label>
                 <div class="layui-input-block">
-                    <input id="userName" lay-verify="myUserName" type="text" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
+                    <input type="text" id="userName" lay-verify="myUserName"  name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">密码</label>
                 <div class="layui-input-block">
-                    <input type="password" id="password" lay-verify="myPassword" type="text" name="password"  placeholder="" autocomplete="off" class="layui-input">
+                    <input type="password" id="password" lay-verify="myPassword" name="password"   autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item" >
