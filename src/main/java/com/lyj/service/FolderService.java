@@ -81,6 +81,11 @@ public class FolderService {
         return num1==1 ? true : false;
     }
 
+    //清除缓存在redis中的folder
+    @CacheEvict(value = "folder",key = "'folders-userId:'+#userId")
+    public void cleanFolderCache(int userId){
+    }
+
     //该操作后,清除缓存
     @CacheEvict(value = "folder",key = "'folders-userId:'+#folder.userId")
     @Transactional

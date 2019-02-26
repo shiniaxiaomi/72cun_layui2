@@ -11,6 +11,7 @@ import com.lyj.service.URLService;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Date;
 
@@ -20,7 +21,7 @@ import java.util.Date;
 
 public class ChromeParser extends ParseNode {
 
-    public ChromeParser(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
+    public ChromeParser( FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
         super(folderService, urlService, pid, pidName, userId);
     }
 

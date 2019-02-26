@@ -16,6 +16,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,6 +62,10 @@ public abstract class ParseNode {
                 //批量保存url
                 try{
                     urlService.addUrlBatch(list);
+                    //删除redis中的文件夹缓存
+                    if(list.size()>0){
+                        folderService.cleanFolderCache(list.get(0).getUserId());
+                    }
                 }catch (DataIntegrityViolationException e){
                     String s = e.getCause().toString();
                     String[] split = s.split("row");

@@ -11,6 +11,7 @@ import com.lyj.service.URLService;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Date;
 
