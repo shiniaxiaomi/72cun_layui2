@@ -82,4 +82,7 @@ public interface URLDao{
     void addUrlBatch(List<URL> list);
 
 
+    //在批量插入时根据label来判断是否存在相同的网址
+    @Select("select count(*) from url where userId=#{userId} and label=#{label}")
+    int isExistesUrl(URL url);
 }

@@ -40,6 +40,10 @@ public class ChromeParser extends ParseNode {
                 url.setCreateTime(new Date(Long.parseLong(el.attr("add_date"))*1000));
                 url.setPidName(pidName);
                 url.setUserId(userId);
+                //会员才可以开启此去重功能
+//                if(!urlService.isExistesUrl(url)){//如果不存在，才添加网址
+//                    list.add(url);
+//                }
                 list.add(url);
                 continue;
             }else if(el.tagName().equals("h3")){
@@ -49,7 +53,7 @@ public class ChromeParser extends ParseNode {
                 folder.setPid(pid);
                 folder.setUserId(userId);
                 if(!folderService.isExistFolderName(folder)){
-                    folderService.addFolder(folder);//保存文件夹
+                    folderService.addFolderWithoutCache(folder);//保存文件夹
                     pid=folder.getId();
                     pidName=folder.getName();
                 }else{

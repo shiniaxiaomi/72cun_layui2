@@ -52,6 +52,12 @@ public class FolderService {
         return i==1 ? true : false;
     }
 
+    //在添加文件夹的时候不更新redis缓存
+    public boolean addFolderWithoutCache(Folder folder) {
+        int i=folderDao.addFolder(folder);//新增folder,并获取到了自增id
+        return i==1 ? true : false;
+    }
+
     //该操作后,清除缓存
     @CacheEvict(value = "folder",key = "'folders-userId:'+#userId")
     @Transactional

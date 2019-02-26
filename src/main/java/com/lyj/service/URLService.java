@@ -26,6 +26,11 @@ public class URLService {
     @Autowired
     URLDao urlDao;
 
+    //在批量插入时使用（如果label相同有存在，则认为是重复的网址）
+    public boolean isExistesUrl(URL url){
+        return urlDao.isExistesUrl(url)==0?false:true;
+    }
+
     public PageInfo<URL> getUrlsByPid(Integer userId, int pid, Integer page, Integer limit) {
         PageHelper.startPage(page, limit);
         List<URL> urls = urlDao.getUrlsByPidPage(userId, pid);

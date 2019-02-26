@@ -49,7 +49,7 @@ public class IEParser extends ParseNode {
                 folder.setPid(pid);
                 folder.setUserId(userId);
                 if(!folderService.isExistFolderName(folder)){
-                    folderService.addFolder(folder);//保存文件夹
+                    folderService.addFolderWithoutCache(folder);//保存文件夹
                     pid=folder.getId();
                     pidName=folder.getName();
                 }else{
