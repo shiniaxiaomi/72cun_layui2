@@ -90,4 +90,22 @@ public class URL implements Serializable {
         this.isShare=isShare;
         this.shareTime=shareTime;
     }
+
+    @Override
+    public String toString() {
+        return "URL{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", label='" + label + '\'' +
+                ", pid=" + pid +
+                ", pidName='" + pidName + '\'' +
+                ", userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", createTime=" + createTime +
+                ", shareTime=" + shareTime +
+                ", isShare=" + isShare +
+                ", clickNumber=" + clickNumber +
+                ", goodNumber=" + goodNumber +
+                '}';
+    }
 }

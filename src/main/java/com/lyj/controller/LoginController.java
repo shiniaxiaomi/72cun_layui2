@@ -7,6 +7,10 @@ import com.lyj.model.User;
 import com.lyj.service.UserService;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,8 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.Formatter;
+import java.util.List;
 
 /**
  * Created by 陆英杰
@@ -30,6 +33,34 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public Object test(){
+//        Object o = redisTemplate.opsForHash().get("a", "1");
+//        List list = redisTemplate.opsForHash().multiGet("hash", Arrays.asList("age", "name"));
+//        redisTemplate.opsForHash().put("hash","object", JSON.toJSONString(new URL("111","222",1,null,1,null)));
+//        Object parse = JSON.parse((String) redisTemplate.opsForHash().get("hash", "object"));
+
+        //批量操作（同步的）
+        List list = redisTemplate.executePipelined(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                for (int i = 0; i < 2; i++) {
+                   //批量获取map
+                    connection.hGet(("hash" + i).getBytes(), "1".getBytes());//第一个参数是key，第二个参数是map中的key
+                }
+                return null;
+            }
+        });
+
+        System.out.println(list);
+        return null;
+    }
+
 
     @RequestMapping("/")
     public ModelAndView login(HttpSession session, ModelAndView mv){

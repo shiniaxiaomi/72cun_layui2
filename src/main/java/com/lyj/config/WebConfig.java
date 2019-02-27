@@ -54,6 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/hotUrl/incrClickNumber",//记录共享链接的点击量
                         "/getUserFromSession",//询问是否已经登入
                         "/hotUrl/getHotUrlByHot",//查询首页的热点排行
+                        "/test",//测试使用
                         "/home/**"  //个人主页
                 );
 

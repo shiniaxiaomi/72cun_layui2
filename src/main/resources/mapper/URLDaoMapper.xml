@@ -10,12 +10,34 @@
         <!--<result column="userId" property="userId" jdbcType="INTEGER"></result>-->
         <!--<result column="createTime" property="createTime" jdbcType="TIMESTAMP"></result>-->
         <!--<result column="pidName" property="pidName" jdbcType="VARCHAR"></result>-->
+        <!--<result column="isShare" property="isShare" jdbcType=""></result>-->
+        <!--<result column="shareTime" property="shareTime" jdbcType=""></result>-->
+        <!--<result column="userName" property="userName" jdbcType="VARCHAR"></result>-->
     <!--</resultMap>-->
 
 
     <sql id="url_list">
         u.id,u.url,u.label,u.pid,u.userId,u.createTime,f.pidName,isShare,shareTime
     </sql>
+
+    <select id="getUrlsByIdBatch" resultType="com.lyj.model.URL">
+        SELECT url.*,user.userName from url
+        left join user on user.id=url.userId
+        where 1=1
+        <if test="list.size() == 1">
+            and url.id=
+            <foreach collection="list" item="itemId" index="no" open="" separator="" close="">
+                #{itemId}
+            </foreach>
+        </if>
+        <if test="list.size() > 1">
+            and url.id in
+            <foreach collection="list" item="itemId" index="no" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+
+    </select>
 
     <update id="updateUrl">
         UPDATE url

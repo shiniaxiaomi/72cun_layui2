@@ -42,9 +42,9 @@ public interface HotUrlDao {
     @Select("select count(*) from user_hotUrl where userId=#{userId} and likeUrlId=#{likeUrlId}")
     int isIncredGoodNumber(User_HotUrl user_hotUrl);
 
-    @Select("select url.*,user.userName,hotUrl.clickNumber,hotUrl.goodNumber from hotUrl " +
-            "left join url on hotUrl.urlId=url.id " +
-            "left join user on user.id=url.userId order by score desc")
-    List<URL> getHotUrlByHot();
+//    @Select("select url.*,user.userName,hotUrl.clickNumber,hotUrl.goodNumber from hotUrl " +
+//            "left join url on hotUrl.urlId=url.id " +
+//            "left join user on user.id=url.userId order by score desc")
+//    List<URL> getHotUrlByHot();
 
 }

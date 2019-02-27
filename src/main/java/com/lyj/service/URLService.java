@@ -138,4 +138,7 @@ public class URLService {
         }
     }
 
+    public List<URL> getUrlsByIdBatch(List list) {
+        return urlDao.getUrlsByIdBatch(list);
+    }
 }

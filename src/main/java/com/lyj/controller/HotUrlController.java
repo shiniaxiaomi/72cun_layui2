@@ -10,8 +10,12 @@ import com.lyj.util.PageEntity;
 import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2019/2/24.
@@ -26,12 +30,7 @@ public class HotUrlController {
 
     @RequestMapping("/incrClickNumber")
     public Result incrClickNumber(int urlId){
-        int i = hotUrlService.incrClickNumber(urlId);
-        if(i==0){//如果等于0，说明数据库中还没有数据，应该新建
-            HotUrl hotUrl = new HotUrl(urlId,1,0, PublicVar.clickValue);
-            hotUrlService.addHotUrl(hotUrl);
-        }
-
+        hotUrlService.incrClickNumber(urlId);
         return ResultUtil.success(null);
     }
 
@@ -48,12 +47,7 @@ public class HotUrlController {
 
     @RequestMapping("/incrGoodNumber")
     public Result incrGoodNumber(int urlId){
-        int i = hotUrlService.incrGoodNumber(urlId);
-        if(i==0){//如果等于0，说明数据库中还没有数据，应该新建
-            HotUrl hotUrl = new HotUrl(urlId,0,1,PublicVar.goodValue);
-            hotUrlService.addHotUrl(hotUrl);
-        }
-
+        hotUrlService.incrGoodNumber(urlId);
         return ResultUtil.success(null);
     }
 
@@ -64,10 +58,17 @@ public class HotUrlController {
     }
 
 
+//    @RequestMapping("/getHotUrlByHot")
+//    public PageEntity<URL> getHotUrlByHot(Integer page){
+//        PageInfo<URL> pageInfo = hotUrlService.getHotUrlByHot(page, 10);
+//        return new PageEntity<URL>(pageInfo.getTotal(),pageInfo.getList(),pageInfo.getPages());//直接放入组装好的urls
+//    }
+
     @RequestMapping("/getHotUrlByHot")
     public PageEntity<URL> getHotUrlByHot(Integer page){
-        PageInfo<URL> pageInfo = hotUrlService.getHotUrlByHot(page, 10);
-        return new PageEntity<>(pageInfo.getTotal(),pageInfo.getList(),pageInfo.getPages());//直接放入组装好的urls
+        List urls = hotUrlService.getHotUrlByHot(page, 10);
+
+        return new PageEntity<URL>(50L,urls,5);
     }
 
 

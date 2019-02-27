@@ -5,9 +5,9 @@ package com.lyj.util;
  */
 public class PublicVar {
 
-    public static final String redisHotUrl="hotUrl";
-    public static final int clickValue=1;//点击分值
-    public static final int goodValue=100000000;//点赞分值
+    public static final String hotUrlScore="hotUrlScore";
+    public static final Double clickValue=1.0;//点击分值
+    public static final Double goodValue=3.0;//点赞分值
 
 
 }
