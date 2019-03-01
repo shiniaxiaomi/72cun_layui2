@@ -21,8 +21,8 @@ import java.util.Date;
 
 public class IEParser extends ParseNode {
 
-    public IEParser( FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
-        super(folderService, urlService, pid, pidName, userId);
+    public IEParser( FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId,String userName,RedisTemplate redisTemplate) {
+        super(folderService, urlService, pid, pidName, userId,userName,redisTemplate);
     }
 
     //解析节点

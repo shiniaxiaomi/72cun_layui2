@@ -7,6 +7,7 @@ import com.lyj.model.URL;
 import com.lyj.model.User;
 import com.lyj.service.URLService;
 import com.lyj.util.PageEntity;
+import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +32,8 @@ public class URLController {
 
     @Autowired
     URLService urlService;
+
+    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     //需要分页
     @RequestMapping("/getUrlsByPid")
@@ -113,12 +118,14 @@ public class URLController {
     }
 
     @RequestMapping("/changeShareStatus")
-    public Result changeShareStatus(URL url){
+    public Result changeShareStatus(URL url,String time,User sessionUser) throws ParseException {
+        url.setCreateTime(simpleDateFormat.parse(time));
+        url.setUserName(sessionUser.getUserName());
         if(url.getIsShare()==true){
             url.setShareTime(new Timestamp(new Date().getTime()));
         }
-        urlService.changeShareStatus(url);
-        return ResultUtil.success("状态更新成功");
+        urlService.changeShareStatus(url,sessionUser);
+        return ResultUtil.success("状态更新成功,并在"+ PublicVar.updateTime+"分钟后生效！");
     }
 
 

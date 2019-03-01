@@ -55,6 +55,15 @@ public class PageController {
         return mv;
     }
 
+    @RequestMapping("/userHome")
+    public String userHome(HttpSession session){
+        if(session.getAttribute("user")!=null){
+            return "forward:/main";
+        }else{
+            return "/html/index.html";
+        }
+    }
+
     @RequestMapping("/main")
     public ModelAndView userMain(ModelAndView mv, HttpSession session,User sessionUser){
 

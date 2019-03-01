@@ -9,6 +9,7 @@ import com.lyj.model.Result;
 import com.lyj.model.URL;
 import com.lyj.service.FolderService;
 import com.lyj.service.URLService;
+import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,14 +38,18 @@ public abstract class ParseNode {
     int pid;
     String pidName;
     int userId;
+    String userName;
+    RedisTemplate redisTemplate;
     List<URL> list=new ArrayList<>();//创建存放url的集合,便于之后批量提交
 
-    public ParseNode(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
+    public ParseNode(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId,String userName,RedisTemplate redisTemplate) {
         this.folderService = folderService;
         this.urlService = urlService;
         this.pid = pid;
         this.pidName = pidName;
         this.userId = userId;
+        this.userName=userName;
+        this.redisTemplate=redisTemplate;
     }
 
     //模板
@@ -61,10 +66,11 @@ public abstract class ParseNode {
 
                 //批量保存url
                 try{
-                    urlService.addUrlBatch(list);
+                    int number = urlService.addUrlBatch(list);
                     //删除redis中的文件夹缓存
                     if(list.size()>0){
                         folderService.cleanFolderCache(list.get(0).getUserId());
+                        redisTemplate.opsForZSet().incrementScore(PublicVar.userShareScore,userName,number);//保存记录用户分享的个数在redis中
                     }
                 }catch (DataIntegrityViolationException e){
                     String s = e.getCause().toString();

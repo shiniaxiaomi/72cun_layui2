@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyj.dao.HotUrlDao">
+
+    <insert id="updateHotUrlByUrlIdBatch">
+        replace into hotUrl  (urlId,clickNumber,goodNumber,score) VALUES
+        <foreach collection="list" item="itemId" index="no" separator=",">
+            ( #{itemId.urlId},#{itemId.clickNumber},#{itemId.goodNumber},#{itemId.score} )
+        </foreach>
+    </insert>
+
+
+</mapper>

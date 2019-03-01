@@ -4,16 +4,23 @@ import com.lyj.dao.UserDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
 import com.lyj.model.User;
+import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by Yingjie.Lu on 2018/9/17.
@@ -32,6 +39,8 @@ public class UserService {
     @Autowired
     URLService urlService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
 
     public boolean isExists(User user){
         if(!StringUtil.isEmpty(user.getUserName())){
@@ -151,5 +160,24 @@ public class UserService {
     public User getUserByUserName(String userName) {
         User user = userDao.getUserByUserName(userName);
         return user;
+    }
+
+    //从redis中获取用户网址分享数量的排序数据
+    public List<User> getShareUserOrder(Integer page,int limit) {
+        Set set = redisTemplate.opsForZSet().reverseRangeWithScores(PublicVar.userShareScore, (page - 1) * limit, limit - 1);
+
+        Object[] objects = set.toArray();
+        List<User> userList=new ArrayList<>();
+        for(int i=0;i<objects.length;i++){
+            DefaultTypedTuple object = (DefaultTypedTuple)objects[i];
+
+            User user=new User();
+            user.setUserName(String.valueOf(object.getValue()));
+            user.setShareNumber((int) Math.round(object.getScore()));
+
+            userList.add(user);
+        }
+
+        return userList;
     }
 }

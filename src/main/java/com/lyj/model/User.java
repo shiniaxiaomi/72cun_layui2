@@ -41,5 +41,9 @@ public class User implements Serializable {
     //验证码(不存在数据库中)
     private String code;
 
+    private int shareNumber;//用户的分享数量
+
+    private int goodNumber;//用户的点赞数量
+
 
 }

@@ -21,8 +21,8 @@ import java.util.Date;
 
 public class _360Parser extends ParseNode {
 
-    public _360Parser(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
-        super(folderService, urlService, pid, pidName, userId);
+    public _360Parser(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId,String userName,RedisTemplate redisTemplate) {
+        super(folderService, urlService, pid, pidName, userId,userName,redisTemplate);
     }
 
     //解析节点

@@ -43,7 +43,11 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             }else{//如果是页面请求
 
                 if(request.getRequestURI().contains("/main")){
-                    response.sendRedirect("/html/index.html");//重新请求到登入页面
+                    if(request.getParameterMap().containsKey("home")){
+                        response.sendRedirect("/userHome");//从主页过来的
+                    }else{
+                        response.sendRedirect("/html/index.html");//从其他地方过来的，重新请求到登入页面
+                    }
                 }else{
                     response.sendRedirect("/");//重新请求到登入页面
                 }

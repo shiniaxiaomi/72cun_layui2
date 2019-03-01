@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -28,10 +30,10 @@ public class FastController {
     //在登入请求那边拿到session中的数据,并以json的格式返回给login页面,login页面根据返回的数据判断要跳转到那个快捷的请求
     //在快捷的请求中再次获取session中的数据,并且渲染到快捷页面上即可
     @RequestMapping("/saveAndLogin")
-    public ModelAndView fast(ModelAndView mv, HttpSession session, HttpServletResponse response,
-                             @RequestParam(value = "url",required = false) String url,
-                             @RequestParam(value = "title",required = false) String title,
-                             @RequestParam(value = "type",required = false) String type){
+    public void fast(ModelAndView mv, HttpSession session,HttpServletResponse response,
+                       @RequestParam(value = "url",required = false) String url,
+                       @RequestParam(value = "title",required = false) String title,
+                       @RequestParam(value = "type",required = false) String type) throws IOException {
 
         //将首次过来的数据保存到session中
         sessionSetString(session,"url",url,true);
@@ -42,16 +44,15 @@ public class FastController {
         User user = (User) session.getAttribute("user");
         if(user!=null){//说明用户已经存在
             if(!StringUtil.isEmpty(type)){
-                mv.setViewName("forward:/fast/open");
+                response.sendRedirect("forward:/fast/open");
             }else if(!StringUtil.isEmpty(url)){
-                mv.setViewName("forward:/fast/collection");
+                response.sendRedirect("forward:/fast/collection");
             }else {
-                mv.setViewName("error");//返回错误页面
+                response.sendRedirect("error");//返回错误页面
             }
         }else{
-            mv.setViewName("forward:/");//内部转发到登入请求,去登入页面
+            response.sendRedirect("/html/index.html");//内部转发到登入请求,去登入页面
         }
-        return mv;
     }
 
     //快速收藏

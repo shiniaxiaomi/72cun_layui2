@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -33,34 +34,6 @@ public class LoginController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    RedisTemplate redisTemplate;
-
-    @RequestMapping("/test")
-    @ResponseBody
-    public Object test(){
-//        Object o = redisTemplate.opsForHash().get("a", "1");
-//        List list = redisTemplate.opsForHash().multiGet("hash", Arrays.asList("age", "name"));
-//        redisTemplate.opsForHash().put("hash","object", JSON.toJSONString(new URL("111","222",1,null,1,null)));
-//        Object parse = JSON.parse((String) redisTemplate.opsForHash().get("hash", "object"));
-
-        //批量操作（同步的）
-        List list = redisTemplate.executePipelined(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                for (int i = 0; i < 2; i++) {
-                   //批量获取map
-                    connection.hGet(("hash" + i).getBytes(), "1".getBytes());//第一个参数是key，第二个参数是map中的key
-                }
-                return null;
-            }
-        });
-
-        System.out.println(list);
-        return null;
-    }
-
 
     @RequestMapping("/")
     public ModelAndView login(HttpSession session, ModelAndView mv){
@@ -142,7 +115,7 @@ public class LoginController {
             }else if(url!=null && !"".equals((String)url)){
                 mv.setViewName("forward:/fast/collection");
             }else{
-                mv.setViewName("forward:/main");//重定向到首页
+                mv.setViewName("forward:/main");
             }
         }else {
             throw new MessageException("用户名或密码错误");
@@ -151,7 +124,7 @@ public class LoginController {
         //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
        if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<notice.getNoticeTime()){
             mv.addObject("showNotice",Notice.AnnounceJs);
-        }
+       }
 
         return mv;
     }

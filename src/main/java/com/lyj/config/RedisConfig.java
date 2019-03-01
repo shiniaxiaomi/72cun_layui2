@@ -60,13 +60,39 @@ public class RedisConfig {
 
         //设置redisTempalte的序列化方式
         GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);// 设置值（value）的序列化采用FastJsonRedisSerializer。
-        redisTemplate.setKeySerializer(new StringRedisSerializer());// 设置键（key）的序列化采用StringRedisSerializer。
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(stringRedisSerializer);// 设置键（key）的序列化采用StringRedisSerializer。
+        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        redisTemplate.setHashValueSerializer(stringRedisSerializer);
 
         return redisTemplate;
     }
+
+    //配置的操作的是2号库
+//    @Bean
+//    public RedisTemplate redisTemplate_user(){
+//        //创建连接工厂
+//        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new JedisPoolConfig());
+//        jedisConnectionFactory.setHostName(host);
+//        jedisConnectionFactory.setPassword(password);
+//        jedisConnectionFactory.setPort(port);
+//        jedisConnectionFactory.setTimeout(timeout);
+//        jedisConnectionFactory.setDatabase(2);//选择1号库
+//
+//        RedisTemplate redisTemplate=new RedisTemplate();
+//        redisTemplate.setConnectionFactory(jedisConnectionFactory);
+//
+//        //设置redisTempalte的序列化方式
+//        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+//        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+//        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);// 设置值（value）的序列化采用FastJsonRedisSerializer。
+//        redisTemplate.setKeySerializer(stringRedisSerializer);// 设置键（key）的序列化采用StringRedisSerializer。
+//        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+//        redisTemplate.setHashValueSerializer(stringRedisSerializer);
+//
+//        return redisTemplate;
+//    }
 
 
 //    public static void main(String[] args) {

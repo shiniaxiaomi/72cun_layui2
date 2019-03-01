@@ -20,8 +20,8 @@ import java.util.Date;
  */
 public class FirefoxParser extends ParseNode{
 
-    public FirefoxParser(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId) {
-        super(folderService, urlService, pid, pidName, userId);
+    public FirefoxParser(FolderService folderService, URLService urlService, Integer pid, String pidName, Integer userId,String userName,RedisTemplate redisTemplate) {
+        super(folderService, urlService, pid, pidName, userId,userName,redisTemplate);
     }
 
     //解析节点

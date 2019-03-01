@@ -7,6 +7,7 @@ import com.lyj.model.User;
 import com.lyj.service.FolderService;
 import com.lyj.service.URLService;
 import com.lyj.service.UserService;
+import com.lyj.util.PageEntity;
 import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,5 +201,19 @@ public class UserController {
         }
     }
 
+
+    //获得用户的分享数量的用户排名
+    @ResponseBody
+    @RequestMapping("/getShareUserOrder")
+    public PageEntity<User> getShareUserOrder(Integer page){
+        int size=10;
+        List<User> userList = userService.getShareUserOrder(page, size);
+        if(userList.size()>size){
+            return new PageEntity<User>(Long.valueOf(userList.size()),userList,userList.size()/size);
+        }else{
+            return new PageEntity<User>(Long.valueOf(userList.size()),userList,1);
+        }
+
+    }
 
 }

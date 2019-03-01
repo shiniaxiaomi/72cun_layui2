@@ -20,15 +20,13 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class HotUrl implements Serializable {
 
-    private int id;
-
-    private int urlId;//链接的id
+    private int urlId;//链接的id(也是主键)
 
     private int clickNumber;//点击量
 
     private int goodNumber;//点赞量
 
-    private int score;//分值
+    private double score;//分值
 
 
     public HotUrl(int urlId, int clickNumber, int goodNumber) {
@@ -37,10 +35,11 @@ public class HotUrl implements Serializable {
         this.goodNumber = goodNumber;
     }
 
-    public HotUrl(int urlId, int clickNumber, int goodNumber, int score) {
+    public HotUrl(int urlId, int clickNumber, int goodNumber, double score) {
         this.urlId = urlId;
         this.clickNumber = clickNumber;
         this.goodNumber = goodNumber;
         this.score = score;
     }
+
 }

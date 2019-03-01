@@ -1,7 +1,6 @@
 package com.lyj.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,6 +47,9 @@ public class URL implements Serializable {
 
     //不属于数据库字段
     private int goodNumber;//点赞量
+
+    // 不属于数据库字段
+    private double score;//总分
 
     public URL(String url, String label, int pid, String pidName, int userId, Date createTime) {
         this.url = url;

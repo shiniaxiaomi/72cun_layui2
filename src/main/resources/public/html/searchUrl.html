@@ -193,10 +193,24 @@
 
         //监听链接状态事件
         form.on('switch(isShare)', function(obj){
-            var tr=$(obj.elem).closest("tr").find("td").get(0);
-            var id=$(tr).find("div").text();
+            var tds=$(obj.elem).closest("tr").find("td");
+
+            var id=$(tds.get(0)).find("div").text();
+            var label=$(tds.get(1)).find("div").text();
+            var url=$(tds.get(2)).find("div a").text();
+            var pidName=$(tds.get(3)).find("div").text();
+            var creatTime=$(tds.get(4)).find("div").text();
+
+            var url={
+                id:id,
+                url:url,
+                label:label,
+                pidName:pidName,
+                time:creatTime,
+                isShare:obj.elem.checked
+            }
             //修改链接共享的状态
-            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+            util.ajax("/url/changeShareStatus",url,function (data) {
                 layer.msg(data.message);
             })
         });

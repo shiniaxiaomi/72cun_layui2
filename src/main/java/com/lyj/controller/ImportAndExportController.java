@@ -53,7 +53,7 @@ public class ImportAndExportController {
     @ResponseBody
     @Transactional
     public Result importChrome(MultipartFile file, User sessionUser){
-        ParseNode parseNode=new ChromeParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        ParseNode parseNode=new ChromeParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId(),sessionUser.getUserName(),redisTemplate);//使用chrome解析类
         Result result = parseNode.start(file);
         return result;
     }
@@ -69,7 +69,7 @@ public class ImportAndExportController {
     @ResponseBody
     @Transactional
     public Result importFirefox(MultipartFile file, User sessionUser){
-        ParseNode parseNode=new FirefoxParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        ParseNode parseNode=new FirefoxParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId(),sessionUser.getUserName(),redisTemplate);//使用chrome解析类
         Result result = parseNode.start(file);
         return result;
     }
@@ -85,7 +85,7 @@ public class ImportAndExportController {
     @ResponseBody
     @Transactional
     public Result importIE(MultipartFile file, User sessionUser){
-        ParseNode parseNode=new IEParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        ParseNode parseNode=new IEParser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId(),sessionUser.getUserName(),redisTemplate);//使用chrome解析类
         Result result = parseNode.start(file);
         return result;
     }
@@ -102,7 +102,7 @@ public class ImportAndExportController {
     @ResponseBody
     @Transactional
     public Result import360(MultipartFile file, User sessionUser){
-        ParseNode parseNode=new _360Parser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId());//使用chrome解析类
+        ParseNode parseNode=new _360Parser(folderService,urlService,sessionUser.getRootFolderId(),"默认文件夹",sessionUser.getId(),sessionUser.getUserName(),redisTemplate);//使用chrome解析类
         Result result = parseNode.start(file);
         return result;
     }

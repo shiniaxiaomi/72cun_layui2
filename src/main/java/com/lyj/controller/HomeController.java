@@ -11,6 +11,10 @@ import com.lyj.service.UserService;
 import com.lyj.util.PageEntity;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +42,9 @@ public class HomeController {
     @Autowired
     HotUrlService hotUrlService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     //个人主页
     @RequestMapping("/{userName}")
     public ModelAndView personalPage(@PathVariable(value="userName") String userName){
@@ -55,6 +62,8 @@ public class HomeController {
         }
     }
 
+
+    //会查询出最新的点击量和点赞量
     @RequestMapping("/getShareUrlsLike")
     public PageEntity<URL> getShareUrlsLike(String keywords,Integer userId,Integer page){
         PageInfo<URL> pageInfo=null;
@@ -63,7 +72,30 @@ public class HomeController {
         }else{
             pageInfo = urlService.getShareUrlsByUserIdLike(keywords,userId, page, 10);
         }
-        return new PageEntity<>(pageInfo.getTotal(),pageInfo.getList(),pageInfo.getPages());//直接放入组装好的urls
+
+        List<URL> urls = pageInfo.getList();
+
+        //从redis中查询每个url的点击量和点赞量，并替换
+        List list = redisTemplate.executePipelined(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                for (int i = 0; i < urls.size(); i++) {
+                    //这个进行单个命令操作，外面使用for循环实现批量操作
+                    connection.hMGet(String.valueOf(urls.get(i).getId()).getBytes(),"clickNumber".getBytes(),"goodNumber".getBytes());
+                }
+                return null;
+            }
+        });
+
+        //从redis中查询点击量和点赞量，并替换
+        for(int i=0;i<urls.size();i++){
+            Object clickNumber = ((List)list.get(i)).get(0);
+            Object goodNumber = ((List)list.get(i)).get(1);
+            urls.get(i).setClickNumber(clickNumber==null?0:(int)clickNumber);
+            urls.get(i).setGoodNumber(goodNumber==null?0:(int)goodNumber);
+        }
+
+        return new PageEntity<>(pageInfo.getTotal(),urls,pageInfo.getPages());//直接放入组装好的urls
     }
 
 
