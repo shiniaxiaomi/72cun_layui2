@@ -5,6 +5,7 @@ import com.lyj.model.URL;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public interface URLDao{
 
     //add,delete.update,get
     //增
-    @Insert("insert into url (url,label,pid,createTime,userId,pidName,isShare) values (#{url},#{label},#{pid},#{createTime},#{userId},#{pidName},#{isShare})")
+    @Insert("insert into url (url,label,pid,createTime,userId,pidName,isShare,shareTime) values (#{url},#{label},#{pid},#{createTime},#{userId},#{pidName},#{isShare},#{shareTime})")
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id") //数据插入成功后，id值被反填到user对象中，调用getId()就可以获取
     int addUrl(URL url);
 
@@ -86,4 +87,13 @@ public interface URLDao{
 
     //xml
     List<URL> getUrlsByIdBatch(List list);
+
+    @Select("select id from url where pid=#{pid} and isShare=true")
+    List<Integer> getShareUrlIdsByPid(Integer pid);
+
+    @Select("select id from url where userId=#{userId}")
+    List<Integer> getUrlIdByUserId(Integer userId);
+
+    @Select("select id from url where userId=#{userId} and isShare=true")
+    List<Integer> getShareUrlIdsByUserId(Integer userId);
 }

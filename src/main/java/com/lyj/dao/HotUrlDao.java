@@ -66,6 +66,12 @@ public interface HotUrlDao {
             "left join user on url.userId=user.id ")
     List<URL> getHotUrlByPage();
 
-    @Delete("delete from user_hotUrl where likeUrlId=#{urlId}")
-    int deleteUser_HotUrlByUrlId(Integer urlId);
+    //xml
+    int deleteHotUrlByUrlIdBatch(List<Integer> list);
+
+    //xml
+    int updateHotUrlClickNumberByUrlIdBatch(List<HotUrl> list);
+
+    //xml
+    int updateHotUrlGoodNumberByUrlIdBatch(List<HotUrl> list);
 }

@@ -137,8 +137,9 @@
                 var data = checkStatus.data;
 
                 var id="";
-                for(var i=0;i<data.length;i++){id+=data[i].id+",";}
-                util.ajax("/url/deleteInBatches",{id:id},function (data) {
+                var isShare="";
+                for(var i=0;i<data.length;i++){id+=data[i].id+",";isShare+=data[i].isShare+",";}
+                util.ajax("/url/deleteInBatches",{id:id,isShare:isShare},function (data) {
                     if(data.code==0){
                         tableOption.where={pid:clickNodeId};
                         tableIns.reload(tableOption);//刷新表格
@@ -315,7 +316,7 @@
             ,url: '/url/getUrlsByPid' //数据接口
             ,where:{pid:-1}
             ,page: true //开启分页
-//            ,skin: 'line' //行边框风格
+            ,skin: 'line' //行边框风格
             ,limits:[10,20,30]//分页的数量选择
             ,cols: [[ //表头
                 {type:'checkbox',width:"5%"},
@@ -343,7 +344,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                    util.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
                         if(data.code==0){
                             tableOption.where={pid:clickNodeId};
                             tableIns.reload(tableOption);//刷新表格
@@ -377,10 +378,27 @@
 
         //监听链接状态事件
         form.on('switch(isShare)', function(obj){
-            var tr=$(obj.elem).closest("tr").find("td").get(0);
-            var id=$(tr).find("div").text();
+            var tds=$(obj.elem).closest("tr").find("td");
+
+            var i=1;
+
+            var id=$(tds.get(0+i)).find("div").text();
+            var label=$(tds.get(1+i)).find("div").text();
+            var url=$(tds.get(2+i)).find("div a").text();
+            var pidName=$(tds.get(3+i)).find("div").text();
+            var creatTime=$(tds.get(4+i)).find("div").text();
+
+            var url={
+                id:id,
+                url:url,
+                label:label,
+                pidName:pidName,
+                time:creatTime,
+                isShare:obj.elem.checked
+            }
+
             //修改链接共享的状态
-            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+            util.ajax("/url/changeShareStatus",url,function (data) {
                 layer.msg(data.message);
             })
         });

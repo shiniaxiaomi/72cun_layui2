@@ -61,29 +61,27 @@ public class FolderService {
     //该操作后,清除缓存
     @CacheEvict(value = "folder",key = "'folders-userId:'+#userId")
     @Transactional
-    public boolean deleteFolderByFolderId(int folderId, int userId) {
+    public void deleteFolderByFolderId(int folderId, int userId,String userName) {
         int num1=0;
         int count = folderDao.getChildrenFoldersCountByFolderId(userId, folderId);
         if(count>=1){
             throw new MessageException("该文件夹下还有子文件夹,请先删除子文件夹");
         }else{
             User customFolder = userService.getCustomFolder(userId);
-            if(customFolder.getCustomFolderId()==folderId){
-                throw new MessageException("该文件夹是自定义文件夹,请先更换自定义文件夹后再进行删除!");
-            }
-
+            if(customFolder.getCustomFolderId()==folderId){ throw new MessageException("该文件夹是自定义文件夹,请先更换自定义文件夹后再进行删除!"); }
             num1 = folderDao.deleteByFolderId(folderId);//删除文件夹
-
             //删除文件夹下的网址
-            urlService.deleteUrlByPid(folderId);
+            urlService.deleteUrlByPid(folderId,userName);
         }
 
-        return num1==1 ? true : false;
+        if(num1==0){ throw new MessageException("文件夹删除失败！"); }
+
     }
 
     //清除缓存在redis中的folder
     @CacheEvict(value = "folder",key = "'folders-userId:'+#userId")
     public void cleanFolderCache(int userId){
+
     }
 
     //该操作后,清除缓存
@@ -95,8 +93,9 @@ public class FolderService {
     }
 
 
-    public int deleteFolderByUserId(Integer userId) {
-        return folderDao.deleteByUserId(userId);
+    public void deleteFolderByUserId(Integer userId) {
+        int i = folderDao.deleteByUserId(userId);
+        if(i==0) throw new MessageException("用户文件夹删除失败");
     }
 
     public boolean isExistFolderName(Folder folder){

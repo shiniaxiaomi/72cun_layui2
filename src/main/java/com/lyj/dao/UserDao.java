@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 陆英杰
@@ -65,4 +66,11 @@ public interface UserDao{
 
     @Select("select rootFolderId from user where id=#{userId}")
     int getRootFolderIdByUserId(Integer userId);
+
+    //xml
+    int updateUserShareNumberByUserNameBatch(List<User> list);
+
+    //xml
+    int updateUserGoodNumberByUserNameBatch(List<User> list);
+
 }

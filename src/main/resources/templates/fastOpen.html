@@ -182,7 +182,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                    util.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
                         if(data.code==0){
                             tableIns.reload(tableOption);//刷新表格
                             layer.msg("删除成功");
@@ -213,10 +213,26 @@
 
         //监听链接状态事件
         form.on('switch(isShare)', function(obj){
-            var tr=$(obj.elem).closest("tr").find("td").get(0);
-            var id=$(tr).find("div").text();
+            var tds=$(obj.elem).closest("tr").find("td");
+
+            var i=0;//递增使用
+
+            var id=$(tds.get(0+i)).find("div").text();
+            var label=$(tds.get(1+i)).find("div").text();
+            var url=$(tds.get(2+i)).find("div a").text();
+            var pidName=$(tds.get(3+i)).find("div").text();
+            var creatTime=$(tds.get(4+i)).find("div").text();
+
+            var url={
+                id:id,
+                url:url,
+                label:label,
+                pidName:pidName,
+                time:creatTime,
+                isShare:obj.elem.checked
+            }
             //修改链接共享的状态
-            util.ajax("/url/changeShareStatus",{id:id,isShare:obj.elem.checked},function (data) {
+            util.ajax("/url/changeShareStatus",url,function (data) {
                 layer.msg(data.message);
             })
         });

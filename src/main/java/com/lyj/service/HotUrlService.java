@@ -1,14 +1,16 @@
 package com.lyj.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.lyj.dao.HotUrlDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.HotUrl;
 import com.lyj.model.URL;
 import com.lyj.model.linkModel.User_HotUrl;
+import com.lyj.util.PageEntity;
 import com.lyj.util.PublicVar;
+import com.lyj.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -37,69 +39,65 @@ public class HotUrlService {
     private Object count;
     private Object hotUrlByPage;
 
-    public List<URL> getHotUrlByHot(Integer page, int limit) {
-        PageHelper.startPage(page, limit);
-        List<URL> urls = hotUrlDao.getHotUrlByHot();
-        return urls;
-    }
+//    public List<URL> getHotUrlByHot(Integer page, int limit) {
+//        PageHelper.startPage(page, limit);
+//        List<URL> urls = hotUrlDao.getHotUrlByHot();
+//        return urls;
+//    }
 
     //查询出的结果会缓存在redis中，并1分钟后过期，过期后会自动重新查询
-    public List getHotUrlByHotByRedis(Integer page, int limit) {
+    public PageEntity getHotUrlByHotByRedis(Integer page, int limit) {
+        PageEntity<URL> pageEntity=null;
 
-        //先去redis中获取主页缓存数据
-        Object homeData = redisTemplate.opsForValue().get("homeData_page"+page);
+        Object data = redisTemplate.opsForValue().get(PublicVar.hotUrlData + page);
+        if(data!=null){
+            return JSON.parseObject((String) data, new TypeReference<PageEntity<URL>>() {});
+        }else{
+            Set set = redisTemplate.opsForZSet().reverseRange(PublicVar.urlScore, (page - 1) * limit, page*limit - 1);//获取排序且分页的url的id集合
+            if(set.size()==0){//如果没有结果集，则直接返回
+                return new PageEntity<>(0L, new ArrayList<URL>(), page);
+            }
 
-        List<URL> urls=null;
-        if(homeData!=null){
-            urls = JSON.parseArray((String) homeData, URL.class);
-        }else if(homeData==null){//如果数据为空或者过期，则重新计算并获取
-
-            Set set = redisTemplate.opsForZSet().reverseRange(PublicVar.hotUrlScore, (page - 1) * limit, limit - 1);
-
-            List<Object> ids = Arrays.asList(set.toArray());
+            Object[] ids = set.toArray();
             List list = redisTemplate.executePipelined(new RedisCallback<String>() {
                 @Override
                 public String doInRedis(RedisConnection connection) throws DataAccessException {
-                    for (int i = 0; i < ids.size(); i++) {
-                        //这个进行单个命令操作，外面使用for循环实现批量操作
-                        connection.hGetAll(String.valueOf(ids.get(i)).getBytes());
+                    for(int i=0;i<ids.length;i++){
+                        connection.hGet(PublicVar.urlClickNumber.getBytes(),RedisUtil.toByte(ids[i]));
+                        connection.hGet(PublicVar.urlGoodNumber.getBytes(),RedisUtil.toByte(ids[i]));
                     }
                     return null;
                 }
             });
-
-            urls = new ArrayList<>();//保存url的集合
-            for(int i=0;i<set.size();i++){
-                Object clickNumber=((Map)list.get(i)).get("clickNumber");
-                Object goodNumber=((Map)list.get(i)).get("goodNumber");
-                Object json= ((Map)list.get(i)).get("url");
-
-                if(json!=null){
-                    URL url = JSON.parseObject((String)json, URL.class);
-                    url.setClickNumber(clickNumber==null?0:Integer.valueOf((String)clickNumber));
-                    url.setGoodNumber(goodNumber==null?0:Integer.valueOf((String)goodNumber));
-                    urls.add(url);
-                }
+            List<URL> urlList = urlService.getUrlsByIdBatch(Arrays.asList(ids));
+            for(int i=0;i<urlList.size();i++){
+                URL url = urlList.get(i);
+                url.setClickNumber(RedisUtil.toInt(list.get(2*i)));
+                url.setGoodNumber(RedisUtil.toInt(list.get(2*i+1)));
             }
-
-            redisTemplate.opsForValue().set("homeData_page"+page,JSON.toJSONString(urls),PublicVar.updateTime, TimeUnit.MINUTES);//在将数据缓存在redis中,并并且设置1分钟过期
+            pageEntity = new PageEntity<>(Long.valueOf(urlList.size()), urlList, set.size()<limit?page:page+1);
+            if(PublicVar.updateTime>0){
+                redisTemplate.opsForValue().set(PublicVar.hotUrlData+page,JSON.toJSONString(pageEntity),PublicVar.updateTime, TimeUnit.MINUTES);//在将数据缓存在redis中,并并且设置1分钟过期
+            }
         }
 
-        return urls;
+        return pageEntity;
     }
+
+//    public void incrRedisUtil(RedisTemplate redisTemplate){
+//
+//    }
 
     //浏览量加1
     public void incrClickNumber(URL url) {
-
         //增加点击量
         //在redis中进行批量操作
         redisTemplate.executePipelined(new RedisCallback<String>() {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 //如果map不存在，则自动创建。如果map中的key不存在，则自动创建，并初始化值为0
-                connection.hIncrBy(String.valueOf(url.getId()).getBytes(),"clickNumber".getBytes(),1L);//在urlId对应的map中添加点击量
-                connection.hSetNX(String.valueOf(url.getId()).getBytes(), "url".getBytes(),JSON.toJSONString(url).getBytes());//保存url信息
-                connection.zIncrBy(PublicVar.hotUrlScore.getBytes(),PublicVar.clickValue,String.valueOf(url.getId()).getBytes());//在分数中增加分值
+                connection.hIncrBy(PublicVar.urlClickNumber.getBytes(),RedisUtil.toByte(url.getId()),1L);//urlClickNumber
+                connection.zIncrBy(PublicVar.urlScore.getBytes(),PublicVar.clickValue,RedisUtil.toByte(url.getId()));//在分数中增加分值
                 return null;
             }
         });
@@ -107,7 +105,7 @@ public class HotUrlService {
     }
 
     //收藏量加1
-    public void incrGoodNumber(URL url) {
+    public void incrGoodNumber(URL url,String userName) {
 
         //增加点赞量
         //在redis中进行批量操作
@@ -115,9 +113,9 @@ public class HotUrlService {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 //如果map不存在，则自动创建。如果map中的key不存在，则自动创建，并初始化值为0
-                connection.hIncrBy(String.valueOf(url.getId()).getBytes(),"goodNumber".getBytes(),1L);//在urlId对应的map中添加点击量
-                connection.hSetNX(String.valueOf(url.getId()).getBytes(), "url".getBytes(),JSON.toJSONString(url).getBytes());//保存url信息
-                connection.zIncrBy(PublicVar.hotUrlScore.getBytes(),PublicVar.goodValue,String.valueOf(url.getId()).getBytes());//在分数中增加分值
+                connection.hIncrBy(PublicVar.urlGoodNumber.getBytes(),RedisUtil.toByte(url.getId()),1L);//urlGoodNumber
+                connection.zIncrBy(PublicVar.urlScore.getBytes(),PublicVar.goodValue,RedisUtil.toByte(url.getId()));//urlScore
+                connection.zIncrBy(PublicVar.userGoodScore.getBytes(),1.0,RedisUtil.toByte(userName));//userGoodScore
                 return null;
             }
         });
@@ -137,15 +135,16 @@ public class HotUrlService {
         }
     }
 
-    public void deleteHotUrlByUrlId(Integer id) {
-        int i=hotUrlDao.deleteHotUrlByUrlId(id);
-        if(i==0){
-            throw new MessageException("热点数据删除失败！");
-        }
+    public int deleteHotUrlByUrlId(Integer id) {
+        return hotUrlDao.deleteHotUrlByUrlId(id);
     }
 
-    public void updateHotUrlByUrlIdBatch(List<HotUrl> hotUrls) {
-        int i=hotUrlDao.updateHotUrlByUrlIdBatch(hotUrls);
+    public int updateHotUrlByUrlIdBatch(List<HotUrl> hotUrls) {
+        if(hotUrls.size()>0){
+            return hotUrlDao.updateHotUrlByUrlIdBatch(hotUrls);
+        }else{
+            return 0;
+        }
     }
 
     public int getCount() {
@@ -157,10 +156,30 @@ public class HotUrlService {
         return hotUrlDao.getHotUrlByPage();
     }
 
-    public void deleteUser_HotUrlByUrlId(Integer urlId) {
-        int i = hotUrlDao.deleteUser_HotUrlByUrlId(urlId);
-        if(i==0){
-            throw new MessageException("网址点赞记录删除失败!");
+
+    public int deleteHotUrlByUrlIdBatch(List<Integer> ids) {
+        if(ids.size()>0){
+            return  hotUrlDao.deleteHotUrlByUrlIdBatch(ids);
+        }else {
+            return 0;
+        }
+
+    }
+
+
+    public int updateHotUrlClickNumberByUrlIdBatch(List<HotUrl> list) {
+        if(list.size()>0){
+            return hotUrlDao.updateHotUrlClickNumberByUrlIdBatch(list);
+        }else{
+            return 0;
+        }
+    }
+
+    public int updateHotUrlGoodNumberByUrlIdBatch(List<HotUrl> list) {
+        if(list.size()>0){
+            return hotUrlDao.updateHotUrlGoodNumberByUrlIdBatch(list);
+        }else{
+            return 0;
         }
     }
 }

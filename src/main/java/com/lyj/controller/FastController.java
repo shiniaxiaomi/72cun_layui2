@@ -30,7 +30,7 @@ public class FastController {
     //在登入请求那边拿到session中的数据,并以json的格式返回给login页面,login页面根据返回的数据判断要跳转到那个快捷的请求
     //在快捷的请求中再次获取session中的数据,并且渲染到快捷页面上即可
     @RequestMapping("/saveAndLogin")
-    public void fast(ModelAndView mv, HttpSession session,HttpServletResponse response,
+    public ModelAndView fast(ModelAndView mv, HttpSession session,HttpServletResponse response,
                        @RequestParam(value = "url",required = false) String url,
                        @RequestParam(value = "title",required = false) String title,
                        @RequestParam(value = "type",required = false) String type) throws IOException {
@@ -40,25 +40,28 @@ public class FastController {
         sessionSetString(session,"title",title,true);
         sessionSetString(session,"type",type,false);
 
-
         User user = (User) session.getAttribute("user");
         if(user!=null){//说明用户已经存在
             if(!StringUtil.isEmpty(type)){
-                response.sendRedirect("forward:/fast/open");
+                mv.setViewName("forward:/fast/open");
+                return mv;
             }else if(!StringUtil.isEmpty(url)){
-                response.sendRedirect("forward:/fast/collection");
+                mv.setViewName("forward:/fast/collection");
+                return mv;
             }else {
-                response.sendRedirect("error");//返回错误页面
+                mv.setViewName("error");//返回错误页面
+                return mv;
             }
         }else{
             response.sendRedirect("/html/index.html");//内部转发到登入请求,去登入页面
+            return null;
         }
     }
 
     //快速收藏
     @RequestMapping("/collection")
-    public ModelAndView collection(ModelAndView mv, HttpSession session){
-        mv.setViewName("fastCollection");
+    public ModelAndView collection( HttpSession session){
+        ModelAndView mv=new ModelAndView("fastCollection");
         mv.addObject("url",session.getAttribute("url"));
         mv.addObject("label",session.getAttribute("label"));
         session.removeAttribute("url");
@@ -68,8 +71,8 @@ public class FastController {
 
     //快速打开
     @RequestMapping("/open")
-    public ModelAndView open(ModelAndView mv, HttpSession session){
-        mv.setViewName("fastOpen");
+    public ModelAndView open(HttpSession session){
+        ModelAndView mv=new ModelAndView("fastOpen");
         mv.addObject("type",session.getAttribute("type"));
         session.removeAttribute("type");
         return mv;

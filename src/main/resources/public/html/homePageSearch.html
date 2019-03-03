@@ -95,42 +95,30 @@
 
                     </div>
                     <div class="layui-col-md3">
-                        <div class="grid-demo">
-                            <div class="layui-card homepage-top">
-                                <div class="layui-card-header">
-                                    <h3 class="panel-title">
-                                        <i class="layui-icon layui-icon-picture"></i>
-                                        分享达人
-                                    </h3>
-                                </div>
-                                <div class="layui-card-body">
-                                    <div class="layui-row layui-col-space15">
-                                        <div class="layui-col-md4">
-                                            <p>1111</p>
-                                        </div>
-                                        <div class="layui-col-md12 margin-top10">
-                                            <a href="javascript:;"  class="layui-btn layui-btn-primary">更多</a>
+                        <div class="grid-demo layui-card homepage-bottom">
+                            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                                <ul class="layui-tab-title" style="text-align: center">
+                                    <li class="layui-this">分享达人</li>
+                                    <li>获赞达人</li>
+                                    <li>随机用户</li>
+                                </ul>
+                                <div class="layui-tab-content">
+                                    <div class="layui-tab-item layui-show layui-card-body">
+                                        <div class="flow-default" id="shareUser">
+                                            <!--动态生成-->
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="layui-card homepage-bottom">
-                                <div class="layui-card-header">
-                                    <h3 class="panel-title">
-                                        <i class="layui-icon layui-icon-user"></i>
-                                        私信
-                                    </h3>
-                                </div>
-                                <div class="layui-card-body">
-                                    <a href="javascript:;" class="layadmin-privateletterlist-item">
-                                        <div class="meida-left">
-                                            <!--<img src="../../layuiadmin/style/res/template/portrait.png">-->
+                                    <div class="layui-tab-item layui-card-body">
+                                        <div id="goodUser">
+                                            <!-- 动态生成点赞排行榜 -->
                                         </div>
-                                        <div class="meida-right">
-                                            <p>Hugo</p>
-                                            <mdall>人生是一场修行,不要轻易交白卷</mdall>
+                                    </div>
+                                    <div class="layui-tab-item layui-card-body">
+                                        <div id="randomUser">
+                                            <!-- 动态生成随机用户 -->
+                                            待开发。。。。。
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -145,259 +133,24 @@
 <script src="/js/jquery.min.js"></script>
 <script src="/layui/layui.js"></script>
 <script src="/js/util.js"></script>
+<script src="/myjs/app.js?v=1.0.1"></script><!-- 自己定义的模块 -->
 <script>
 
-    var layer=undefined;//提示框的全局变量
-    var user=undefined;//保存user数据
+    layui.use(['layer','homePageJs'], function() {
+        var layer = layui.layer;
+        var homePageJs=layui.homePageJs;
 
-    //修改登入的状态
-    function changeLoginStatus(data) {
-        $("#user").html(`
-             <li class="layui-nav-item">
-                <a class="fly-nav-avatar" href="javascript:;">
-                    <img src="/images/code.png" style="margin-right: 10px">
-                    <cite class="layui-hide-xs" style="margin-right: 5px">`+data.userName+`</cite>
-                    <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
-                </a>
-            </li>
-            <li class="layui-nav-item"><a href="/exit" style="text-align: center;">退出</a></li>
-        `);
-    }
+        homePageJs.init();
 
-    //动态添加数据
-    function addUrlData(url,param,next) {
-        util.ajax(url,param,function (data) {
-
-            var o = document.getElementById("LAY_demo1");
-            var width = o.offsetWidth-200; //div的宽度
-
-            var lis = [];
-            var list=data.data;
-            for(var i = 0; i < list.length; i++){
-                lis.push(`
-                                <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px"></a>
-                                <div class="media-body">
-                                    <div class="pad-btm">
-                                        <p class="fontColo "><a href="/home/`+list[i].userName+`"><b>`+list[i].userName+`</b></a><span>共享了一个链接</span></p>
-                                        <p>`+list[i].shareTime+`</p>
-                                    </div>
-                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank"><span style="color: #01AAED" onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].label+`</span></a></span></p></b>
-                                    <p>位置：<span>`+list[i].pidName+`</span></p>
-                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank"><span onclick="urlClick(this)" urlId="`+list[i].id+`">`+list[i].url+`</span></a></div>
-
-                                    <div class="media">
-                                        <div class="media-right">
-
-                                            <ul class="list-inline">
-                                                <li><span>点击量：</span><span>`+list[i].clickNumber+`</span></li>
-                                                <li><span>点赞量：</span><span>`+list[i].goodNumber+`</span></li>
-                                                <li onclick="goodClick(this)" urlId="`+list[i].id+`"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
-                                            </ul>
-
-                                        </div>
-                                        <!--<div class="media-left"></div>-->
-                                    </div>
-                                </div>
-                                <hr>
-                        `)
-            }
-
-            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
-            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
-            next(lis.join(''), param.page < data.pages); //假设总页数为 10
-        })
-    }
-
-    //通过点击节点获取点击对应的url数据
-    function getUrlData(arg) {
-        var div=$(arg).closest(".media-body");
-        //获取时间
-        var id=$(arg).attr("urlId")
-        var url=$(div).find("div a span").text();
-        var label=$(div).find("b a span").text();
-        var pidName=$($(div).find("p span").get(3)).text();
-        var userName=$($(div).find("div p").get(0)).find("b").text();
-        var clickNumber=$($(div).find("ul li span").get(1)).text();
-        var goodNumber=$($(div).find("ul li span").get(3)).text();
-
-        var shareTime=$($(div).find("div p").get(1)).text();
-
-        var url={
-            id:id,
-            url:url,
-            label:label,
-            pidName:pidName,
-            userName:userName,
-            time:shareTime,
-            clickNumber:clickNumber,
-            goodNumber:goodNumber
-        }
-        return url;
-    }
-
-    //访问链接的点击事件
-    function urlClick(arg) {
-        var url=getUrlData(arg);
-        util.ajax("/hotUrl/incrClickNumber",url,function (data) {
-            if(data.code==0){//增加点击量
-                var li=$(arg).closest(".media-body").find(".list-inline li").get(0);
-                var span=$(li).find("span").get(1);
-                $(span).text(Number($(span).text())+1);
-            }else{
-                layer.msg(data.message);
-            }
-        })
-    }
-
-    //点赞的点击事件
-    function goodClick(arg) {
-        //检查是否登入
-        if(user==undefined){
-            layer.msg("请登入后再操作！");
-            return;
-        }
-        var url=getUrlData(arg);
-        var a={userId:user.id,likeUrlId:$(arg).attr("urlId")};
-        console.log(a);
-        console.log(url);
-        //检查用户是否已经点赞过
-        util.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
-            if(data.code==0){//增加点赞量
-                //点赞递增
-                util.ajax("/hotUrl/incrGoodNumber",url,function (data) {
-                    if(data.code==0){//增加点赞量
-                        var li=$(arg).closest("ul").find("li").get(1);
-                        var span=$(li).find("span").get(1);
-                        $(span).text(Number($(span).text())+1);
-
-                        layer.msg(data.message);
-
-                        //标记该用户以点赞
-                        util.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:$(arg).attr("urlId")},function (data) {
-                            if(data.code==1){
-                                console.log(data.message);//标记失败的话，静默打印
-                            }
-                        })
-                    }else{
-                        layer.msg(data.message);
-                    }
-                })
-            }else{
-                layer.msg(data.message);
-            }
-        })
-    }
-
-    layui.use(['flow','util','element','layer','form'], function() {
-        var flow = layui.flow;
-        var utils = layui.util;
-        layer=layui.layer;
-        var form=layui.form;
-
-        //查询是否已经登入
-        util.ajax("/getUserFromSession",{},function (data) {
-            if(data.userName!=null){
-                user=data;//保存user的信息
-                changeLoginStatus(data);//修改登入状态
-            }
-        })
-
-        //输入框获得焦点
-        window.onload=function() {
-            $("#keywords").focus();
-        }
-
-        $("#personalPage").click(function () {
-            if(user!=undefined){
-                window.location.href="/home/"+user.userName;
-            }else{
-                layer.prompt({title: '输入用户名就可以直接访问个人主页', formType: 0,maxlength: 15,shadeClose: true}, function(pass, index){
-                    window.location.href="/home/"+pass;
-                });
-            }
-
-        })
-
-
-        //返回页面最上方
-        utils.fixbar({
-            showHeight:200,
-        });
+        //刚进来的时候初始化，按回车之后重新搜索
+        homePageJs.loadUrlDataByFlow("LAY_demo1","/home/getShareUrlsLike",{keywords:decodeURI(window.location.search.split("=")[1])});//获取url的search参数并解码再进行搜索
 
         //绑定回车搜索
         $("#keywords").keyup(function(event){
             if(event.keyCode==13){
                 $("#LAY_demo1").empty();
-                flow.load({
-                    elem: '#LAY_demo1', //流加载容器
-                    isAuto: false,
-                    done: function(page, next){ //执行下一页的回调
-                        addUrlData("/home/getShareUrlsLike",{page:page,keywords:$("#keywords")[0].value},next);
-                    }
-                });
+                homePageJs.loadUrlDataByFlow("LAY_demo1","/home/getShareUrlsLike",{keywords:$("#keywords")[0].value});
             }
-        });
-
-        flow.load({
-            elem: '#LAY_demo1', //流加载容器
-            isAuto: false,
-            done: function(page, next){ //执行下一页的回调
-                addUrlData("/home/getShareUrlsLike",{page:page,keywords:decodeURI(window.location.search.split("=")[1])},next);//获取url的search参数并解码再进行搜索
-            }
-        });
-
-
-        var addLayer=undefined;
-        //使用ajax请求登入页面(静态资源)
-        $("#login").click(function () {
-            //页面层
-            addLayer=layer.open({
-                type: 1,
-                title:'用户登入',
-                shadeClose: true,
-                area: ['380px', '220px'], //宽高
-                content: $("#loginDiv")
-            });
-
-        })
-
-        //绑定回车搜索
-        $("#keywords").keyup(function(event){
-            if(event.keyCode==13){
-                $("#LAY_demo1").empty();
-                flow.load({
-                    elem: '#LAY_demo1', //流加载容器
-                    isAuto: false,
-                    done: function(page, next){ //执行下一页的回调
-                        addUrlData("/home/getShareUrlsLike",{page:page,keywords:$("#keywords")[0].value},next);
-                    }
-                });
-            }
-        });
-
-        //表单参数检验
-        form.verify({
-            myUserName: [/^.{1,20}$/,'长度在1~20之间']
-            ,myPassword: [/^.{1,20}$/,'长度在1~20之间']
-        });
-
-        //登入事件
-        form.on('submit(loginSubmit)', function(formData){
-            //在主页的登入操作
-            util.ajax("/homeLogin",formData.field,function (data) {
-                if(data.code==0){
-                    user=data.data;//保存user信息
-                    layer.close(addLayer);//关闭登入弹窗
-                    layer.msg("登入成功！");
-                    if(data.message!=null){
-                        eval(data.message);//展示公告
-                    }
-                    changeLoginStatus(data.data);//修改登入状态
-                }else {
-                    layer.msg(data.message);
-                }
-            })
-            return false;
         });
 
     })

@@ -2,20 +2,22 @@ package com.lyj.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lyj.model.HotUrl;
+import com.lyj.model.User;
 import com.lyj.service.HotUrlService;
+import com.lyj.task.RedisToMysqlTask;
 import com.lyj.util.PublicVar;
+import com.lyj.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.DefaultTypedTuple;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,6 +33,9 @@ public class TestController {
 
     @Autowired
     HotUrlService hotUrlService;
+
+//    @Autowired
+//    RedisToMysqlTask redisToMysqlTask;
 
     @RequestMapping("/1")
     public void test(){
@@ -58,7 +63,10 @@ public class TestController {
 
     @RequestMapping("/2")
     public Object test1(){
-        return null;
+
+//        redisToMysqlTask.updateUserGoodNumberData();
+
+        return true;
     }
 
     @RequestMapping("/3")

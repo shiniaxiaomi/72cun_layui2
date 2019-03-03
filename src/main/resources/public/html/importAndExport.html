@@ -127,7 +127,7 @@
             elem: '#test10'
             ,url: '/importChrome'
             ,size: 1024 //限制文件大小，单位 KB
-            ,exts: 'html' //只允许上传html文件
+            ,exts: 'html|htm'   //只允许上传html文件
             ,done: function(res){
                 if(res.code==0){
                     layer.msg(res.message, {offset: '50px', anim: 0});
@@ -147,7 +147,7 @@
             elem: '#test11'
             ,url: '/importFirefox'
             ,size: 1024 //限制文件大小，单位 KB
-            ,exts: 'html' //只允许上传html文件
+            ,exts: 'html|htm'   //只允许上传html文件
             ,done: function(res){
                 if(res.code==0){
                     layer.msg(res.message, {offset: '50px', anim: 0});
@@ -167,7 +167,7 @@
             elem: '#test12'
             ,url: '/importIE'
             ,size: 1024 //限制文件大小，单位 KB
-            ,exts: 'html' //只允许上传html文件
+            ,exts: 'html|htm'  //只允许上传html文件
             ,done: function(res){
                 if(res.code==0){
                     layer.msg(res.message, {offset: '50px', anim: 0});
@@ -187,7 +187,7 @@
             elem: '#test13'
             ,url: '/import360'
             ,size: 1024 //限制文件大小，单位 KB
-            ,exts: 'html' //只允许上传html文件
+            ,exts: 'html|htm'   //只允许上传html文件
             ,done: function(res){
                 if(res.code==0){
                     layer.msg(res.message, {offset: '50px', anim: 0});

@@ -61,7 +61,7 @@ public class RedisConfig {
         //设置redisTempalte的序列化方式
         GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);// 设置值（value）的序列化采用FastJsonRedisSerializer。
+        redisTemplate.setValueSerializer(stringRedisSerializer);// 设置值（value）的序列化采用FastJsonRedisSerializer。
         redisTemplate.setKeySerializer(stringRedisSerializer);// 设置键（key）的序列化采用StringRedisSerializer。
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
         redisTemplate.setHashValueSerializer(stringRedisSerializer);

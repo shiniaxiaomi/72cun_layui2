@@ -9,6 +9,8 @@ import com.lyj.service.HotUrlService;
 import com.lyj.service.URLService;
 import com.lyj.service.UserService;
 import com.lyj.util.PageEntity;
+import com.lyj.util.PublicVar;
+import com.lyj.util.RedisUtil;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -81,7 +83,8 @@ public class HomeController {
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 for (int i = 0; i < urls.size(); i++) {
                     //这个进行单个命令操作，外面使用for循环实现批量操作
-                    connection.hMGet(String.valueOf(urls.get(i).getId()).getBytes(),"clickNumber".getBytes(),"goodNumber".getBytes());
+                    connection.hGet(PublicVar.urlClickNumber.getBytes(), RedisUtil.toByte(urls.get(i).getId()));
+                    connection.hGet(PublicVar.urlGoodNumber.getBytes(), RedisUtil.toByte(urls.get(i).getId()));
                 }
                 return null;
             }
@@ -89,10 +92,8 @@ public class HomeController {
 
         //从redis中查询点击量和点赞量，并替换
         for(int i=0;i<urls.size();i++){
-            Object clickNumber = ((List)list.get(i)).get(0);
-            Object goodNumber = ((List)list.get(i)).get(1);
-            urls.get(i).setClickNumber(clickNumber==null?0:(int)clickNumber);
-            urls.get(i).setGoodNumber(goodNumber==null?0:(int)goodNumber);
+            urls.get(i).setClickNumber(RedisUtil.toInt(list.get(2*i)));
+            urls.get(i).setGoodNumber(RedisUtil.toInt(list.get(2*i+1)));
         }
 
         return new PageEntity<>(pageInfo.getTotal(),urls,pageInfo.getPages());//直接放入组装好的urls

@@ -47,11 +47,10 @@ public class FolderController {
     public Result<Folder> delete(Folder folder, User sessionUser){
         if(folder.getPid()==0){
             return ResultUtil.error("根文件夹不能删除");
-        }else if(folderService.deleteFolderByFolderId(folder.getId(),sessionUser.getId())){
-            return ResultUtil.success("删除成功");
-        }else{
-            return ResultUtil.error("删除失败");
         }
+
+        folderService.deleteFolderByFolderId(folder.getId(),sessionUser.getId(),sessionUser.getUserName());
+        return ResultUtil.success("文件夹删除成功");
     }
 
 

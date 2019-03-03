@@ -35,8 +35,11 @@
             <foreach collection="list" item="itemId" index="no" open="(" separator="," close=")">
                 #{itemId}
             </foreach>
+            order by field
+            <foreach collection="list" item="itemId" index="no" open="(url.id," separator="," close=")">
+                #{itemId}
+            </foreach>
         </if>
-
     </select>
 
     <update id="updateUrl">
@@ -54,18 +57,15 @@
             <if test="pidName!=null and pidName!='' ">
                 pidName=#{pidName},
             </if>
-            <if test="isShare!=null and isShare!='' ">
-                isShare=#{isShare},
-            </if>
         </trim>
         where id = #{id}
     </update>
 
 
-    <insert id="addUrlBatch">
-        insert into url (url,label,pid,createTime,userId,pidName,isShare) values
+    <insert id="addUrlBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into url (url,label,pid,createTime,userId,pidName,isShare,shareTime) values
         <foreach collection="list" item="itemId" index="no" separator=",">
-            ( #{itemId.url},#{itemId.label},#{itemId.pid},#{itemId.createTime},#{itemId.userId},#{itemId.pidName},#{itemId.isShare} )
+            ( #{itemId.url},#{itemId.label},#{itemId.pid},#{itemId.createTime},#{itemId.userId},#{itemId.pidName},#{itemId.isShare},#{itemId.shareTime} )
         </foreach>
     </insert>
 

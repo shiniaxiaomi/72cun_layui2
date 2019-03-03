@@ -1,8 +1,6 @@
 package com.lyj.init;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageInfo;
-import com.lyj.model.HotUrl;
 import com.lyj.model.URL;
 import com.lyj.service.HotUrlService;
 import com.lyj.util.PublicVar;
@@ -13,7 +11,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +52,7 @@ public class HotUrlDataInit {
                         connection.hSet(String.valueOf(url.getId()).getBytes(),"clickNumber".getBytes(),String.valueOf(url.getClickNumber()).getBytes());//在urlId对应的map中添加点击量
                         connection.hSet(String.valueOf(url.getId()).getBytes(),"goodNumber".getBytes(),String.valueOf(url.getGoodNumber()).getBytes());//在urlId对应的map中添加点击量
                         connection.hSet(String.valueOf(url.getId()).getBytes(), "url".getBytes(),JSON.toJSONString(url).getBytes());//保存url信息
-                        connection.zAdd(PublicVar.hotUrlScore.getBytes(),url.getScore(),String.valueOf(url.getId()).getBytes());//在分数中增加分值
+                        connection.zAdd(PublicVar.urlScore.getBytes(),url.getScore(),String.valueOf(url.getId()).getBytes());//在分数中增加分值
                     }
                     return null;
                 }
@@ -69,35 +66,35 @@ public class HotUrlDataInit {
     //一般不使用（不开启注解，因为redis中已经存在数据）
     //当redis中的数据量小于50条时，就从数据库中将数据在项目启动的时候就保存在数据库中
 //    @PostConstruct //需要时再开启注解
-    public void initDataToRedis(){
-        Long size = redisTemplate.opsForZSet().size(PublicVar.hotUrlScore);
-        if(size<50){
-            List<URL> hotUrls = hotUrlService.getHotUrlByHot(0, 50);//数据库排序删选出前50条数据
-
-            //批量往redis中添加数据
-            redisTemplate.executePipelined(new RedisCallback<String>() {
-                @Override
-                public String doInRedis(RedisConnection connection) throws DataAccessException {
-                    for (int i = 0; i < hotUrls.size(); i++) {
-                        URL url = hotUrls.get(i);
-
-                        //在排行榜中添加数据
-                        connection.zAdd(PublicVar.hotUrlScore.getBytes(),url.getScore(),String.valueOf(url.getId()).getBytes());
-
-                        //在redis中添加网址数据
-                        Map<byte[], byte[]> map=new HashMap();
-                        map.put("url".getBytes(), JSON.toJSONString(url).getBytes());
-                        map.put("clickNumber".getBytes(), String.valueOf(url.getClickNumber()).getBytes());
-                        map.put("goodNumber".getBytes(), String.valueOf(url.getGoodNumber()).getBytes());
-                        connection.hMSet(String.valueOf(url.getId()).getBytes(),map);
-                    }
-                    return null;
-                }
-            });
-        }
-
-        System.out.println("==================redis数据初始化完成===================");
-    }
+//    public void initDataToRedis(){
+//        Long size = redisTemplate.opsForZSet().size(PublicVar.urlScore);
+//        if(size<50){
+//            List<URL> hotUrls = hotUrlService.getHotUrlByHot(0, 50);//数据库排序删选出前50条数据
+//
+//            //批量往redis中添加数据
+//            redisTemplate.executePipelined(new RedisCallback<String>() {
+//                @Override
+//                public String doInRedis(RedisConnection connection) throws DataAccessException {
+//                    for (int i = 0; i < hotUrls.size(); i++) {
+//                        URL url = hotUrls.get(i);
+//
+//                        //在排行榜中添加数据
+//                        connection.zAdd(PublicVar.urlScore.getBytes(),url.getScore(),String.valueOf(url.getId()).getBytes());
+//
+//                        //在redis中添加网址数据
+//                        Map<byte[], byte[]> map=new HashMap();
+//                        map.put("url".getBytes(), JSON.toJSONString(url).getBytes());
+//                        map.put("clickNumber".getBytes(), String.valueOf(url.getClickNumber()).getBytes());
+//                        map.put("goodNumber".getBytes(), String.valueOf(url.getGoodNumber()).getBytes());
+//                        connection.hMSet(String.valueOf(url.getId()).getBytes(),map);
+//                    }
+//                    return null;
+//                }
+//            });
+//        }
+//
+//        System.out.println("==================redis数据初始化完成===================");
+//    }
 
 
 

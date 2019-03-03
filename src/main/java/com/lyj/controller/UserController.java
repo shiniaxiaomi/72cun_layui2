@@ -8,6 +8,7 @@ import com.lyj.service.FolderService;
 import com.lyj.service.URLService;
 import com.lyj.service.UserService;
 import com.lyj.util.PageEntity;
+import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import com.lyj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,8 @@ public class UserController {
                 List<URL> urls=new ArrayList<>();
                 Date time = new Date();
                 //批量添加的时候默认是共享的
-                urls.add(new URL("https://www.72cun.cn", "72cun 网址收藏", 0,"默认文件夹", user.getId(),user.getUserName(), time,true,time));
-                urlService.addUrlBatch(urls);
+                urls.add(new URL("https://www.72cun.cn", "72cun 网址收藏", folder.getId(),"默认文件夹", user.getId(),user.getUserName(), time,true,time));
+                urlService.addUrlBatch(urls,user.getUserName());
 
                 if(userService.updateRootFolderIdByUserId(folder.getId(),user.getId())){
                     return ResultUtil.success("注册成功");
@@ -205,15 +206,23 @@ public class UserController {
     //获得用户的分享数量的用户排名
     @ResponseBody
     @RequestMapping("/getShareUserOrder")
-    public PageEntity<User> getShareUserOrder(Integer page){
-        int size=10;
-        List<User> userList = userService.getShareUserOrder(page, size);
-        if(userList.size()>size){
-            return new PageEntity<User>(Long.valueOf(userList.size()),userList,userList.size()/size);
-        }else{
-            return new PageEntity<User>(Long.valueOf(userList.size()),userList,1);
+    public PageEntity<User> getShareUserOrder(Integer page,int limit){
+        int size=limit;
+        if(page> PublicVar.showNumber/size){
+            return new PageEntity<>(0L, new ArrayList<User>(), page);
         }
+        return userService.getShareUserOrder(page, size);
+    }
 
+    //获得用户的点按数量的用户排名
+    @ResponseBody
+    @RequestMapping("/getGoodUserOrder")
+    public PageEntity<User> getGoodUserOrder(Integer page,int limit){
+        int size=limit;
+        if(page> PublicVar.showNumber/size){
+            return new PageEntity<>(0L, new ArrayList<User>(), page);
+        }
+        return userService.getGoodUserOrder(page, size);
     }
 
 }

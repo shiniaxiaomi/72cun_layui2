@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyj.dao.UserDao">
+
+    <!-- 批量更新user表中shareNumber字段 -->
+    <update id="updateUserShareNumberByUserNameBatch">
+        <foreach collection="list" item="itemId" index="no">
+            UPDATE user set shareNumber=#{itemId.shareNumber} where userName = #{itemId.userName};
+        </foreach>
+    </update>
+
+    <!-- 批量更新user表中goodNumber字段 -->
+    <update id="updateUserGoodNumberByUserNameBatch">
+        <foreach collection="list" item="itemId" index="no">
+            UPDATE user set goodNumber=#{itemId.goodNumber} where userName = #{itemId.userName};
+        </foreach>
+    </update>
+
+
+</mapper>

@@ -42,4 +42,6 @@ public class HotUrl implements Serializable {
         this.score = score;
     }
 
+
+
 }

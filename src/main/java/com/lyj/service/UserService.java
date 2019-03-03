@@ -1,12 +1,13 @@
 package com.lyj.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.lyj.dao.UserDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
+import com.lyj.model.URL;
 import com.lyj.model.User;
-import com.lyj.util.PublicVar;
-import com.lyj.util.ResultUtil;
-import com.lyj.util.StringUtil;
+import com.lyj.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Yingjie.Lu on 2018/9/17.
@@ -112,15 +114,13 @@ public class UserService {
 
     //删除用户
     @Transactional
-    public Result deleteUserById(Integer userId) {
-        int deleteUrlCount=urlService.deleteUrlByUserId(userId);
-        int deleteFolderCount= folderService.deleteFolderByUserId(userId);
-        int deleteUserCount=userDao.deleteById(userId);
-        if(deleteFolderCount>0 && deleteUserCount>0){
-            return ResultUtil.success("删除成功!");
-        }else{
-            return ResultUtil.error("删除失败!");
-        }
+    public Result deleteUserById(Integer userId,String userName) {
+        int i = userDao.deleteById(userId);//删除用户
+        if(i==0) throw new MessageException("用户删除失败");
+
+        folderService.deleteFolderByUserId(userId);//删除user的文件夹
+        urlService.deleteUrlByUserId(userId,userName);//删除user的网址
+        return ResultUtil.success("用户删除成功!");
     }
 
     public boolean updatePassword(User user) {
@@ -163,21 +163,83 @@ public class UserService {
     }
 
     //从redis中获取用户网址分享数量的排序数据
-    public List<User> getShareUserOrder(Integer page,int limit) {
-        Set set = redisTemplate.opsForZSet().reverseRangeWithScores(PublicVar.userShareScore, (page - 1) * limit, limit - 1);
+    public PageEntity<User> getShareUserOrder(Integer page,int limit) {
+        PageEntity<User> pageEntity=null;
+        List<User> userList=null;
 
-        Object[] objects = set.toArray();
-        List<User> userList=new ArrayList<>();
-        for(int i=0;i<objects.length;i++){
-            DefaultTypedTuple object = (DefaultTypedTuple)objects[i];
-
-            User user=new User();
-            user.setUserName(String.valueOf(object.getValue()));
-            user.setShareNumber((int) Math.round(object.getScore()));
-
-            userList.add(user);
+        //先去redis中获取主页缓存数据
+        Object data = redisTemplate.opsForValue().get(PublicVar.userShareData+page);
+        if(data!=null){
+            return JSON.parseObject((String) data, new TypeReference<PageEntity<User>>() {});
+        }else{
+            Set set = redisTemplate.opsForZSet().reverseRangeWithScores(PublicVar.userShareScore, (page - 1) * limit, page*limit - 1);
+            if(set.size()==0){//如果没有结果集，则直接返回
+                return new PageEntity<>(0L, new ArrayList<User>(), page);
+            }
+            Object[] objects = set.toArray();
+            userList=new ArrayList<>();
+            for(int i=0;i<objects.length;i++){
+                DefaultTypedTuple object = (DefaultTypedTuple)objects[i];
+                User user=new User();
+                user.setUserName(RedisUtil.toString(object.getValue()));
+                user.setShareNumber(RedisUtil.toInt(object.getScore()));
+                userList.add(user);
+            }
+            pageEntity = new PageEntity<>(Long.valueOf(userList.size()), userList, set.size()<limit?page:page+1);
+            if(PublicVar.updateTime>0){
+                redisTemplate.opsForValue().set(PublicVar.userShareData+page,JSON.toJSONString(pageEntity),PublicVar.updateTime, TimeUnit.MINUTES);//在将数据缓存在redis中,并并且设置1分钟过期
+            }
         }
 
-        return userList;
+        return pageEntity;
+    }
+
+    //从redis中获取用户被点赞数量的排序数据
+    public PageEntity<User> getGoodUserOrder(Integer page, int limit) {
+        PageEntity<User> pageEntity=null;
+        List<User> userList=null;
+
+        //先去redis中获取主页缓存数据
+        Object data = redisTemplate.opsForValue().get(PublicVar.userGoodData+page);
+        if(data!=null){
+            return JSON.parseObject((String) data, new TypeReference<PageEntity<User>>() {});
+        }else{
+            Set set = redisTemplate.opsForZSet().reverseRangeWithScores(PublicVar.userGoodScore, (page - 1) * limit, page*limit - 1);
+            if(set.size()==0){//如果没有结果集，则直接返回
+                return new PageEntity<>(0L, new ArrayList<User>(), page);
+            }
+            Object[] objects = set.toArray();
+            userList=new ArrayList<>();
+            for(int i=0;i<objects.length;i++){
+                DefaultTypedTuple object = (DefaultTypedTuple)objects[i];
+                User user=new User();
+                user.setUserName(RedisUtil.toString(object.getValue()));
+                user.setGoodNumber(RedisUtil.toInt(object.getScore()));
+                userList.add(user);
+            }
+            pageEntity = new PageEntity<>(Long.valueOf(userList.size()), userList, set.size()<limit?page:page+1);
+            if(PublicVar.updateTime>0){
+                redisTemplate.opsForValue().set(PublicVar.userGoodData+page,JSON.toJSONString(pageEntity),PublicVar.updateTime, TimeUnit.MINUTES);//在将数据缓存在redis中,并并且设置1分钟过期
+            }
+        }
+
+        return pageEntity;
+    }
+
+    public int updateUserShareNumberByUserNameBatch(List<User> list) {
+        if(list.size()>0){
+            return userDao.updateUserShareNumberByUserNameBatch(list);
+        }else {
+            return 0;
+        }
+    }
+
+    public int updateUserGoodNumberByUserNameBatch(List<User> list) {
+        if(list.size()>0){
+            return userDao.updateUserGoodNumberByUserNameBatch(list);
+        }else {
+            return 0;
+        }
+
     }
 }

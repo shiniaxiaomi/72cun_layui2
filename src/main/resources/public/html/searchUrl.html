@@ -163,7 +163,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/url/delete",{id:obj.data.id},function (data) {
+                    util.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
                         if(data.code==0){
                             tableIns.reload(tableOption);//刷新表格
                             layer.msg("删除成功");

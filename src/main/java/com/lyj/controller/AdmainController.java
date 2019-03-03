@@ -43,8 +43,8 @@ public class AdmainController {
     }
 
     @RequestMapping("/deleteUserById")
-    public Result deleteUserById(Integer id){
-         return userService.deleteUserById(id);
+    public Result deleteUserById(Integer id,User sessionUser){
+         return userService.deleteUserById(id,sessionUser.getUserName());
     }
 
     @RequestMapping("/getUserUrl")

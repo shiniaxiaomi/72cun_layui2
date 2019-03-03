@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <!--application.yml 传递参数，不能使用logback 自带的<property>标签 -->
+    <springProperty scope="context" name="path" source="logback.path"/>
+    <springProperty scope="context" name="level" source="logback.level"/>
+
+    <!-- 日志级别： TRACE < DEBUG < INFO < WARN < ERROR < FATAL  -->
+
+    <!-- 控制台的输出类 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36}[%line]行 : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 定时任务日志的输出文件类 -->
+    <appender name="taskInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${path}/task/task.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${path}/task/task.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--只保留最近90天的日志-->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} : %msg%n</pattern>
+            <!--<pattern>%d{yyyy-MM-dd HH:mm:ss} [%class-代码行%line] : %msg%n</pattern>-->
+        </encoder>
+    </appender>
+
+    <!-- 错误日志的输出文件类 -->
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>Error</level>
+        </filter>
+
+        <File>${path}/error/error.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${path}/error/error.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--只保留最近90天的日志-->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 指定最基础的日志输出级别,所有的日志记录器都是在这个基础之上，如果这个等级时error，那么别的记录器等级在error已下的都不会被记录 -->
+    <root level="${level}">
+        <!-- 将INFO的日志输出到控制台 -->
+        <appender-ref ref="consoleLog"/>
+        <!-- 将error的日志输出到文件 -->
+        <appender-ref ref="errorLog"/>
+    </root>
+
+    <!-- 将定时任务的日志输出到文件 指定additivity="false"，则不会再在控制台中输出,只会输出到文件（即不会输出两遍） -->
+    <logger name="com.lyj.task.RedisToMysqlTask" level="WARN" additivity="false">
+        <appender-ref ref="taskInfoLog"/>
+    </logger>
+
+
+</configuration>

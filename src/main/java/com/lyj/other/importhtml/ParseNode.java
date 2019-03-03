@@ -66,11 +66,9 @@ public abstract class ParseNode {
 
                 //批量保存url
                 try{
-                    int number = urlService.addUrlBatch(list);
-                    //删除redis中的文件夹缓存
+                    urlService.addUrlBatch(list,userName);
                     if(list.size()>0){
                         folderService.cleanFolderCache(list.get(0).getUserId());
-                        redisTemplate.opsForZSet().incrementScore(PublicVar.userShareScore,userName,number);//保存记录用户分享的个数在redis中
                     }
                 }catch (DataIntegrityViolationException e){
                     String s = e.getCause().toString();

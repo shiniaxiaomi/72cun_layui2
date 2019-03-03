@@ -9,5 +9,26 @@
         </foreach>
     </insert>
 
+    <delete id="deleteHotUrlByUrlIdBatch">
+        DELETE from hotUrl where urlId in
+        <foreach collection="list" item="itemId" index="no" open="(" close=")" separator=",">
+            #{itemId}
+        </foreach>
+    </delete>
+
+    <!-- 更新点击量 -->
+    <update id="updateHotUrlClickNumberByUrlIdBatch">
+        <foreach collection="list" item="itemId" index="no" >
+            update hotUrl set clickNumber=#{itemId.clickNumber} where urlId=#{itemId.urlId};
+        </foreach>
+    </update>
+
+    <!-- 更新点赞量 -->
+    <update id="updateHotUrlGoodNumberByUrlIdBatch">
+        <foreach collection="list" item="itemId" index="no" >
+            update hotUrl set goodNumber=#{itemId.goodNumber} where urlId=#{itemId.urlId};
+        </foreach>
+    </update>
+
 
 </mapper>

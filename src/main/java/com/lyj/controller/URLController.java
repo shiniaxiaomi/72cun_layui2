@@ -1,5 +1,6 @@
 package com.lyj.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.lyj.model.Folder;
 import com.lyj.model.Result;
@@ -10,6 +11,9 @@ import com.lyj.util.PageEntity;
 import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,20 +89,14 @@ public class URLController {
     }
 
     @RequestMapping("/delete")
-    public Result delete(Integer id){
-        if(urlService.deleteUrl(id)){
-            return ResultUtil.success("删除成功!");
-        }else{
-            return ResultUtil.error("删除失败!");
-        }
+    public Result delete(int id,boolean isShare,User sessionUser){
+        urlService.deleteUrl(id,isShare,sessionUser.getUserName());
+        return ResultUtil.success("删除成功!");
     }
     @RequestMapping("/deleteInBatches")
-    public Result deleteInBatches(String id){
-        if(urlService.deleteUrlsInBatchesByIds(id)){
-            return ResultUtil.success("删除成功!");
-        }else{
-            return ResultUtil.error("删除失败!");
-        }
+    public Result deleteInBatches(String id,String isShare,User sessionUser){
+        urlService.deleteUrlsInBatchesByIds(id,isShare,sessionUser.getUserName());
+        return ResultUtil.success("删除成功!");
     }
 
     @RequestMapping("/add")
@@ -107,14 +105,11 @@ public class URLController {
         Date time=new Timestamp(new Date().getTime());//记录生成时间
         url.setCreateTime(time);
         if(url.getIsShare()==true){
-            url.setCreateTime(time);
+            url.setShareTime(time);
         }
 
-        if(urlService.addUrl(url)){
-            return ResultUtil.success("保存成功!",url);
-        }else{
-            return ResultUtil.error("保存失败!");
-        }
+        urlService.addUrl(url,sessionUser);
+        return ResultUtil.success("保存成功!",url);
     }
 
     @RequestMapping("/changeShareStatus")

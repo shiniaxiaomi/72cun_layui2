@@ -2,9 +2,11 @@ package com.lyj.controller;
 
 import com.lyj.model.Result;
 import com.lyj.model.URL;
+import com.lyj.model.User;
 import com.lyj.model.linkModel.User_HotUrl;
 import com.lyj.service.HotUrlService;
 import com.lyj.util.PageEntity;
+import com.lyj.util.PublicVar;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,11 +50,11 @@ public class HotUrlController {
     }
 
     @RequestMapping("/incrGoodNumber")
-    public Result incrGoodNumber(URL url,String time) throws ParseException {
+    public Result incrGoodNumber(URL url,String time,User sessionUser) throws ParseException {
         url.setShareTime(simpleDateFormat.parse(time));
 
-        hotUrlService.incrGoodNumber(url);
-        return ResultUtil.success("点赞成功，数据将在1分钟之后更新！");
+        hotUrlService.incrGoodNumber(url,sessionUser.getUserName());
+        return ResultUtil.success("点赞成功，数据将在"+PublicVar.updateTime+"分钟之后更新！");
     }
 
     @RequestMapping("/markIsIncredGoodNumber")
@@ -64,12 +67,11 @@ public class HotUrlController {
     @RequestMapping("/getHotUrlByHot")
     public PageEntity<URL> getHotUrlByHot(Integer page){
         int size=10;
-        List urls = hotUrlService.getHotUrlByHotByRedis(page, size);
-        if(urls.size()>size){
-            return new PageEntity<URL>(Long.valueOf(urls.size()),urls,urls.size()/size);
-        }else{
-            return new PageEntity<URL>(Long.valueOf(urls.size()),urls,1);
+        if(page> PublicVar.showNumber/size){
+            return new PageEntity<>(0L, new ArrayList<URL>(), page);
         }
+
+        return hotUrlService.getHotUrlByHotByRedis(page, size);
     }
 
 
