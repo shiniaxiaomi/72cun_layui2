@@ -269,10 +269,7 @@
                     if(data.code==0){
                         layer.msg('删除成功');
                         d.deleteNode();//删除该节点
-
-                        tableOption.where={pid:clickNodeId};
                         tableIns.reload(tableOption);//刷新表格
-
                     }else{
                         layer.msg(data.message);
                         el_left.reload();//发生错误时,重新加载
