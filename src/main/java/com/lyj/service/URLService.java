@@ -273,10 +273,12 @@ public class URLService {
         redisTemplate.executePipelined(new RedisCallback<String>() {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.hDel(PublicVar.urlClickNumber.getBytes(), RedisUtil.toByteArray(ids));//删除urlClickNumber中的url
-                connection.hDel(PublicVar.urlGoodNumber.getBytes(), RedisUtil.toByteArray(ids));//删除urlGoodNumber中的url
+                if(ids.size()!=0){
+                    connection.hDel(PublicVar.urlClickNumber.getBytes(), RedisUtil.toByteArray(ids));//删除urlClickNumber中的url
+                    connection.hDel(PublicVar.urlGoodNumber.getBytes(), RedisUtil.toByteArray(ids));//删除urlGoodNumber中的url
+                    connection.zRem(PublicVar.urlScore.getBytes(),RedisUtil.toByteArray(ids));//删除urlScore排序集合中的数据
+                }
 
-                connection.zRem(PublicVar.urlScore.getBytes(),RedisUtil.toByteArray(ids));//删除urlScore排序集合中的数据
                 connection.zIncrBy(PublicVar.userShareScore.getBytes(),-ids.size()*1.0,RedisUtil.toByte(userName));//减少userShareScore用户分享的个数
                 connection.zIncrBy(PublicVar.userGoodScore.getBytes(), -goodNumber*1.0,RedisUtil.toByte(userName));//减少userGoodScore用户点赞的个数
                 return null;

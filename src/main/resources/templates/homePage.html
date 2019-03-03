@@ -172,7 +172,7 @@
         //绑定回车搜索
         $("#keywords").keyup(function(event){
             if(event.keyCode==13){
-                window.location.href="http://localhost:8087/html/homePageSearch.html?search="+encodeURI($("#keywords")[0].value);
+                window.location.href="/html/homePageSearch.html?search="+encodeURI($("#keywords")[0].value);
                 $('#keywords').val('');//清空搜索框
             }
         });

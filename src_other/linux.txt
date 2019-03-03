@@ -15,3 +15,10 @@ tail -f /72cun/temp.log
 
 现在使用shell脚本之后的命令就可以重启应用
 /bin/bash /72cun.sh
+
+
+启动步骤：
+1.压缩static资源，并上传资源文件，
+2.将public/html下的文件也上传到nginx上
+3.然后重启nginx（命令：/usr/sbin/nginx -s reload ）
+4.打包springboot，上传并启动（命令：/bin/bash /72cun.sh）
