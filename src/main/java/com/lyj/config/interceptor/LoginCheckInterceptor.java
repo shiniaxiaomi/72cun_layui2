@@ -1,8 +1,8 @@
 package com.lyj.config.interceptor;
 
 import com.lyj.model.User;
-import com.lyj.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginCheckInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    UserService userService;
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     /**
      * 在请求前处理,如果返回true,则继续进行拦截器调用,否则,直接退出拦截器,返回对应的结果
@@ -54,11 +54,11 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
             }
 
-            System.out.println("intercept: "+request.getRequestURL().toString()+" request");
+            logger.warn("intercept: "+request.getRequestURL().toString()+" request");
             return false;
         }
 
-        System.out.println("pass: "+request.getRequestURL().toString()+" request");
+        logger.warn("pass: "+request.getRequestURL().toString()+" request");
         return true;
     }
 
