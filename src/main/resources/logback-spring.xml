@@ -55,13 +55,24 @@
     </appender>
 
 
-    <!-- 指定最基础的日志输出级别,所有的日志记录器都是在这个基础之上，如果这个等级时error，那么别的记录器等级在error已下的都不会被记录 -->
-    <root level="${level}">
-        <!-- 将INFO的日志输出到控制台 -->
-        <appender-ref ref="consoleLog"/>
-        <!-- 将error的日志输出到文件 -->
-        <appender-ref ref="errorLog"/>
-    </root>
+    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+
+
+    <!-- 开发环境. -->
+    <springProfile name="dev">
+        <!-- 指定最基础的日志输出级别,所有的日志记录器都是在这个基础之上，如果这个等级时error，那么别的记录器等级在error已下的都不会被记录 -->
+        <root level="${level}">
+            <appender-ref ref="consoleLog"/><!-- 将INFO的日志输出到控制台 -->
+        </root>
+    </springProfile>
+    <!-- 生产环境. -->
+    <springProfile name="prod">
+        <!-- 指定最基础的日志输出级别,所有的日志记录器都是在这个基础之上，如果这个等级时error，那么别的记录器等级在error已下的都不会被记录 -->
+        <root level="${level}">
+            <appender-ref ref="errorLog"/><!-- 将error的日志输出到文件 -->
+        </root>
+    </springProfile>
+
 
     <!-- 将定时任务的日志输出到文件 指定additivity="false"，则不会再在控制台中输出,只会输出到文件（即不会输出两遍） -->
     <logger name="com.lyj.task.RedisToMysqlTask" level="WARN" additivity="false">

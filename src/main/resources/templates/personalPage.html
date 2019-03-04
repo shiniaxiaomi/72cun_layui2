@@ -152,6 +152,9 @@
         var layer = layui.layer;
         var homePageJs=layui.homePageJs;
 
+        //示范一个公告层
+        <#if showNotice?? > ${showNotice} </#if>
+
         homePageJs.init();
 
         //刚进来的时候初始化，按回车之后重新搜索

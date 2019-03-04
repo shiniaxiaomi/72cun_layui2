@@ -165,6 +165,9 @@
         var layer = layui.layer;
         var homePageJs=layui.homePageJs;
 
+        //示范一个公告层
+        <#if showNotice?? > ${showNotice} </#if>
+
         homePageJs.init();//进行初始化
 
         homePageJs.loadUrlDataByFlow("LAY_demo1","/hotUrl/getHotUrlByHot",{});//热帖
