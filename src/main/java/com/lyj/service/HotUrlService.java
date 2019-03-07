@@ -105,7 +105,7 @@ public class HotUrlService {
     }
 
     //收藏量加1
-    public void incrGoodNumber(URL url,String userName) {
+    public void incrGoodNumber(URL url) {
 
         //增加点赞量
         //在redis中进行批量操作
@@ -115,7 +115,7 @@ public class HotUrlService {
                 //如果map不存在，则自动创建。如果map中的key不存在，则自动创建，并初始化值为0
                 connection.hIncrBy(PublicVar.urlGoodNumber.getBytes(),RedisUtil.toByte(url.getId()),1L);//urlGoodNumber
                 connection.zIncrBy(PublicVar.urlScore.getBytes(),PublicVar.goodValue,RedisUtil.toByte(url.getId()));//urlScore
-                connection.zIncrBy(PublicVar.userGoodScore.getBytes(),1.0,RedisUtil.toByte(userName));//userGoodScore
+                connection.zIncrBy(PublicVar.userGoodScore.getBytes(),1.0,RedisUtil.toByte(url.getUserName()));//userGoodScore
                 return null;
             }
         });

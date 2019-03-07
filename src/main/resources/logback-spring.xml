@@ -54,8 +54,22 @@
         </encoder>
     </appender>
 
-
-    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+    <!-- 请求日志的输出文件类 -->
+    <appender name="loginCheckLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${path}/loginCheck/loginCheck.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${path}/loginCheck/loginCheck.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--只保留最近90天的日志-->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} : %msg%n</pattern>
+        </encoder>
+    </appender>
 
 
     <!-- 开发环境. -->
@@ -64,6 +78,11 @@
         <root level="${level}">
             <appender-ref ref="consoleLog"/><!-- 将INFO的日志输出到控制台 -->
         </root>
+
+        <!-- 记录请求拦截日志 -->
+        <logger name="com.lyj.config.interceptor.LoginCheckInterceptor" level="WARN" additivity="true">
+            <appender-ref ref="loginCheckLog"/>
+        </logger>
     </springProfile>
     <!-- 生产环境. -->
     <springProfile name="prod">
@@ -71,7 +90,14 @@
         <root level="${level}">
             <appender-ref ref="errorLog"/><!-- 将error的日志输出到文件 -->
         </root>
+
+        <!-- 记录请求拦截日志 -->
+        <logger name="com.lyj.config.interceptor.LoginCheckInterceptor" level="WARN" additivity="false">
+            <appender-ref ref="loginCheckLog"/>
+        </logger>
     </springProfile>
+
+
 
 
     <!-- 将定时任务的日志输出到文件 指定additivity="false"，则不会再在控制台中输出,只会输出到文件（即不会输出两遍） -->

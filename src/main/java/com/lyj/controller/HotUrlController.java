@@ -50,10 +50,10 @@ public class HotUrlController {
     }
 
     @RequestMapping("/incrGoodNumber")
-    public Result incrGoodNumber(URL url,String time,User sessionUser) throws ParseException {
+    public Result incrGoodNumber(URL url,String time) throws ParseException {
         url.setShareTime(simpleDateFormat.parse(time));
 
-        hotUrlService.incrGoodNumber(url,sessionUser.getUserName());
+        hotUrlService.incrGoodNumber(url);
         return ResultUtil.success("点赞成功，数据将在"+PublicVar.updateTime+"分钟之后更新！");
     }
 
