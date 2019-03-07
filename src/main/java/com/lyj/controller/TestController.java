@@ -34,8 +34,8 @@ public class TestController {
     @Autowired
     HotUrlService hotUrlService;
 
-//    @Autowired
-//    RedisToMysqlTask redisToMysqlTask;
+    @Autowired
+    RedisToMysqlTask redisToMysqlTask;
 
     @RequestMapping("/1")
     public void test(){
@@ -64,7 +64,10 @@ public class TestController {
     @RequestMapping("/2")
     public Object test1(){
 
-//        redisToMysqlTask.updateUserGoodNumberData();
+//        redisToMysqlTask.updateUrlScoreData();
+
+        redisToMysqlTask.updateClickNumberData();
+        redisToMysqlTask.updateGoodNumberData();
 
         return true;
     }
