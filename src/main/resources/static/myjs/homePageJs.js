@@ -159,15 +159,18 @@ layui.define(['flow','layer','util','element','form'], function(exports){
         },
         //修改登入的状态
         changeLoginStatus:function (data) {
-            $("#user").html(`
-                 <li class="layui-nav-item">
-                    <a class="fly-nav-avatar" href="javascript:;">
-                        <img src="/images/code.png" style="margin-right: 10px">
-                        <cite class="layui-hide-xs" style="margin-right: 5px">`+data.userName+`</cite>
-                        <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
-                    </a>
-                </li>
-                <li class="layui-nav-item"><a href="/exit" style="text-align: center;">退出</a></li>
+            $("#userDiv").html(`
+                    <li style="float:right;margin-left: 10px"><a href="/exit">退出</a></li>
+                    <i class="layui-badge fly-badge-vip layui-hide-xs" style="float: right;margin-top: 19px">VIP</i>
+                    <div class="dropdown" style="float:right;margin-right: 10px">
+                        <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
+                        <div class="dropdown-content">
+                            <!--<a class="subMenu" href="#1">链接 1</a>-->
+                            <!--<a class="subMenu" href="#2">链接 2</a>-->
+                            <!--<a class="subMenu" href="#3">链接 3</a>-->
+                        </div>
+                    </div>
+                    <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
             `);
         },
         //加载url数据，flow流动的数据（加载更多）
