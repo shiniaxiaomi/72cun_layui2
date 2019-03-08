@@ -38,6 +38,12 @@ html body {
     text-decoration:none;
 }
 
+.logo{
+    margin-left: 18%;
+    margin-top: 5px;
+    float: left;
+}
+
 .menu-header li a:hover,.menu-header .dropdown:hover,.menu-header
 {
     background-color:#111;
@@ -79,7 +85,7 @@ html body {
     float: left;
     padding: 6px;
     margin-top: 10px;
-    margin-left: 60px;
+    margin-left: 20px;
     border: none;
     font-size: 17px;
 }
@@ -97,56 +103,6 @@ html body {
         border: 1px solid #ccc;
     }
 }
-
-/*.menu-header ul{*/
-    /*height: 52px;*/
-    /*position: fixed;*/
-    /*top: 0;*/
-    /*width: 100%;*/
-    /*list-style-type: none;*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-    /*overflow: hidden;*/
-    /*background-color: #333;*/
-    /*z-index: 100000;*/
-    /*font-size: 18px;*/
-/*}*/
-
-/*.menu-header li{  float:left;  }*/
-
-/*.active {  background-color: #4CAF50;  }*/
-
-/*.menu-header li a, .menu-header .dropbtn {*/
-    /*display:inline-block;*/
-    /*color:white;*/
-    /*text-align:center;*/
-    /*padding:14px 16px;*/
-    /*text-decoration:none;*/
-/*}*/
-
-/*.menu-header li a:hover,.menu-header .dropdown:hover, .menu-header .dropbtn {  background-color:#111;  }*/
-
-/*.menu-header .dropdown {  display:inline-block;  }*/
-
-/*.menu-header .dropdown-content {*/
-    /*display:none;*/
-    /*position:absolute;*/
-    /*background-color:#f9f9f9;*/
-    /*min-width:160px;*/
-    /*box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2);*/
-/*}*/
-
-/*.menu-header .dropdown-content a {*/
-    /*color:black;*/
-    /*padding:12px 16px;*/
-    /*text-decoration:none;*/
-    /*display:block;*/
-/*}*/
-
-/*.menu-header .dropdown-content a:hover {background-color: #f1f1f1}*/
-
-/*.menu-header .dropdown:hover .dropdown-content {  display:block;  }*/
-
 
 /* 菜单栏结束 */
 
