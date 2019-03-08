@@ -265,6 +265,24 @@ layui.define(['flow','layer','util','element','form'], function(exports){
                 $("#keywords").focus();
             }
 
+            //检测是否已经学习过快速入门
+            var isStudied = layui.data('72cun',{key: 'isStudied'});//查询本地数据
+            if(isStudied==undefined ||isStudied!="true"){
+                //询问框
+                var confirmLayer=layer.confirm('检测到你首次访问，是否打开<strong>快速入门</strong>进行学习？', {
+                    btn: ['可以学习一波','我想自己摸索'] //按钮
+                }, function(){
+                    window.open("/html/quickStart.html","_blank");
+                    layui.data('72cun', {key: 'isStudied',value: 'true'});//写入本地数据
+                    layer.close(confirmLayer);
+                    layer.alert('以后的使用过程中如果有疑问，可以到<br>导航栏中的<strong>快速入门</strong>进行再次学习',{title:"学习成功！"});
+                }, function(){
+                    layui.data('72cun', {key: 'isStudied',value: 'true'});//写入本地数据
+                    layer.close(confirmLayer);
+                    layer.alert('以后的使用过程中如果有疑问，可以到<br>导航栏中的<strong>快速入门</strong>进行再次学习',{title:"欢迎再次学习！"});
+                });
+            }
+
         }
 
     }
