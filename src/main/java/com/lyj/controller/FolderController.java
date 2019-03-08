@@ -56,14 +56,10 @@ public class FolderController {
 
     @RequestMapping("/update")
     public Result update(Folder folder,User sessionUser){
-
         folder.setUserId(sessionUser.getId());
 
-         if(folderService.updateFolder(folder)){
-             return ResultUtil.success("更新成功");
-         }else{
-             return ResultUtil.error("更新失败");
-         }
+        folderService.updateFolder(folder);
+        return ResultUtil.success("更新成功");
     }
 
 }

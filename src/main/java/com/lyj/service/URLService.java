@@ -300,4 +300,7 @@ public class URLService {
         });
     }
 
+    public void updateUrlPidNameByPid(Folder folder) {
+        urlDao.updateUrlPidNameByPid(folder.getName(),folder.getId());
+    }
 }

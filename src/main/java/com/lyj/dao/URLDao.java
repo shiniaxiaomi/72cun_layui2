@@ -46,6 +46,9 @@ public interface URLDao{
     @Update("update url set isShare=#{isShare},shareTime=#{shareTime} where id=#{id}")//修改链接的分享状态和分享时间
     int changeShareStatus(URL url);
 
+    @Update("update url set pidName=#{pidName} where pid=#{pid}")
+    void updateUrlPidNameByPid(@Param("pidName")String pidName,@Param("pid")int pid);
+
     //查
     @Select("select * from url where userId=#{userId} and pid=#{pid} order by createTime desc")
     List<URL> getUrlsByPidPage(@Param("userId") Integer userId, @Param("pid") int pid);//分页
@@ -96,4 +99,5 @@ public interface URLDao{
 
     @Select("select id from url where userId=#{userId} and isShare=true")
     List<Integer> getShareUrlIdsByUserId(Integer userId);
+
 }

@@ -3,6 +3,7 @@ package com.lyj.service;
 import com.lyj.dao.FolderDao;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Folder;
+import com.lyj.model.URL;
 import com.lyj.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -87,9 +88,12 @@ public class FolderService {
     //该操作后,清除缓存
     @CacheEvict(value = "folder",key = "'folders-userId:'+#folder.userId")
     @Transactional
-    public boolean updateFolder(Folder folder) {
+    public void updateFolder(Folder folder) {
         int i = folderDao.updateFolder(folder);
-        return i==1 ? true : false;
+        if(i==0){
+            throw new MessageException("文件夹更改失败！");
+        }
+        urlService.updateUrlPidNameByPid(folder);
     }
 
 
