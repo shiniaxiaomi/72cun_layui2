@@ -11,58 +11,28 @@
     <link rel="stylesheet" href="/layui/style/template.css" media="all">
     <link rel="stylesheet" href="/css/global.css" media="all">
 
-    <style type="text/css">
-        .longtext{overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
-        .fly-header .fly-nav a {
-            padding: 0 0px 0 60px;
-        }
-        .layadmin-homepage-list-imgtxt .media-body .media {
-            margin-top: 0px;
-            overflow: hidden;
-        }
-        .fly-header .layui-nav {
-            padding: 0;
-        }
-    </style>
+    <!-- 最后一个加载 -->
+    <link rel="stylesheet" href="/css/myStyle.css" media="all">
 
 </head>
 
 <body>
 
-<div class="fly-header layui-bg-black">
-    <div class="layui-container">
+<div class="menu-header">
+    <ul>
+        <img src="/images/logo.png" style="float: left;margin-top: 5px;margin-left: 300px">
 
-        <a class="fly-logo" href="javascript:;">
-            <img src="/images/logo.png">
-        </a>
+        <li><a href="/" style="margin-left: 100px">首页</a></li>
+        <li><a href="javascript:;" id="personalPage">个人首页</a></li>
+        <li><a href="/main?home">后台管理</a></li>
+        <li><a href="/html/quickStart.html" target="_blank">功能预览</a></li>
+        <li><a href="javascript:;">留言建议</a></li>
 
-        <ul class="layui-nav fly-nav layui-hide-xs">
-            <li class="layui-nav-item">
-                <a href="/"><i class="layui-icon layui-icon-home"></i>首页</a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:;" id="personalPage"><i class="layui-icon layui-icon-username"></i>个人首页</a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="/main?home"><i class="layui-icon layui-icon-set"></i>后台管理</a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="/html/quickStart.html" target="_blank"><i class="layui-icon layui-icon-chart-screen"></i>功能预览</a>
-            </li>
-        </ul>
-
-        <ul class="layui-nav fly-nav-user" id="user">
-            <li class="layui-nav-item">
-                <a class="iconfont icon-touxiang layui-hide-xs" href="javascript:;"></a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:;" id="login">登入</a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="/html/register.html">注册</a>
-            </li>
-        </ul>
-    </div>
+        <div id="userDiv">
+            <li style="float:right"><a href="/html/register.html" id="">注册</a></li>
+            <li style="float:right"><a href="javascript:;" id="login">登入</a></li>
+        </div>
+    </ul>
 </div>
 
 
