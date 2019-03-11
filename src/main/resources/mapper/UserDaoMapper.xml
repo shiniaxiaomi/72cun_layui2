@@ -4,15 +4,15 @@
 
     <!-- 批量更新user表中shareNumber字段 -->
     <update id="updateUserShareNumberByUserNameBatch">
-        <foreach collection="list" item="itemId" index="no">
-            UPDATE user set shareNumber=#{itemId.shareNumber} where userName = #{itemId.userName};
+        <foreach collection="list" item="itemId" index="no" separator=";">
+            UPDATE user set `shareNumber`=#{itemId.shareNumber} where `userName` = #{itemId.userName}
         </foreach>
     </update>
 
     <!-- 批量更新user表中goodNumber字段 -->
     <update id="updateUserGoodNumberByUserNameBatch">
-        <foreach collection="list" item="itemId" index="no">
-            UPDATE user set goodNumber=#{itemId.goodNumber} where userName = #{itemId.userName};
+        <foreach collection="list" item="itemId" index="no" separator=";">
+            UPDATE user set `goodNumber`=#{itemId.goodNumber} where `userName` = #{itemId.userName}
         </foreach>
     </update>
 
