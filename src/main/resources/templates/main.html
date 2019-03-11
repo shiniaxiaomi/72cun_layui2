@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>后台管理</title>
-    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
 
     <!-- 右键菜单 -->
-    <link href="/css/jquery.contextMenu.min.css" rel="stylesheet">
+    <link href="http://www.usetools.cn/css/jquery.contextMenu.min.css" rel="stylesheet">
 
     <!-- 右边主体的css -->
-    <link rel="stylesheet" type="text/css" href="/css/fs.css?v=1.8.4" media="all"/>
+    <link rel="stylesheet" type="text/css" href="http://www.usetools.cn/css/fs.css?v=1.8.4" media="all"/>
 
 </head>
 <body class="layui-layout-body">
@@ -32,9 +32,9 @@
         <!--</ul>-->
         <ul class="layui-nav layui-layout-right" lay-filter="fsTopRightMenu" id="fsTopRightMenu">
             <li class="layui-nav-item">
-                <a id="parentUserName" href="javascript:;"><img src="/images/code.png" class="layui-nav-img">${user.userName}</a>
+                <a id="parentUserName" href="javascript:;"><img src="http://www.usetools.cn/images/code.png" class="layui-nav-img">${user.userName}</a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" url="/html/personalInfo.html"> <cite>个人信息</cite></a></dd>
+                    <dd><a href="javascript:;" url="http://www.usetools.cn/html/personalInfo.html"> <cite>个人信息</cite></a></dd>
                     <dd><a href="/exit"> <cite>退出</cite></a></dd>
                 </dl>
             </li>
@@ -54,24 +54,24 @@
                         <!--<dd><a href="javascript:;" url="/searchUrl"> <cite><i class="layui-icon layui-icon-triangle-r"></i>网址管理</cite></a></dd>-->
                         <dd><a href="/" > <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>网站首页</cite></a></dd>
                         <dd><a href="/home/${user.userName}" > <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>个人主页</cite></a></dd>
-                        <dd><a href="javascript:;" url="/html/folderManager.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>文件夹管理</cite></a></dd>
-                        <dd><a href="javascript:;" url="/html/importAndExport.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>导入导出</cite></a></dd>
+                        <dd><a href="javascript:;" url="http://www.usetools.cn/html/folderManager.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>文件夹管理</cite></a></dd>
+                        <dd><a href="javascript:;" url="http://www.usetools.cn/html/importAndExport.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>导入导出</cite></a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed"  style="display: block;">
                     <a href="javascript:;"><i class="fa fa-table"></i> <cite>设置</cite><span class="layui-nav-more"></span></a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" url="/html/fastCollectionPage.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>快速工具</cite></a></dd>
-                        <dd><a href="javascript:;" url="/html/quickStart.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>快速入门</cite></a></dd>
-                        <dd><a href="javascript:;" url="/html/aboutMe.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>关于本站</cite></a></dd>
+                        <dd><a href="javascript:;" url="http://www.usetools.cn/html/fastCollectionPage.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>快速工具</cite></a></dd>
+                        <dd><a href="javascript:;" url="http://www.usetools.cn/html/quickStart.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>快速入门</cite></a></dd>
+                        <dd><a href="javascript:;" url="http://www.usetools.cn/html/aboutMe.html"> <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>关于本站</cite></a></dd>
                         <#if user.userName=='陆英杰'>
-                            <dd><a href="javascript:;" url="/html/admin/feedbackMessagesManager.html">
+                            <dd><a href="javascript:;" url="http://www.usetools.cn/html/admin/feedbackMessagesManager.html">
                                     <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>用户反馈</cite>
                                     <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
                             </dd>
                         <#else>
-                            <dd><a href="javascript:;" url="/html/admin/feedbackMessages.html">
+                            <dd><a href="javascript:;" url="http://www.usetools.cn/html/admin/feedbackMessages.html">
                                     <cite><i class="layui-icon layui-icon-circle-dot" style="font-size: 13px;margin: 0px 10px"></i>用户反馈</cite>
                                     <#if count??><span id="feedback" class="layui-badge" <#if count==0>style="display: none"</#if>><#if count!=0>${count}</#if></span></#if>
                                 </a>
@@ -96,7 +96,7 @@
             <!-- 主体 -->
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show" lay-id="首页">
-                    <iframe src="/html/searchUrl.html"></iframe>
+                    <iframe src="http://www.usetools.cn/html/searchUrl.html"></iframe>
                 </div>
             </div>
         </div>
@@ -110,10 +110,10 @@
     </div>
 
 </div>
-<script src="/js/jquery.min.js"></script>
-<script src="/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="/js/jquery.contextMenu.min.js"></script>
-<script src="/myjs/app.js?v=1.0.1"></script><!-- 自己定义的模块 -->
+<script src="http://www.usetools.cn/js/jquery.min.js"></script>
+<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="http://www.usetools.cn/js/jquery.contextMenu.min.js"></script>
+<script src="http://www.usetools.cn/myjs/app.js?v=1.0.1"></script><!-- 自己定义的模块 -->
 <script>
     layui.use(['layer','fsTab','fsContextMenu','leftSide'], function(){
         //示范一个公告层

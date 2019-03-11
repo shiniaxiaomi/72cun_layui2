@@ -25,7 +25,7 @@ public class CompressorUtil {
     //需要压缩的文件夹(会压缩此文件夹下的所有js、css文件)
 //    private String filePath="F:\\code\\72cun_buff\\static";
 //    private String filePath="D:\\code\\72cun_buff\\static";//需要将本地的静态文件拷贝到这个目录下，然后直接压缩该目录下的文件
-    private String filePath="C:\\Users\\yingjie.lu\\Desktop\\myStyle.css";
+    private String filePath="C:\\Users\\yingjie.lu\\Desktop\\app.js";
 //    private String filePath="F:\\code\\72cun_layui2\\src\\main\\resources\\static\\css\\myStyle.css";
 
     static int linebreakpos = 1000;//-1;换行：负数表示不换行
