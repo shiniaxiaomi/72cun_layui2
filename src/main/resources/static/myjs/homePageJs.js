@@ -3,12 +3,13 @@
  */
 
 
-layui.define(['flow','layer','util','element','form'], function(exports){
+layui.define(['flow','layer','util','element','form','myUtil'], function(exports){
 
     var flow = layui.flow;
     var layer = layui.layer;
     var utils = layui.util;
     var form = layui.form;
+    var myUtil = layui.myUtil;
 
     var user=undefined;
     var addLayer=undefined;
@@ -17,7 +18,7 @@ layui.define(['flow','layer','util','element','form'], function(exports){
     var obj={
         //动态添加热点网址数据
         addUrlData:function (id, url, param, next) {
-            util.ajax(url,param,function (data) {
+            myUtil.ajax(url,param,function (data) {
                 var o = document.getElementById(id);
                 var width = o.offsetWidth-200; //div的宽度
 
@@ -58,7 +59,7 @@ layui.define(['flow','layer','util','element','form'], function(exports){
                 $(".urlClick").unbind("click");//先删除之前所有的点击事件，防止绑定多次事件
                 $(".urlClick").on("click",function (arg) {//绑定链接点击事件
                     var url=obj.getUrlData(arg.target);
-                    util.ajax("/hotUrl/incrClickNumber",url,function (data) {
+                    myUtil.ajax("/hotUrl/incrClickNumber",url,function (data) {
                     })
                 })
 
@@ -77,14 +78,14 @@ layui.define(['flow','layer','util','element','form'], function(exports){
                     url.id=urlId;
 
                     //检查用户是否已经点赞过
-                    util.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
+                    myUtil.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
                         if(data.code==0){//增加点赞量
                             //点赞递增
-                            util.ajax("/hotUrl/incrGoodNumber",url,function (data) {
+                            myUtil.ajax("/hotUrl/incrGoodNumber",url,function (data) {
                                 if(data.code==0){//增加点赞量
                                     layer.msg(data.message);
                                     //标记该用户以点赞
-                                    util.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
+                                    myUtil.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
                                         if(data.code==1){
                                             console.log(data.message);//标记失败的话，静默打印
                                         }
@@ -103,7 +104,7 @@ layui.define(['flow','layer','util','element','form'], function(exports){
         //动态添加用户数据
         addUserData:function (url,param,next,flag) {
             var buff1="";
-            util.ajax(url,param,function (data) {
+            myUtil.ajax(url,param,function (data) {
                 var userData=data.data;
                 var lis = [];
                 for(var i=0;i<userData.length;i++){
@@ -208,7 +209,7 @@ layui.define(['flow','layer','util','element','form'], function(exports){
                 }
             })
             //查询是否已经登入
-            util.ajax("/getUserFromSession",{},function (data) {
+            myUtil.ajax("/getUserFromSession",{},function (data) {
                 if(data.userName!=null){
                     user=data;//保存user的信息
                     obj.changeLoginStatus(data);//修改登入状态
@@ -232,7 +233,7 @@ layui.define(['flow','layer','util','element','form'], function(exports){
             //登入事件
             form.on('submit(loginSubmit)', function(formData){
                 //在主页的登入操作
-                util.ajax("/homeLogin",formData.field,function (data) {
+                myUtil.ajax("/homeLogin",formData.field,function (data) {
                     if(data.code==0){
                         user=data.data;
                         layer.close(addLayer);//关闭登入弹窗

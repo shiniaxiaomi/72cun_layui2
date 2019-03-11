@@ -18,7 +18,12 @@ tail -f /72cun/temp.log
 
 
 启动步骤：
-1.压缩static资源，并上传资源文件，
-2.将public/html下的文件也上传到nginx上
-3.然后重启nginx（命令：/usr/sbin/nginx -s reload ）
-4.打包springboot，上传并启动（命令：/bin/bash /72cun.sh）
+//现在将资源放到cdn中，就不需要进行压缩，cdn会自动进行压缩，所以之后就直接将文件上传到nginx服务器中即可
+1.将static和public/html下的文件也上传到nginx上，然后重启nginx（命令：/usr/sbin/nginx -s reload ）,上传完成之后要去cdn更新缓存,
+    cdn需要刷新的目录
+    https://www.usetools.cn/html/
+    https://www.usetools.cn/layui/
+    https://www.usetools.cn/js/
+    https://www.usetools.cn/css/
+    https://www.usetools.cn/myjs/
+2.打包springboot，上传并启动（命令：/bin/bash /72cun.sh）

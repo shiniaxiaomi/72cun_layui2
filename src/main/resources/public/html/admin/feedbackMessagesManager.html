@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>用户反馈消息管理</title>
 
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
 </head>
 <body>
@@ -50,21 +50,22 @@
     <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="delete">删除</button>
 </script>
 
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js" charset="utf-8"></script>
-<script src="http://www.usetools.cn/js/util.js"></script>
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script><!-- 不缓存 -->
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 
 <script>
 
-    layui.use(['form','table'], function(){
+    layui.use(['form','table','myUtil'], function(){
         var form = layui.form;
         var table = layui.table;
+        var myUtil = layui.myUtil;
 
         //监听反馈主题的提交
 //        form.on('submit(formDemo)', function(data){
 //            data.field.isRoot=1;//设置是根节点
 //            //发送消息
-//            util.ajax("/message/send",data.field,function (data) {
+//            myUtil.ajax("/message/send",data.field,function (data) {
 //                layer.msg(data.message, {offset: '50px', anim: 0});
 //                if(data.code==0){
 //                    tableIns.reload();
@@ -95,7 +96,7 @@
             done: function(res, curr, count){
                 //如果是异步请求数据成功之后
                 var buff=top.window.document.getElementById("feedback");
-                util.ajax("/message/getSendedMessagesCount",{},function (data) {
+                myUtil.ajax("/message/getSendedMessagesCount",{},function (data) {
                     if(data==0){
                         $(buff).hide();
                     }else{
@@ -121,7 +122,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/message/delete",{id:obj.data.id},function (data) {
+                    myUtil.ajax("/message/delete",{id:obj.data.id},function (data) {
                         if(data.code==0){
                             tableIns.reload(tableOption);//刷新表格
                         }

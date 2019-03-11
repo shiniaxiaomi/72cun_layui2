@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>快速收藏</title>
 
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
-    <link rel="stylesheet" href="http://www.usetools.cn/css/eleTree.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/eleTree.css" media="all">
     <style>
         .form-dialog,.hide{
             display: none;
@@ -28,10 +28,9 @@
 </body>
 </html>
 
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="http://www.usetools.cn/myjs/app.js?v=1.0.1"></script>
-<script src="http://www.usetools.cn/js/util.js"></script>
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
     var eleTree;
     var layer;
@@ -43,15 +42,17 @@
     var parentDataArr;//请求到的原始数据
 
     var addLayer;
+    var myUtil;
 
-    layui.use(['layer',"eleTree",'form',"jquery"], function() {
+    layui.use(['layer',"eleTree",'form',"jquery",'myUtil'], function() {
         layer = layui.layer;
         $ = layui.jquery;
         form = layui.form;
         layer_folderTree=layui.layer;//文件夹树显示层
+        myUtil=layui.myUtil;//文件夹树显示层
 
         //查询默认文件夹id
-        util.ajax("/user/getRootFolderId",[],function (data) {
+        myUtil.ajax("/user/getRootFolderId",[],function (data) {
             //清空表单
             form.val("addText", {
                 "pidName": "默认文件夹",
@@ -79,7 +80,7 @@
                 data.field.isShare="false";
             }
 
-            util.ajax("/url/add",data.field,function (data) {
+            myUtil.ajax("/url/add",data.field,function (data) {
                 layer.close(addLayer);
 
                 setTimeout(function () {
@@ -163,9 +164,9 @@
 
     <script>
 
-        layui.use(["eleTree"], function() {
+        layui.use(["eleTree",'myUtil'], function() {
             eleTree = layui.eleTree;
-
+            var myUtil = layui.myUtil;
 
             //绑定输入框搜索事件
             $("#searchFolder").on("input",function (e) {
@@ -197,7 +198,7 @@
 
             //请求自定义文件夹id
             $(".customFolderSetting").on("click",function () {
-                util.ajax("/user/getCustomFolder",{},function (data) {
+                myUtil.ajax("/user/getCustomFolder",{},function (data) {
                     if(data.code==0){
                         $("#folderId_add").val(data.data.customFolderId);
                         $("#folderName_add").val(data.data.customFolderName);
@@ -215,7 +216,7 @@
                 expandOnClickNode: false,//点击节点前的图标才收缩
                 defaultExpandAll:true,//默认展开所有节点
                 done: function(res){
-                    var buff=buildTree(res);//转化成树结构
+                    var buff=myUtil.buildTree(res);//转化成树结构
                     searchTableDataObj=buff[0];
                     parentDataArr=buff;
                     return buff;//将平面数据转换成tree数据,返回给data

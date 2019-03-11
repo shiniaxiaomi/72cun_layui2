@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
     <style>
         .form-dialog,.hide{
@@ -62,10 +62,10 @@
 </script>
 
 
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="http://www.usetools.cn/myjs/app.js?v=1.0.1"></script>
-<script src="http://www.usetools.cn/js/util.js"></script>
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script><!-- 不缓存 -->
+
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
 
     var table;
@@ -84,12 +84,13 @@
     }
 
 
-    layui.use(['table','layer','form',"jquery"], function(){
+    layui.use(['table','layer','form',"jquery","myUtil"], function(){
         table = layui.table;
         layer=layui.layer;
         layer_folderTree=layui.layer;//文件夹树显示层
         $ = layui.jquery;
         form=layui.form;
+        var myUtil=layui.myUtil;
 
 
         //绑定点击搜索
@@ -141,7 +142,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/admin/deleteUserById",{id:obj.data.id},function (data) {
+                    myUtil.ajax("/admin/deleteUserById",{id:obj.data.id},function (data) {
                         if(data.code==0){
                             tableIns.reload(tableOption);//刷新表格
                             layer.msg("删除成功");

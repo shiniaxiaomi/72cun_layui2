@@ -3,16 +3,15 @@
  */
 
 layui.config({
-  base : "http://www.usetools.cn/myjs/",//设定扩展的Layui模块的所在目录，这个目录是其他扩展模块的根目录,如果其他模块都直接在根目录,即可直接使用
-	version : '1.0.1'
-});
+    //本地环境
+    // dir:"/layui/",//layui内置模块的所在目录的前缀
+    // extendDir:"",//本地开发的时候使用该前缀
 
-//layui.use(['layer','jquery','form','element'],function () {
-//    var layer = layui.layer;
-//
-//    //配置弹出层全局效果
-//    layer.config({
-//        shade: 0.1,//遮罩
-//    });
-//
-//})
+    //测试环境
+    dir:"https://www.usetools.cn/layui/",//layui内置模块的所在目录的前缀
+    extendDir:"https://www.usetools.cn",//其他Layui模块的所在目录的前缀
+
+
+    version : '1.0.1',
+    base : "/myjs/",//设定扩展的Layui模块的所在目录，这个目录是其他扩展模块的根目录,如果其他模块都直接在根目录,即可直接使用
+});

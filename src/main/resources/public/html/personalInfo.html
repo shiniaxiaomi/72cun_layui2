@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>72cun - 网址收藏</title>
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
 </head>
 <body>
@@ -108,15 +108,14 @@
     </div>
 </form>
 
-
-
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="http://www.usetools.cn/js/util.js"></script>
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
-    layui.use(['form'], function(){
+    layui.use(['form','myUtil'], function(){
         var form = layui.form
-            ,layer = layui.layer;
+            ,layer = layui.layer
+            ,myUtil = layui.myUtil;
 
         //自定义验证规则
         form.verify({
@@ -135,7 +134,7 @@
         });
 
         //获取用户信息并填充
-        util.ajax("/user/getUserInfo",{},function (data) {
+        myUtil.ajax("/user/getUserInfo",{},function (data) {
             if(data.code==0){
                 //确定显示绑定按钮还是更改按钮
                 if(data.data.phoneNumber=="" || data.data.phoneNumber==null){
@@ -156,7 +155,7 @@
         var updateUserNameLayer;
         $("#openReplaceUserNameDiv").click(function () {
             layer.prompt({title: '请输入登入密码', formType: 1}, function(pass, index){
-                util.ajax("/user/checkPassword",{"password":pass},function (data) {
+                myUtil.ajax("/user/checkPassword",{"password":pass},function (data) {
                     if(data.code==0){
                         layer.close(index);
                         updateUserNameLayer=layer.open({
@@ -174,9 +173,9 @@
         })
         //用户名修改提交
         form.on('submit(updateUserNameSubmit)', function(formData){
-            util.ajax("/user/isUserNameExist",{"userName":formData.field.userName},function (data) {
+            myUtil.ajax("/user/isUserNameExist",{"userName":formData.field.userName},function (data) {
                 if(data.code==0){
-                    util.ajax("/user/updateUserName",formData.field,function (data) {
+                    myUtil.ajax("/user/updateUserName",formData.field,function (data) {
                         layer.close(updateUserNameLayer);
                         if(data.code==0){
                             layer.msg("用户名修改成功,请重新登入!", {offset: '50px', anim: 0});
@@ -209,7 +208,7 @@
         })
         //绑定手机号提交
         form.on('submit(bindPhoneNumberSubmit)', function(formData){
-            util.ajax("/user/updatePhoneNumber",formData.field,function (data) {
+            myUtil.ajax("/user/updatePhoneNumber",formData.field,function (data) {
 
                 if(data.code==0){
                     layer.msg("手机号绑定成功!", {offset: '50px', anim: 0});
@@ -229,7 +228,7 @@
         var replacePhoneNumberLayer;
         $("#openReplacePhoneNumberDiv").click(function () {
             layer.prompt({title: '请输入登入密码', formType: 1}, function(pass, index){
-                util.ajax("/user/checkPassword",{"password":pass},function (data) {
+                myUtil.ajax("/user/checkPassword",{"password":pass},function (data) {
                     if(data.code==0){
                         layer.close(index);
                         replacePhoneNumberLayer=layer.open({
@@ -247,7 +246,7 @@
         })
         //更改手机号提交
         form.on('submit(replacePhoneNumberSubmit)', function(formData){
-            util.ajax("/user/updatePhoneNumber",formData.field,function (data) {
+            myUtil.ajax("/user/updatePhoneNumber",formData.field,function (data) {
 
                 if(data.code==0){
                     layer.msg("手机号绑定成功!", {offset: '50px', anim: 0});
@@ -295,10 +294,10 @@
                 }
 
                 //判断手机号是否已经存在(注册)
-                util.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
+                myUtil.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
                     if(data=="0"){
                         //发送获取验证码的请求
-                        util.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
+                        myUtil.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
                             if(data.code==0){
                                 setTimeout(function () {
                                     time("#getCode");//开始1分钟的定时
@@ -336,10 +335,10 @@
                 }
 
                 //判断手机号是否已经存在(注册)
-                util.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
+                myUtil.ajax("/phone/isPhoneNumberExist",{phoneNumber:phoneNumber},function (data) {
                     if(data=="0"){
                         //发送获取验证码的请求
-                        util.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
+                        myUtil.ajax("/phone/sendCode",{phoneNumber:phoneNumber},function (data) {
                             if(data.code==0){
                                 setTimeout(function () {
                                     time("#getReplaceCode");//开始1分钟的定时

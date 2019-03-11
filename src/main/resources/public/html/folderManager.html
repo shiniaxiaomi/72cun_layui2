@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
-    <link rel="stylesheet" href="http://www.usetools.cn/css/eleTree.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/eleTree.css" media="all">
 
     <style>
         /*设定表格特定的字体大小*/
@@ -68,10 +68,9 @@
     <a href="{{d.url}}" class="layui-table-link" target="_blank">{{ d.url }}</a>
 </script>
 
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="http://www.usetools.cn/myjs/app.js?v=1.0.0"></script>
-<script src="http://www.usetools.cn/js/util.js?v=1.8.4"></script>
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.0"></script>
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
 
     var eleTree;//文件夹树工厂,产生实例
@@ -93,13 +92,14 @@
     var moveLayer;//编辑弹窗id
     var beforeMoveFolderId;//点击批量移动前的文件夹id
 
-    layui.use(['jquery','layer', 'table','eleTree','form'], function () {
+    layui.use(['jquery','layer', 'table','eleTree','form','myUtil'], function () {
         eleTree = layui.eleTree;
         table = layui.table;
         $ = layui.$;
         layer_folderTree=layui.layer;//文件夹树显示层
         layer=layui.layer;
         form = layui.form;
+        myUtil = layui.myUtil;
 
         //打开批量移动到弹窗
         $("#moveToBtn").on("click",function () {
@@ -139,7 +139,7 @@
                 var id="";
                 var isShare="";
                 for(var i=0;i<data.length;i++){id+=data[i].id+",";isShare+=data[i].isShare+",";}
-                util.ajax("/url/deleteInBatches",{id:id,isShare:isShare},function (data) {
+                myUtil.ajax("/url/deleteInBatches",{id:id,isShare:isShare},function (data) {
                     if(data.code==0){
                         tableOption.where={pid:clickNodeId};
                         tableIns.reload(tableOption);//刷新表格
@@ -196,7 +196,7 @@
             expandOnClickNode: false,//点击节点前的图标才收缩
             defaultExpandAll:true,//默认展开所有节点
             done: function(res){
-                var buff=buildTree(res);//转化成树结构
+                var buff=myUtil.buildTree(res);//转化成树结构
                 searchTableDataObj=buff[0];
                 parentDataArr=buff;
                 return buff;//将平面数据转换成tree数据,返回给data
@@ -206,7 +206,7 @@
         // 添加子节点事件之前
         eleTree.on("nodeAppend(data1)", function (d) {
             layer.prompt({title: '请输入文件夹名称', formType: 0,maxlength: 15,shadeClose: true}, function(pass, index){
-                util.ajax("/folder/addFolder",{name:pass,pid:d.data.value},function (data) {
+                myUtil.ajax("/folder/addFolder",{name:pass,pid:d.data.value},function (data) {
                     if(data.code==0){
                         d.setData({//设置数据
                             value:data.data.id,
@@ -227,7 +227,7 @@
 
         // 节点被编辑事件之前(检查编译后的名称和检验后台是否修改成功)
         eleTree.on("nodeEdit(data1)", function (d) {
-            util.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
+            myUtil.ajax("/folder/update",{name:d.value,id:d.data.value},function (data) {
                 if(data.code==0){
                     layer.msg('文件夹名称更改成功');
                     d.update();//更新页面数据
@@ -246,7 +246,7 @@
             if(d.current.data.currentData.pid==d.target.data.currentData.value){
                 return;
             }
-            util.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
+            myUtil.ajax("/folder/update",{id:d.current.data.currentData.value,pid:d.target.data.currentData.value},function (data) {
                 if(data.code==0){
                     layer.msg('文件夹更改成功');
                     d.move();//成功之后页面上才移动
@@ -265,7 +265,7 @@
                 shadeClose: true,
             }, function(){
 
-                util.ajax("/folder/delete",{id:d.data.value,pid:d.data.pid},function (data) {
+                myUtil.ajax("/folder/delete",{id:d.data.value,pid:d.data.pid},function (data) {
                     if(data.code==0){
                         layer.msg('删除成功');
                         d.deleteNode();//删除该节点
@@ -299,7 +299,7 @@
         eleTree.on("nodeSetting(data1)", function (d) {
             clickNodeId=d.data.value;
 
-            util.ajax("/user/updateCustomFolder",{customFolderId:clickNodeId,customFolderName:d.data.label},function (data) {
+            myUtil.ajax("/user/updateCustomFolder",{customFolderId:clickNodeId,customFolderName:d.data.label},function (data) {
                 layer.msg(data.message);
             })
         });
@@ -341,7 +341,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
+                    myUtil.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
                         if(data.code==0){
                             tableOption.where={pid:clickNodeId};
                             tableIns.reload(tableOption);//刷新表格
@@ -395,7 +395,7 @@
             }
 
             //修改链接共享的状态
-            util.ajax("/url/changeShareStatus",url,function (data) {
+            myUtil.ajax("/url/changeShareStatus",url,function (data) {
                 layer.msg(data.message);
             })
         });
@@ -419,7 +419,7 @@
 
         //url更改事件
         form.on('submit(editSubmit)', function(formData){
-            util.ajax("/url/update",formData.field,function (data) {
+            myUtil.ajax("/url/update",formData.field,function (data) {
                 tableOption.where={pid:beforeMoveFolderId};//展示批量移动前的文件夹
                 tableIns.reload(tableOption);//刷新表格
                 clickNodeId=beforeMoveFolderId;//重新法赋值文件夹id
@@ -441,7 +441,7 @@
                 id+=data[i].id+",";
             }
 
-            util.ajax("/url/updateInBatches",{pid:formData.field.pid,id:id,pidName:formData.field.pidName},function (data) {
+            myUtil.ajax("/url/updateInBatches",{pid:formData.field.pid,id:id,pidName:formData.field.pidName},function (data) {
                 if(data.code==0){
                     tableOption.where={pid:beforeMoveFolderId};//展示批量移动前的文件夹
                     tableIns.reload(tableOption);//刷新表格
@@ -538,8 +538,9 @@
 
     <script>
 
-        layui.use(["eleTree"], function() {
+        layui.use(["eleTree",'myUtil'], function() {
             eleTree = layui.eleTree;
+            var myUtil = layui.myUtil;
 
             //绑定输入框搜索事件
             $("#searchFolder").on("input",function (e) {
@@ -572,7 +573,7 @@
 
             //请求自定义文件夹id
             $(".customFolderSetting").on("click",function () {
-                util.ajax("/user/getCustomFolder",{},function (data) {
+                myUtil.ajax("/user/getCustomFolder",{},function (data) {
                     if(data.code==0){
                         $("#folderId_move").val(data.data.customFolderId);
                         $("#folderName_move").val(data.data.customFolderName);
@@ -591,7 +592,7 @@
                 expandOnClickNode: false,//点击节点前的图标才收缩
                 defaultExpandAll:true,//默认展开所有节点
                 done: function(res){
-                    var buff=buildTree(res);//转化成树结构
+                    var buff=myUtil.buildTree(res);//转化成树结构
                     searchTableDataObj=buff[0];
                     parentDataArr=buff;
                     return buff;//将平面数据转换成tree数据,返回给data

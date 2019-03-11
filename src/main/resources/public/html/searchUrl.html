@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>网址搜索</title>
 
-    <link rel="stylesheet" href="http://www.usetools.cn/layui/css/layui.css">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
-    <link rel="stylesheet" href="http://www.usetools.cn/css/eleTree.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/eleTree.css" media="all">
 
     <style>
         .form-dialog,.hide{
@@ -75,10 +75,10 @@
     <a href="{{d.url}}" class="layui-table-link" target="_blank" onclick="">{{ d.url }}</a>
 </script>
 
-<script src="http://www.usetools.cn/js/jquery.min.js"></script>
-<script src="http://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
-<script src="http://www.usetools.cn/myjs/app.js?v=1.0.1"></script>
-<script src="http://www.usetools.cn/js/util.js"></script>
+
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script>
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
 
     var eleTree;
@@ -98,6 +98,7 @@
     var addLayer;//添加弹窗id
     var el;//文件夹树实例
     var clickNodeId;//保存点击过的node的id
+    var myUtil;
 
     ////输入框获得焦点
     window.onload=function() {
@@ -105,12 +106,13 @@
     }
 
 
-    layui.use(['table','layer','form',"jquery"], function(){
+    layui.use(['table','layer','form',"jquery","myUtil"], function(){
         table = layui.table;
         layer=layui.layer;
         layer_folderTree=layui.layer;//文件夹树显示层
         $ = layui.jquery;
         form=layui.form;
+        myUtil=layui.myUtil;
 
         //绑定点击搜索
         $("#searchBtn").on("click",function () {
@@ -163,7 +165,7 @@
                     btn: ['确定','取消'], //按钮
                     shadeClose: true,
                 }, function(){
-                    util.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
+                    myUtil.ajax("/url/delete",{id:obj.data.id,isShare:obj.data.isShare},function (data) {
                         if(data.code==0){
                             tableIns.reload(tableOption);//刷新表格
                             layer.msg("删除成功");
@@ -210,7 +212,7 @@
                 isShare:obj.elem.checked
             }
             //修改链接共享的状态
-            util.ajax("/url/changeShareStatus",url,function (data) {
+            myUtil.ajax("/url/changeShareStatus",url,function (data) {
                 layer.msg(data.message);
             })
         });
@@ -227,7 +229,7 @@
 
 
             //查询默认文件夹id
-            util.ajax("/user/getRootFolderId",[],function (data) {
+            myUtil.ajax("/user/getRootFolderId",[],function (data) {
                 //清空表单
                 form.val("addText", {
                     "label": "",
@@ -248,7 +250,7 @@
                 data.field.isShare="false";
             }
 
-            util.ajax("/url/add",data.field,function (data) {
+            myUtil.ajax("/url/add",data.field,function (data) {
                 tableIns.reload(tableOption);//刷新表格
                 layer.close(addLayer);
                 layer.msg("添加成功");
@@ -258,7 +260,7 @@
         //url更改事件
         form.on('submit(editSubmit)', function(formData){
 
-            util.ajax("/url/update",formData.field,function (data) {
+            myUtil.ajax("/url/update",formData.field,function (data) {
                 tableIns.reload(tableOption);//刷新表格
                 layer.close(editLayer);
                 layer.msg("更改成功");
@@ -367,8 +369,9 @@
 
     <script>
 
-        layui.use(["eleTree"], function() {
+        layui.use(["eleTree",'myUtil'], function() {
             eleTree = layui.eleTree;
+            var myUtil = layui.myUtil;
 
 
             //绑定输入框搜索事件
@@ -400,7 +403,7 @@
 
             //请求自定义文件夹id
             $(".customFolderSetting").on("click",function () {
-                util.ajax("/user/getCustomFolder",{},function (data) {
+                myUtil.ajax("/user/getCustomFolder",{},function (data) {
                     if(data.code==0){
                         $("#folderId_add").val(data.data.customFolderId);
                         $("#folderName_add").val(data.data.customFolderName);
@@ -419,7 +422,7 @@
                 expandOnClickNode: false,//点击节点前的图标才收缩
                 defaultExpandAll:true,//默认展开所有节点
                 done: function(res){
-                    var buff=buildTree(res);//转化成树结构
+                    var buff=myUtil.buildTree(res);//转化成树结构
                     searchTableDataObj=buff[0];
                     parentDataArr=buff;
                     return buff;//将平面数据转换成tree数据,返回给data
