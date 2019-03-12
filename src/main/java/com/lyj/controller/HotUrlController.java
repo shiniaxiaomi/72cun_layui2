@@ -32,8 +32,6 @@ public class HotUrlController {
 
     @RequestMapping("/incrClickNumber")
     public Result incrClickNumber(URL url,String time) throws ParseException {
-        url.setShareTime(simpleDateFormat.parse(time));
-
         hotUrlService.incrClickNumber(url);
         return ResultUtil.success(null);
     }
@@ -50,9 +48,7 @@ public class HotUrlController {
     }
 
     @RequestMapping("/incrGoodNumber")
-    public Result incrGoodNumber(URL url,String time) throws ParseException {
-        url.setShareTime(simpleDateFormat.parse(time));
-
+    public Result incrGoodNumber(URL url) throws ParseException {
         hotUrlService.incrGoodNumber(url);
         return ResultUtil.success("点赞成功，数据将在"+PublicVar.updateTime+"分钟之后更新！");
     }

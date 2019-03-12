@@ -3,18 +3,31 @@
  */
 
 
-layui.define([], function(exports){
+layui.define(['layer'], function(exports){
 
+    var layer=layui.layer;
+
+    //isShowWait为false时，不显示等待图标
+    //isShowWait不填，则默认显示等待图标
     var obj={
         //异步的ajax请求
-        ajax:function (url,data,func) {
+        ajax:function (url,data,func,isShowWait) {
+            if(isShowWait==undefined){
+                var waitLayer=layer.msg('加载中...', {
+                    icon: 16
+                    ,shade: 0.01
+                });
+            }
+
             $.ajax({
                 type: 'post',
                 url: url,
                 dataType: 'json',
                 data: data,
                 complete:function (data) {
-                    //console.dir(data)
+                    if(isShowWait==undefined){
+                        layer.close(waitLayer);
+                    }
                 },
                 error: function (data) {
                     if(data.status==309){//自己设置的错误码,表示session失效
@@ -31,11 +44,19 @@ layui.define([], function(exports){
             });
         },
         ajax_get:function (url,data,func) {
+            var waitLayer=layer.msg('加载中...', {
+                icon: 16
+                ,shade: 0.01
+            });
+
             $.ajax({
                 type: 'get',
                 url: url,
                 dataType: 'json',
                 data: data,
+                complete:function (data) {
+                    layer.close(waitLayer);
+                },
                 error: function (data) {
                     if(data.status==309){//自己设置的错误码,表示session失效
                         console.dir("session 失效")
@@ -75,6 +96,21 @@ layui.define([], function(exports){
             var data=data1.data;//取到里面的json数据
             return obj.fn(data,0);
         },
+        //时间转化工具
+        beautify_time:function (time) {
+            var d = new Date(time)
+            var mistiming = Math.round((Date.now() - d.getTime(d)) / 1000);
+            var arrr = ['年', '个月', '星期', '天', '小时', '分钟', '秒'];
+            var arrn = [31536000, 2592000, 604800, 86400, 3600, 60, 1];
+            for (var i = 0; i < arrn.length; i++) {
+                var inm = Math.floor(mistiming / arrn[i]);
+                if (inm != 0) {
+                    return inm + arrr[i] + '前';
+                }
+            }
+        }
+
+
 
     }
 

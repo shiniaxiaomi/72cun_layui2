@@ -25,31 +25,47 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 var lis = [];
                 var list=data.data;
                 for(var i = 0; i < list.length; i++){
+                    var shareTime=myUtil.beautify_time(list[i].shareTime);
                     lis.push(`
-                                <a href="javascript:;" class="media-left"><img src="/images/code.png" height="46px" width="46px" style="display: block;float: left;vertical-align: top;padding-right: 10px;"></a>
-                                <div class="media-body">
-                                    <div class="pad-btm">
-                                        <p class="fontColo "><a href="/home/`+list[i].userName+`"><b>`+list[i].userName+`</b></a><span>共享了一个链接</span></p>
-                                        <p>`+list[i].shareTime+`</p>
-                                    </div>
-                                    <b><p style="font-size: 15px">标题：<span><a href="`+list[i].url+`" target="_blank" ><span style="color: #01AAED" class="urlClick" urlId="`+list[i].id+`">`+list[i].label+`</span></a></span></p></b>
-                                    <p>位置：<span>`+list[i].pidName+`</span></p>
-                                    <div class="longtext" style="width:`+width+`px;">链接：<a href="`+list[i].url+`" target="_blank" ><span class="urlClick" urlId="`+list[i].id+`">`+list[i].url+`</span></a></div>
-
-                                    <div class="media">
-                                        <div class="media-right">
-
-                                            <ul class="list-inline">
-                                                <li><span>点击量：</span><span>`+list[i].clickNumber+`</span></li>
-                                                <li><span>点赞量：</span><span>`+list[i].goodNumber+`</span></li>
-                                                <li class="goodClick" urlId="`+list[i].id+`"><i class="layui-icon layui-icon-praise" style="font-size: 25px;" onmousemove="$(this).css('color','#1E9FFF')" onmouseout="$(this).css('color','')"></i></li>
-                                            </ul>
-
+                                <ul class="feedlist_mod web" style="padding-top: 0px;">
+                                    <li class="clearfix" urlId="`+list[i].id+`">
+                                        <div class="list_con">
+                                            <div class="title">
+                                                <h2>
+                                                    <a href="`+list[i].url+`" target="_blank">
+                                                        <span class="urlClick">`+list[i].label+`</span>
+                                                    </a>
+                                                </h2>
+                                            </div>
+                                            <div class="summary oneline">链接:`+list[i].url+`</div>
+                                            <dl class="list_userbar">
+                                                <dt>
+                                                    <a href="/home/`+list[i].userName+`" class="user_img">
+                                                        <img src="https://www.usetools.cn/images/code.png">
+                                                    </a>
+                                                </dt>
+                                                <dd class="name">
+                                                    <a href="/home/`+list[i].userName+`">`+list[i].userName+`</a>
+                                                </dd>
+                                                <div class="interval"></div>
+                                                <dd class="time">`+shareTime+`</dd>
+                                                <div class="interactive floatR">
+                                                    <dd class="common_num">
+                                                            <span class="text">阅读数</span>
+                                                            <span class="num">`+list[i].clickNumber+`</span>
+                                                    </dd>
+                                                    <div class="interval"></div>
+                                                    <dd class="read_num">
+                                                        <a href="javascript:;" title="点赞" class="goodClick">
+                                                            <span class="text">点赞数</span>
+                                                            <span class="num">`+list[i].goodNumber+`</span>
+                                                        </a>
+                                                    </dd>
+                                                </div>
+                                            </dl>
                                         </div>
-                                        <!--<div class="media-left"></div>-->
-                                    </div>
-                                </div>
-                                <hr>
+                                    </li>
+                                </ul> 
                         `)
                 }
 
@@ -58,7 +74,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 next(lis.join(''), param.page < data.pages); //假设总页数为 10
                 $(".urlClick").unbind("click");//先删除之前所有的点击事件，防止绑定多次事件
                 $(".urlClick").on("click",function (arg) {//绑定链接点击事件
-                    var url=obj.getUrlData(arg.target);
+                    var url=obj.getClickUrl(arg.target);
                     myUtil.ajax("/hotUrl/incrClickNumber",url,function (data) {
                     })
                 })
@@ -72,24 +88,22 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                         return;
                     }
 
-                    var url=obj.getUrlData(arg.target);
-                    var urlId=$(arg.target).closest("li").attr("urlId");
-                    url.likeUrlId=urlId;
-                    url.id=urlId;
+                    var url=obj.getClickUrl(arg.target);
+                    url.likeUrlId=url.id;
 
                     //检查用户是否已经点赞过
-                    myUtil.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
+                    myUtil.ajax("/hotUrl/isIncredGoodNumber",{userId:user.id,likeUrlId:url.urlId},function (data) {
                         if(data.code==0){//增加点赞量
                             //点赞递增
                             myUtil.ajax("/hotUrl/incrGoodNumber",url,function (data) {
                                 if(data.code==0){//增加点赞量
                                     layer.msg(data.message);
                                     //标记该用户以点赞
-                                    myUtil.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:urlId},function (data) {
+                                    myUtil.ajax("/hotUrl/markIsIncredGoodNumber",{userId:user.id,likeUrlId:url.urlId},function (data) {
                                         if(data.code==1){
                                             console.log(data.message);//标记失败的话，静默打印
                                         }
-                                    })
+                                    },false)
                                 }else{
                                     layer.msg(data.message);
                                 }
@@ -132,29 +146,13 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 next(lis.join(''), param.page < data.pages); //假设总页数为 10
             })
         },
-        //通过点击节点获取点击对应的url数据
-        getUrlData:function (arg) {
-            var div=$(arg).closest(".media-body");
-            //获取时间
-            var id=$(arg).attr("urlId")
-            var url=$(div).find("div a span").text();
-            var label=$(div).find("b a span").text();
-            var pidName=$($(div).find("p span").get(3)).text();
-            var userName=$($(div).find("div p").get(0)).find("b").text();
-            var clickNumber=$($(div).find("ul li span").get(1)).text();
-            var goodNumber=$($(div).find("ul li span").get(3)).text();
-
-            var shareTime=$($(div).find("div p").get(1)).text();
-
+        //获取点击链接的id
+        getClickUrl:function (arg) {
+            var urlId=$(arg).closest("li").attr("urlId");
+            var userName=$(arg).closest("li").find(".name a").text();
             var url={
-                id:id,
-                url:url,
-                label:label,
-                pidName:pidName,
+                id:urlId,
                 userName:userName,
-                time:shareTime,
-                clickNumber:clickNumber,
-                goodNumber:goodNumber
             }
             return url;
         },
@@ -166,9 +164,8 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                     <div class="dropdown" style="float:right;margin-right: 10px">
                         <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
                         <div class="dropdown-content">
-                            <!--<a class="subMenu" href="#1">链接 1</a>-->
-                            <!--<a class="subMenu" href="#2">链接 2</a>-->
-                            <!--<a class="subMenu" href="#3">链接 3</a>-->
+                            <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
+                            <a class="subMenu" href="/html/membership.html">会员</a>
                         </div>
                     </div>
                     <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
@@ -196,8 +193,53 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 }
             });
         },
+        //添加登入弹窗
+        addLoginDialog:function () {
+            var addLoginDialog=$(`
+                <div class="layui-form form-dialog" id="loginDiv" lay-filter="loginDiv" style="display: none;">
+    <div class="layui-row">
+        <div class="layui-col-md11">
+            <div class="layui-form-item" style="margin-top: 10px">
+                <label class="layui-form-label" style="padding: 9px 0px;">账号</label>
+                <div class="layui-input-block">
+                    <input id="userName" lay-verify="myUserName" type="text" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="padding: 9px 0px;">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="password" lay-verify="myPassword" type="text" name="password"  placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-input-block">
+                    <button class="layui-btn" id="loginBtn" lay-submit lay-filter="loginSubmit">登入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            `);
+            $("body").append(addLoginDialog);
+
+            $("#userName").keyup(function(event){
+                if(event.keyCode==13){
+                    $('#loginBtn').click();
+                }
+            });
+
+            $("#password").keyup(function(event){
+                if(event.keyCode==13){
+                    $('#loginBtn').click();
+                }
+            });
+
+        },
         //初始化函数
         init:function () {
+            //添加登入弹窗
+            obj.addLoginDialog();
+
             //绑定个人主页点击事件
             $("#personalPage").click(function () {
                 if(user!=undefined){
@@ -208,6 +250,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                     });
                 }
             })
+
             //查询是否已经登入
             myUtil.ajax("/getUserFromSession",{},function (data) {
                 if(data.userName!=null){
@@ -259,6 +302,8 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                     area: ['380px', '220px'], //宽高
                     content: $("#loginDiv")
                 });
+
+                $("#userName").focus();//显示登入弹窗后，获取焦点
             })
 
             //输入框获得焦点

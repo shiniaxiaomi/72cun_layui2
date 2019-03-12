@@ -1,0 +1,224 @@
+
+/* url展示主体 */
+main ul.feedlist_mod li {
+    padding: 18px 24px;
+    background: #fff;
+    border-bottom: 1px solid #f4f4f4;
+    position: relative;
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+main ul.feedlist_mod li .list_con h2 {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+main ul.feedlist_mod li .list_con h2 a {
+    max-width: 98%;
+    color: #3d3d3d;
+    display: block;
+    line-height: 24px;
+    height: 24px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap
+}
+
+main ul.feedlist_mod li .list_con h2 a:link {
+    color: #3d3d3d
+}
+
+/*main ul.feedlist_mod li .list_con h2 a:visited {*/
+     /*color: #b8b8b8*/
+/*}*/
+
+main ul.feedlist_mod li .list_con h2 a:hover, main ul.feedlist_mod li .list_con h2 a:active {
+    color: #ca0c16
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar {
+    height: 24px;
+    line-height: 24px;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar .interval {
+    float: left;
+    width: 1px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    margin-top: 6px;
+    margin-left: 8px;
+    margin-right: 8px
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dt {
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dt .user_img {
+    position: relative;
+    display: inline-block;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dt .user_img::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 50%
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dt .user_img img {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    -o-object-fit: cover;
+    object-fit: cover;
+    overflow: hidden
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd {
+    float: left;
+    font-size: 14px;
+    color: #8a8a8a;
+    line-height: 24px;
+}
+
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd a {
+    color: #999;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd a:link, main ul.feedlist_mod li .list_con dl.list_userbar dd a:visited {
+    color: #999
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd a:hover, main ul.feedlist_mod li .list_con dl.list_userbar dd a:active {
+    color: #157dcf;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd a:hover svg, main ul.feedlist_mod li .list_con dl.list_userbar dd a:active svg {
+    fill: #157dcf
+}
+
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd.blogtitle a {
+    margin-left: 4px;
+    max-width: 180px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd.blogtitle a {
+    color: #3399ea;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd.blogtitle a:hover {
+    color: #157dcf
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar dd svg {
+    width: 14px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    fill: #999;
+    margin-right: 4px
+}
+
+
+main ul.feedlist_mod li .list_con dl.list_userbar .name a {
+    display: inline-block;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar .name a:link, main ul.feedlist_mod li .list_con dl.list_userbar .name a:visited {
+    color: #3d3d3d
+}
+
+main ul.feedlist_mod li .list_con dl.list_userbar .name a:hover {
+    color: #157dcf
+}
+
+main ul.feedlist_mod li .list_con .interactive {
+    line-height: 24px;
+}
+
+main ul.feedlist_mod li .list_con .interactive .read_num {
+    float: left;
+    text-align: center;
+}
+
+main ul.feedlist_mod li .list_con .interactive .read_num:hover .num, main ul.feedlist_mod li .list_con .interactive .read_num:hover .text {
+    color: #157dcf
+}
+
+main ul.feedlist_mod li .list_con .interactive .read_num .text {
+    color: #8a8a8a
+}
+
+main ul.feedlist_mod li .list_con .interactive .read_num .num {
+    color: #3399ea
+}
+
+main ul.feedlist_mod li .list_con .interactive .common_num {
+    float: left;
+}
+
+main ul.feedlist_mod li .list_con .interactive .common_num .num {
+    color: #349edf
+}
+
+main ul.feedlist_mod li .list_con .interactive .common_num .text {
+    color: #8a8a8a
+}
+
+
+
+main ul.feedlist_mod li .list_con .summary {
+    margin-bottom: 4px;
+    color: #8a8a8a;
+    font-size: 14px;
+    line-height: 24px
+}
+
+main ul.feedlist_mod li .list_img {
+    display: block;
+    float: left;
+    margin: 0 20px 0 0;
+    width: 120px;
+    height: 90px;
+    border: 1px solid #e3e3e3;
+    overflow: hidden;
+}
+
+main ul.feedlist_mod li .list_img img {
+    width: 100%;
+    border: 0
+}
+
+.floatR {
+    float: right
+}
+.oneline {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}

@@ -4,12 +4,12 @@
 
 layui.config({
     //本地环境
-    // dir:"/layui/",//layui内置模块的所在目录的前缀
-    // extendDir:"",//本地开发的时候使用该前缀
+    dir:"/layui/",//layui内置模块的所在目录的前缀
+    extendDir:"",//本地开发的时候使用该前缀
 
     //测试环境
-    dir:"https://www.usetools.cn/layui/",//layui内置模块的所在目录的前缀
-    extendDir:"https://www.usetools.cn",//其他Layui模块的所在目录的前缀
+    // dir:"https://www.usetools.cn/layui/",//layui内置模块的所在目录的前缀
+    // extendDir:"https://www.usetools.cn",//其他Layui模块的所在目录的前缀
 
 
     version : '1.0.1',

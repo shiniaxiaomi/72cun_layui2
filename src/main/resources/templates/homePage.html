@@ -13,6 +13,8 @@
 
     <!-- 最后一个加载 -->
     <link rel="stylesheet" href="https://www.usetools.cn/css/myStyle.css" media="all">
+    <link rel="stylesheet" href="/css/urlStyle.css" media="all">
+
 
 </head>
 
@@ -47,12 +49,13 @@
     </ul>
 </div>
 
-<div class="layui-fluid layadmin-homepage-fluid">
+<div class="layui-container" style="width: 80%;">
+    <div class="layui-fluid layadmin-homepage-fluid">
     <div class="layui-row layui-col-space8">
         <div class="layui-col-md2">
             <div class="layadmin-homepage-panel layadmin-homepage-shadow" style="min-height:500px">
                 <div class="layui-card text-center">
-                    <h1>72cun-网址收藏</h1>
+                    <h2>72cun-网址收藏</h2>
                 </div>
                 <p class="layadmin-homepage-about">关于我</p>
                 <div class="layadmin-homepage-pad-hor">
@@ -74,19 +77,25 @@
                                 </ul>
                                 <div class="layui-tab-content">
                                     <div class="layui-tab-item layui-show" style="">
-                                        <div class="flow-default" id="LAY_demo1">
-                                            <!--动态生成-->
-                                        </div>
+                                        <main>
+                                            <div class="flow-default" id="LAY_demo1">
+                                                <!--动态生成-->
+                                            </div>
+                                        </main>
                                     </div>
                                     <div class="layui-tab-item" style="">
-                                        <div class="flow-default" id="LAY_demo2">
-                                            还在开发中。。。
-                                        </div>
+                                        <main>
+                                            <div class="flow-default" id="LAY_demo2">
+                                                还在开发中。。。
+                                            </div>
+                                        </main>
                                     </div>
                                     <div class="layui-tab-item" style="">
-                                        <div class="flow-default" id="LAY_demo3">
-                                            还在开发中。。。
-                                        </div>
+                                        <main>
+                                            <div class="flow-default" id="LAY_demo3">
+                                                还在开发中。。。
+                                            </div>
+                                        </main>
                                     </div>
                                 </div>
                             </div>
@@ -127,15 +136,21 @@
         </div>
     </div>
 </div>
+</div>
 
 <script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
 <script src="/myjs/app.js?v=1.0.1"></script><!-- 不缓存 -->
 <script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
 
-    layui.use(['layer','homePageJs'], function() {
+    layui.use(['layer','homePageJs','myUtil'], function() {
         var layer = layui.layer;
         var homePageJs=layui.homePageJs;
+        var myUtil=layui.myUtil;
+
+        var s=myUtil.beautify_time("2019-03-05 13:49:00");//时间转化工具
+        console.log(s);
+
 
         $(".subMenu").click(function () {
             $(".menu-header .dropdown .dropdown-content").hide();
@@ -168,27 +183,3 @@
 </html>
 
 
-<!-- url 添加 弹窗 -->
-<div class="layui-form form-dialog" id="loginDiv" lay-filter="loginDiv" style="display: none;">
-    <div class="layui-row">
-        <div class="layui-col-md11">
-            <div class="layui-form-item" style="margin-top: 10px">
-                <label class="layui-form-label" style="padding: 9px 0px;">账号</label>
-                <div class="layui-input-block">
-                    <input id="userName" lay-verify="myUserName" type="text" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label" style="padding: 9px 0px;">密码</label>
-                <div class="layui-input-block">
-                    <input type="password" id="password" lay-verify="myPassword" type="text" name="password"  placeholder="" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item" >
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="loginSubmit">登入</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

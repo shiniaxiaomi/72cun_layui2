@@ -14,6 +14,7 @@
 
     <!-- 最后一个加载 -->
     <link rel="stylesheet" href="https://www.usetools.cn/css/myStyle.css" media="all">
+    <link rel="stylesheet" href="/css/urlStyle.css" media="all">
 
 </head>
 
@@ -37,7 +38,8 @@
 </div>
 
 
-<div class="layui-fluid layadmin-homepage-fluid">
+<div class="layui-container" style="width: 80%;">
+    <div class="layui-fluid layadmin-homepage-fluid">
     <div class="layui-row layui-col-space8">
         <div class="layui-col-md2">
             <div class="layadmin-homepage-panel layadmin-homepage-shadow" style="min-height:500px">
@@ -60,9 +62,11 @@
 
                         <div class="grid-demo">
                             <div class="panel-body layadmin-homepage-shadow">
-                                <div class="flow-default" id="LAY_demo1">
-                                    <!--动态生成-->
-                                </div>
+                                <main>
+                                    <div class="flow-default" id="LAY_demo1">
+                                        <!--动态生成-->
+                                    </div>
+                                </main>
                             </div>
                         </div>
 
@@ -101,6 +105,7 @@
         </div>
     </div>
 </div>
+</div>
 
 
 <script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
@@ -129,30 +134,3 @@
 </script>
 </body>
 </html>
-
-<!-- url 添加 弹窗 -->
-<div class="layui-form form-dialog" id="loginDiv" lay-filter="loginDiv" style="display: none;">
-    <div class="layui-row">
-        <div class="layui-col-md11">
-            <div class="layui-form-item" style="margin-top: 10px">
-                <label class="layui-form-label" style="padding: 9px 0px;">账号</label>
-                <div class="layui-input-block">
-                    <input id="userName" lay-verify="myUserName" type="text" name="userName" placeholder="手机号/用户名" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label" style="padding: 9px 0px;">密码</label>
-                <div class="layui-input-block">
-                    <input type="password" id="password" lay-verify="myPassword" type="text" name="password"  placeholder="" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item" >
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="loginSubmit">登入</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
