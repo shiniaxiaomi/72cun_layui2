@@ -42,6 +42,12 @@ public class PageController {
         return mv;
     }
 
+    @RequestMapping("/membership")
+    public ModelAndView membership(ModelAndView mv){
+        mv.setViewName("membership");
+        return mv;
+    }
+
     @RequestMapping("/admin/userManager")
     public ModelAndView userManager(ModelAndView mv){
         mv.setViewName("admin/userManager");

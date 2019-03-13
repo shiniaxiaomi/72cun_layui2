@@ -16,6 +16,53 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
 
 
     var obj={
+        //添加头部导航栏
+        addHeader:function () {
+            var header=$(`
+                <div class="menu-header">
+                    <ul>
+                        <img class="logo" src="https://www.usetools.cn/images/logo.png" >
+                
+                        <li><a href="/" style="margin-left: 100px">首页</a></li>
+                        <li><a href="javascript:;" id="personalPage">个人首页</a></li>
+                        <li><a href="/html/quickStart.html" target="_blank">快速入门</a></li>
+                        <li><a href="javascript:;">留言建议</a></li>
+                        <!--<div class="dropdown">-->
+                            <!--<a href="javascript:;" class="dropbtn">下拉菜单</a>-->
+                            <!--<div class="dropdown-content">-->
+                                <!--<a class="subMenu" href="#1">链接 1</a>-->
+                                <!--<a class="subMenu" href="#2">链接 2</a>-->
+                                <!--<a class="subMenu" href="#3">链接 3</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <input type="text" id="keywords" placeholder="搜共享链接...">
+                
+                        <div id="userDiv" style=" position: fixed;z-index: 1000;right: 0;">
+                            <li style="float:right"><a href="/html/register.html" id="">注册</a></li>
+                            <li style="float:right"><a href="javascript:;" id="login">登入</a></li>
+                        </div>
+                    </ul>
+                </div>                
+            `);
+
+            $("body").prepend(header);
+        },
+        //修改登入的状态
+        changeLoginStatus:function (data) {
+            $("#userDiv").html(`
+                    <li style="float:right;margin-left: 10px"><a href="/exit">退出</a></li>
+                    <i class="layui-badge fly-badge-vip layui-hide-xs" style="float: right;margin-top: 19px">VIP</i>
+                    <div class="dropdown" style="float:right;margin-right: 10px">
+                        <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
+                        <div class="dropdown-content">
+                            <a class="subMenu" href="/main?home">后台管理</a>
+                            <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
+                            <a class="subMenu" href="/membership">会员</a>
+                        </div>
+                    </div>
+                    <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
+            `);
+        },
         //动态添加热点网址数据
         addUrlData:function (id, url, param, next) {
             myUtil.ajax(url,param,function (data) {
@@ -123,9 +170,9 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 var lis = [];
                 for(var i=0;i<userData.length;i++){
                     if(flag=="分享"){
-                        buff1="共分享了"+userData[i].shareNumber+"条链接";
+                        buff1="共享了"+userData[i].shareNumber+"条链接";
                     }else if(flag=="点赞"){
-                        buff1="共获得了"+userData[i].goodNumber+"个点赞";
+                        buff1="获得了"+userData[i].goodNumber+"个点赞";
                     }
                     lis.push(`
                          <a href="/home/`+userData[i].userName+`" class="layadmin-privateletterlist-item">
@@ -155,21 +202,6 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 userName:userName,
             }
             return url;
-        },
-        //修改登入的状态
-        changeLoginStatus:function (data) {
-            $("#userDiv").html(`
-                    <li style="float:right;margin-left: 10px"><a href="/exit">退出</a></li>
-                    <i class="layui-badge fly-badge-vip layui-hide-xs" style="float: right;margin-top: 19px">VIP</i>
-                    <div class="dropdown" style="float:right;margin-right: 10px">
-                        <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
-                        <div class="dropdown-content">
-                            <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
-                            <a class="subMenu" href="/html/membership.html">会员</a>
-                        </div>
-                    </div>
-                    <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
-            `);
         },
         //加载url数据，flow流动的数据（加载更多）
         loadUrlDataByFlow:function (id,url,param) {
@@ -237,6 +269,8 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
         },
         //初始化函数
         init:function () {
+            //添加头部导航栏
+            obj.addHeader();
             //添加登入弹窗
             obj.addLoginDialog();
 

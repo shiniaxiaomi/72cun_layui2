@@ -16,6 +16,7 @@ layui.define(['layer'], function(exports){
                 var waitLayer=layer.msg('加载中...', {
                     icon: 16
                     ,shade: 0.01
+                    ,time: 0
                 });
             }
 
@@ -47,6 +48,7 @@ layui.define(['layer'], function(exports){
             var waitLayer=layer.msg('加载中...', {
                 icon: 16
                 ,shade: 0.01
+                ,time: 0
             });
 
             $.ajax({

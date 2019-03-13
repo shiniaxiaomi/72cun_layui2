@@ -6,8 +6,18 @@
     <title>72cun - 网址收藏</title>
     <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css">
 
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/style/template.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/global.css" media="all">
+
+    <!-- 最后一个加载 -->
+    <link rel="stylesheet" href="https://www.usetools.cn/css/myStyle.css" media="all">
+
 </head>
 <body>
+
+
+<div class="layui-container">
 
 
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -38,6 +48,7 @@
         </div>
 
     </form>
+</div>
 
 </body>
 
@@ -112,10 +123,13 @@
 <script src="/myjs/app.js?v=1.0.0"></script>
 <script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
-    layui.use(['form','myUtil'], function(){
+    layui.use(['form','myUtil','homePageJs'], function(){
         var form = layui.form
             ,layer = layui.layer
-            ,myUtil = layui.myUtil;
+            ,myUtil = layui.myUtil
+            ,homePageJs = layui.homePageJs
+
+        homePageJs.init();
 
         //自定义验证规则
         form.verify({

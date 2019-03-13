@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员</title>
+
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/layui/style/template.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/global.css" media="all">
+
+
+    <link rel="stylesheet" href="/css/bootstrap.css" media="all">
+    <link rel="stylesheet" href="/css/download_profile.css" media="all">
+    <!-- 最后一个加载 -->
+    <link rel="stylesheet" href="/css/myStyle.css" media="all">
+
+
+
+</head>
+<body>
+
+<div class="layui-container">
+
+    <div class="layui-row">
+        <div class="layui-col-md10" style="width:940px">
+            <div class="vip_buy_wrap vip_buy_new" >
+                <div class="mod_vip_table">
+                    <div class="vip-main">
+                        <div class="vip-compare clearfix">
+                            <dl>
+                                <dt>特权</dt>
+                                <dd>会员有效期</dd>
+                                <dd>保存链接个数</dd>
+                                <dd>保存文件夹个数</dd>
+                                <dd>保存文件夹层数</dd>
+                                <dd>全站免广告</dd>
+                                <dd>VIP身份标识</dd>
+                                <dd>价格</dd>
+                            </dl>
+                            <dl class="js_compare_list super-vip" >
+                                <dt><p>年卡</p></dt>
+                                <dd>365天</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd>¥19.90元</dd>
+                            </dl>
+                            <dl class="js_compare_list" >
+                                <dt><p>季卡</p></dt>
+                                <dd>90天</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd>¥5.40元</dd>
+                            </dl>
+                            <dl class="js_compare_list" >
+                                <dt><p>月卡</p></dt>
+                                <dd>30天</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd>无限制</dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd><img src="/images/down-yes@2x.png" alt=""></dd>
+                                <dd>¥1.90元</dd>
+                            </dl>
+                            <dl >
+                                <dt><p>非会员</p></dt>
+                                <dd>无限制</dd>
+                                <dd>50</dd>
+                                <dd>5</dd>
+                                <dd>1</dd>
+                                <dd><img src="/images/down-no@2x.png" alt=""></dd>
+                                <dd><img src="/images/down-no@2x.png" alt=""></dd>
+                                <dd>免费</dd>
+                            </dl>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md2" style="min-width:210px">
+            <div class="vip_card_buy vip_buy_top clearfix">
+                <div class="vip_buy_t_r">
+                <div class="vip_pay"><span>支付金额</span><strong>19.90元</strong></div>
+                <ul class="vip_pay_list">
+                    <li class="vip_list_fir">
+                        <div class="pay_wrap">
+                            <div id="wechat_payment" class="pay_erweima grey_border"><img width="150" height="150"></div>
+                            <!--遮罩提示-->
+                            <div id="notify" class="pay_notify" style="display: block;"><img onclick="query_order_info();" class="pay_icon" src="/images/pay_time_out.png"><span onclick="query_order_info();" class="pay_tip">点击重新获取</span></div>
+                        </div>
+                        <p class="wechat_intro">
+                            <img class="wx_img" src="/images/wx.png" alt="img">
+                            <img class="zfb_img" src="/images/zfb.png" alt="img">
+                            <span class="pay_intro">扫码支付</span>
+                        </p>
+                    </li>
+
+                </ul>
+                <!--<div class="dl_buy_box" style="padding: 0;">-->
+                    <!--<div class="vip_table_t" style="padding: 0 0 20px;">-->
+                        <!--<label><a href="https://mall.csdn.net/vip_redeem" class="redeem_url"><em>购买兑换码</em></a></label>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
+
+
+<script src="https://www.usetools.cn/layui/layui.js"></script><!-- 需要首先加载 -->
+<script src="/myjs/app.js?v=1.0.1"></script><!-- 不缓存 -->
+<script src="https://www.usetools.cn/js/jquery.min.js"></script>
+<script src="/js/qrcode.js"></script><!-- 生成二维码 -->
+
+
+<script type="text/javascript">
+    $(function () {
+
+        query_order_info();//生成并显示二维码
+
+        $(".js_compare_list").each(function (i) {
+            $(this).on("click", function () {
+
+                var goods_id = $(this).attr('goods-id');
+                $(".js_compare_list").removeClass("super-vip");
+                $(this).addClass("super-vip");
+
+                var vipCard = $(".vip_card_wrap[goods-id=" + goods_id + "]");
+                vipCard.trigger("click");
+                query_order_info();
+            })
+
+        });
+    })
+
+    //生成二维码
+    function generate_code(container_id, code_url) {
+        //参数1表示图像大小，取值范围1-10；参数2表示质量，取值范围'L','M','Q','H'
+        var qr = qrcode(6, 'M');
+        qr.addData(code_url);
+        qr.make();
+        $("#" + container_id).html(qr.createImgTag(3, 3));
+
+        $("#" + container_id).html($("#" + container_id).html());
+
+    }
+
+
+    function show_pay_code( data) {
+        if (data.status != 1) {
+            exchangeHtml('pay_time_out', '点击重新获取');
+            return false;
+        }
+        generate_code('wechat_payment', data.pay_url);
+        $("#union_payment").parents("#vip_list_fir").show();
+        $("#union_payment").attr("href", data.pay_url);
+        if (data.price > 0) {
+            $('.vip_buy_t_r .vip_pay strong').html(data.price + '元');
+        }
+    }
+
+    function exchangeHtml(img, tips) {
+        $("#notify").show().html('<img onclick="query_order_info();" class="pay_icon" src="/images/' + img + '.png"/><span onclick="query_order_info();" class="pay_tip">' + tips + '</span>');
+    }
+
+    //生成并显示二维码
+    function query_order_info() {
+        $("#notify").hide();
+        $("#already_open_tips").hide();
+        $('.vip_buy_t_r .vip_pay .member_discount').hide();
+        $("#union_payment").parents("#vip_list_fir").hide();
+
+        //获取价格
+        var buff=$(".super-vip").find('dd');
+        var dd=$(buff).get($(buff).length-1);
+        console.log(dd);
+        var price=$(dd).text();
+        price=price.substr(1,price.length-2);
+
+        $("#wechat_payment").addClass("grey_border");
+        $("#wechat_payment").html('<img class="loading" src="/images/loading.png"/>');
+
+        //之后通过ajax请求获取data
+        var data={
+            status:1,
+            pay_url:"https://72cun.cn"+price,
+            price:price,
+        }
+        show_pay_code(data);
+
+
+    }
+
+
+</script>
+
+
+<script>
+
+    layui.use(['layer','homePageJs'], function() {
+        var layer = layui.layer;
+        var homePageJs = layui.homePageJs;
+
+        homePageJs.init();
+
+
+    })
+
+
+</script>

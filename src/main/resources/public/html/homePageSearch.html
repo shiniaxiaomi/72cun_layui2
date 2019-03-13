@@ -20,25 +20,10 @@
 
 <body>
 
-<div class="menu-header">
-    <ul>
-        <img class="logo" src="https://www.usetools.cn/images/logo.png" >
-
-        <li><a href="/" style="margin-left: 100px">首页</a></li>
-        <li><a href="javascript:;" id="personalPage">个人首页</a></li>
-        <li><a href="/main?home">后台管理</a></li>
-        <li><a href="/html/quickStart.html" target="_blank">快速入门</a></li>
-        <li><a href="javascript:;">留言建议</a></li>
-
-        <div id="userDiv">
-            <li style="float:right"><a href="/html/register.html" id="">注册</a></li>
-            <li style="float:right"><a href="javascript:;" id="login">登入</a></li>
-        </div>
-    </ul>
-</div>
 
 
-<div class="layui-container" style="width: 80%;">
+
+<div class="layui-container">
     <div class="layui-fluid layadmin-homepage-fluid">
     <div class="layui-row layui-col-space8">
         <div class="layui-col-md2">
@@ -58,7 +43,7 @@
                     <div class="layui-col-md9">
 
                         <!-- 搜索框 -->
-                        <input type="text" name="title" id="keywords" placeholder="搜共享链接" autocomplete="off" class="layui-input" style="margin-bottom: 10px">
+                        <!--<input type="text" name="title" id="keywords" placeholder="搜共享链接" autocomplete="off" class="layui-input" style="margin-bottom: 10px">-->
 
                         <div class="grid-demo">
                             <div class="panel-body layadmin-homepage-shadow">
@@ -129,6 +114,8 @@
                 homePageJs.loadUrlDataByFlow("LAY_demo1","/home/getShareUrlsLike",{keywords:$("#keywords")[0].value});
             }
         });
+
+
 
     })
 </script>
