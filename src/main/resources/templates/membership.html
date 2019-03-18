@@ -21,7 +21,7 @@
 <body>
 
 <!-- 菜单栏 -->
-<#include "/common/header.html">
+<#include "/common/header.html" />
 
 <div class="layui-container">
 
@@ -109,11 +109,11 @@
                     </li>
 
                 </ul>
-                <!--<div class="dl_buy_box" style="padding: 0;">-->
-                    <!--<div class="vip_table_t" style="padding: 0 0 20px;">-->
-                        <!--<label><a href="https://mall.csdn.net/vip_redeem" class="redeem_url"><em>购买兑换码</em></a></label>-->
-                    <!--</div>-->
-                <!--</div>-->
+                <div class="dl_buy_box" style="padding: 0;">
+                    <div class="vip_table_t" style="padding: 0 0 20px;">
+                        <label><a href="javascript:;" class="redeem_url" id="getEwm"><em>生成支付二维码</em></a></label>
+                    </div>
+                </div>
             </div>
             </div>
         </div>
@@ -221,6 +221,10 @@
         var homePageJs = layui.homePageJs;
 
         homePageJs.init();
+
+        $("#getEwm").click(function () {
+            console.log(1111111);
+        })
 
 
     })
