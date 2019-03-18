@@ -16,37 +16,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
 
 
     var obj={
-        //添加头部导航栏
-        addHeader:function () {
-            var header=$(`
-                <div class="menu-header">
-                    <ul>
-                        <img class="logo" src="https://www.usetools.cn/images/logo.png" >
-                
-                        <li><a href="/" style="margin-left: 100px">首页</a></li>
-                        <li><a href="javascript:;" id="personalPage">个人首页</a></li>
-                        <li><a href="/html/quickStart.html" target="_blank">快速入门</a></li>
-                        <li><a href="javascript:;">留言建议</a></li>
-                        <!--<div class="dropdown">-->
-                            <!--<a href="javascript:;" class="dropbtn">下拉菜单</a>-->
-                            <!--<div class="dropdown-content">-->
-                                <!--<a class="subMenu" href="#1">链接 1</a>-->
-                                <!--<a class="subMenu" href="#2">链接 2</a>-->
-                                <!--<a class="subMenu" href="#3">链接 3</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <input type="text" id="keywords" placeholder="搜共享链接...">
-                
-                        <div id="userDiv" style=" position: fixed;z-index: 1000;right: 0;">
-                            <li style="float:right"><a href="/html/register.html" id="">注册</a></li>
-                            <li style="float:right"><a href="javascript:;" id="login">登入</a></li>
-                        </div>
-                    </ul>
-                </div>                
-            `);
 
-            $("body").prepend(header);
-        },
         //修改登入的状态
         changeLoginStatus:function (data) {
             $("#userDiv").html(`
@@ -269,8 +239,6 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
         },
         //初始化函数
         init:function () {
-            //添加头部导航栏
-            obj.addHeader();
             //添加登入弹窗
             obj.addLoginDialog();
 
