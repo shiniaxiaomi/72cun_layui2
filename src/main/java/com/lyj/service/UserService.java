@@ -3,26 +3,27 @@ package com.lyj.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.lyj.dao.UserDao;
+import com.lyj.exception.AlipayException;
 import com.lyj.exception.MessageException;
+import com.lyj.model.Order;
 import com.lyj.model.Result;
-import com.lyj.model.URL;
 import com.lyj.model.User;
 import com.lyj.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.DefaultTypedTuple;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by Yingjie.Lu on 2018/9/17.
@@ -242,4 +243,38 @@ public class UserService {
         }
 
     }
+
+    //添加会员过期日期
+    public void addDeadline(Order order,User sessionUser){
+        int months=0;
+        switch(order.getType()){
+            case 1://年卡
+                months=12;//12个月
+                break;
+            case 2:
+                months=3;//3个月
+                break;
+            case 3:
+                months=1;//1个月
+                break;
+            default:
+                break;
+        }
+
+        User user = userDao.getUserByUserId(sessionUser);
+        if(user.getIsMembership()){//是会员
+            int i = userDao.addDeadline(true, months, sessionUser.getId());
+            if(i!=1){
+                throw new AlipayException(null);//退款
+            }
+        }else{//不是会员
+            int i = userDao.createDeadline(true, 1, sessionUser.getId());
+            if(i!=1){
+                throw new AlipayException(null);//退款
+            }
+        }
+
+    }
+
+
 }

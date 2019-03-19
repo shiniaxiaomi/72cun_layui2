@@ -45,5 +45,8 @@ public class User implements Serializable {
 
     private int goodNumber;//用户的点赞数量
 
+    private Boolean isMembership=false;//是否是会员
+
+    private Date deadline;//会员过期日期
 
 }

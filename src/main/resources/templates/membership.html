@@ -42,7 +42,7 @@
                                 <dd>价格</dd>
                             </dl>
                             <dl class="js_compare_list super-vip" >
-                                <dt><p>年卡</p></dt>
+                                <dt><p type="1">年卡</p></dt>
                                 <dd>365天</dd>
                                 <dd>无限制</dd>
                                 <dd>无限制</dd>
@@ -52,7 +52,7 @@
                                 <dd>¥19.90元</dd>
                             </dl>
                             <dl class="js_compare_list" >
-                                <dt><p>季卡</p></dt>
+                                <dt><p type="2">季卡</p></dt>
                                 <dd>90天</dd>
                                 <dd>无限制</dd>
                                 <dd>无限制</dd>
@@ -62,7 +62,7 @@
                                 <dd>¥5.40元</dd>
                             </dl>
                             <dl class="js_compare_list" >
-                                <dt><p>月卡</p></dt>
+                                <dt><p type="3">月卡</p></dt>
                                 <dd>30天</dd>
                                 <dd>无限制</dd>
                                 <dd>无限制</dd>
@@ -99,10 +99,10 @@
                         <div class="pay_wrap">
                             <div id="wechat_payment" class="pay_erweima grey_border"><img width="150" height="150"></div>
                             <!--遮罩提示-->
-                            <div id="notify" class="pay_notify" style="display: block;"><img onclick="query_order_info();" class="pay_icon" src="/images/pay_time_out.png"><span onclick="query_order_info();" class="pay_tip">点击重新获取</span></div>
+                            <div id="notify" class="pay_notify" style="display: block;"><img class="pay_icon" src="/images/pay_time_out.png"><span class="pay_tip">点击下方按钮生成支付二维码</span></div>
                         </div>
                         <p class="wechat_intro">
-                            <img class="wx_img" src="/images/wx.png" alt="img">
+                            <!--<img class="wx_img" src="/images/wx.png" alt="img">-->
                             <img class="zfb_img" src="/images/zfb.png" alt="img">
                             <span class="pay_intro">扫码支付</span>
                         </p>
@@ -133,24 +133,14 @@
 
 
 <script type="text/javascript">
-    $(function () {
 
-        query_order_info();//生成并显示二维码
-
-        $(".js_compare_list").each(function (i) {
-            $(this).on("click", function () {
-
-                var goods_id = $(this).attr('goods-id');
-                $(".js_compare_list").removeClass("super-vip");
-                $(this).addClass("super-vip");
-
-                var vipCard = $(".vip_card_wrap[goods-id=" + goods_id + "]");
-                vipCard.trigger("click");
-                query_order_info();
-            })
-
-        });
-    })
+    var myUtil;
+    var order={
+        orderId:undefined,
+        price:undefined,
+        title:undefined,
+        type:undefined
+    };
 
     //生成二维码
     function generate_code(container_id, code_url) {
@@ -165,21 +155,8 @@
     }
 
 
-    function show_pay_code( data) {
-        if (data.status != 1) {
-            exchangeHtml('pay_time_out', '点击重新获取');
-            return false;
-        }
-        generate_code('wechat_payment', data.pay_url);
-        $("#union_payment").parents("#vip_list_fir").show();
-        $("#union_payment").attr("href", data.pay_url);
-        if (data.price > 0) {
-            $('.vip_buy_t_r .vip_pay strong').html(data.price + '元');
-        }
-    }
-
     function exchangeHtml(img, tips) {
-        $("#notify").show().html('<img onclick="query_order_info();" class="pay_icon" src="/images/' + img + '.png"/><span onclick="query_order_info();" class="pay_tip">' + tips + '</span>');
+        $("#notify").show().html('<img class="pay_icon" src="/images/' + img + '.png"/><span class="pay_tip">' + tips + '</span>');
     }
 
     //生成并显示二维码
@@ -192,39 +169,72 @@
         //获取价格
         var buff=$(".super-vip").find('dd');
         var dd=$(buff).get($(buff).length-1);
-        console.log(dd);
+        var title=$(".super-vip").find('dt').text();
+        var type=$(".super-vip").find('dt').attr("type");
         var price=$(dd).text();
         price=price.substr(1,price.length-2);
 
         $("#wechat_payment").addClass("grey_border");
         $("#wechat_payment").html('<img class="loading" src="/images/loading.png"/>');
 
-        //之后通过ajax请求获取data
-        var data={
-            status:1,
-            pay_url:"https://72cun.cn"+price,
-            price:price,
-        }
-        show_pay_code(data);
+        $('.vip_buy_t_r .vip_pay strong').html(price + '元');
 
+        order.price=price;
+        order.title=title;
+        order.type=type;
+
+        myUtil.ajax("/alipay/getErweima",order,function (data) {
+            if (data.code != 0) {
+                exchangeHtml('pay_time_out', '点击重新获取');
+                return false;
+            }
+            order.orderId=data.data.orderId;//保存orderId
+            generate_code('wechat_payment', data.data.pay_url);
+            $("#union_payment").parents("#vip_list_fir").show();
+            $("#union_payment").attr("href", data.data.pay_url);
+        })
 
     }
 
-
-</script>
-
-
-<script>
-
-    layui.use(['layer','homePageJs'], function() {
+    layui.use(['layer','homePageJs','myUtil'], function() {
         var layer = layui.layer;
         var homePageJs = layui.homePageJs;
+        myUtil = layui.myUtil;
 
         homePageJs.init();
 
+//        query_order_info();//生成并显示二维码
+        $(".js_compare_list").each(function (i) {
+            $(this).on("click", function () {
+
+                var goods_id = $(this).attr('goods-id');
+                $(".js_compare_list").removeClass("super-vip");
+                $(this).addClass("super-vip");
+
+                var vipCard = $(".vip_card_wrap[goods-id=" + goods_id + "]");
+                vipCard.trigger("click");
+//                query_order_info();//生成并显示二维码
+            })
+        });
+
+
+        //生成支付二维码点击事件
         $("#getEwm").click(function () {
-            console.log(1111111);
+            query_order_info();//生成并显示二维码
         })
+
+        //轮询
+        var timer = setInterval(function () {
+            if(order.orderId==undefined){ return; }
+            myUtil.ajax("/alipay/queryOrder",order,function (data) {
+                if(data.code==0){
+                    layer.msg("支付成功！");
+                    order.orderId=undefined;
+                }
+            },false)
+        },3000);
+
+
 
 
     })

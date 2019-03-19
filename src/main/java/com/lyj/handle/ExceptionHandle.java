@@ -1,5 +1,6 @@
 package com.lyj.handle;
 
+import com.lyj.exception.AlipayException;
 import com.lyj.exception.MessageException;
 import com.lyj.model.Result;
 import com.lyj.util.ResultUtil;
@@ -42,7 +43,17 @@ public class ExceptionHandle {
         }else if(e instanceof MessageException){//自定义消息异常
             System.out.println(e.getMessage());
             return ResultUtil.error(e.getMessage(),e.getStackTrace()[0]);//返回最上层[0]的错误信息
-        }else{//其他异常
+        }else if(e instanceof AlipayException){//支付宝订单支付异常
+
+            //出现异常后，先进行支付宝退款，然后再返回通知消息
+            //todo 支付宝退款
+            System.out.println(e.getMessage());
+            String message = e.getMessage(); /*获取异常信息*/
+            if(message==null){
+                message="订单异常，支付金额将退回到支付账户，请稍后再试，给您带来不便，实属抱歉！";
+            }
+            return ResultUtil.error(message);//返回最上层[0]的错误信息
+        } else{//其他异常
             e.printStackTrace();
             return ResultUtil.error("系统异常",e);
         }

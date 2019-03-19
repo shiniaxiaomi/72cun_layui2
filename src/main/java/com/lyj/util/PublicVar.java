@@ -22,4 +22,9 @@ public class PublicVar {
     public static String hotUrlData = "hotUrlData_Page";//缓存的热点数据的key
     public static String userGoodData = "userGoodData_Page";//缓存的热点数据的key
     public static String userShareData = "userShareData_Page";//缓存的热点数据的key
+
+//    public static int orderType_year=1;//年卡
+//    public static int orderType_quarter=2;//季度卡
+//    public static int orderType_month=3;//月卡
+
 }

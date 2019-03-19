@@ -73,4 +73,9 @@ public interface UserDao{
     //xml
     int updateUserGoodNumberByUserNameBatch(List<User> list);
 
+    @Update("update user set deadline=DATE_ADD(deadline,INTERVAL #{months} MONTH),isMembership=#{isMembership} where id=#{userId}")
+    int addDeadline(@Param("isMembership")boolean isMembership, @Param("months")int months, @Param("userId")int userId);
+
+    @Update("update user set deadline=DATE_ADD(now(),INTERVAL #{months} MONTH),isMembership=#{isMembership} where id=#{userId}")
+    int createDeadline(@Param("isMembership")boolean isMembership, @Param("months")int months, @Param("userId")int userId);
 }
