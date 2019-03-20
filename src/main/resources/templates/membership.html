@@ -233,6 +233,7 @@
                     order.orderId=undefined;
                     layer.alert("支付成功，刷新页面即可！");
                 }else if(data.code==-1){
+                    order.orderId=undefined;
                     layer.alert(data.message);
                 }
             },false)

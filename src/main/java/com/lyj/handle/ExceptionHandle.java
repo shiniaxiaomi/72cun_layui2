@@ -49,17 +49,14 @@ public class ExceptionHandle {
         }else if(e instanceof MessageException){//自定义消息异常
             return ResultUtil.error(e.getMessage(),e.getStackTrace()[0]);//返回最上层[0]的错误信息
         }else if(e instanceof AlipayException){//支付宝订单支付异常
-            String message = e.getMessage(); /*获取异常信息*/
             //出现异常后，先进行支付宝退款，然后再返回通知消息
             //todo 支付宝退款
             Order order = (Order) ((AlipayException) e).getData();//获取order订单
-            Result result = alipayService.refund(order, e.getMessage());//进行退款
+            Result result = alipayService.refund(order, e.getMessage()==null?"无":e.getMessage());//进行退款
             if(result.getCode()==0){
-                message="订单异常，支付金额将退回到支付账户，请稍后再试，给您带来不便，实属抱歉！";
-                return ResultUtil.error(message);//返回最上层[0]的错误信息
+                return ResultUtil.error("订单异常，支付金额将退回到支付账户，请稍后再试，给您带来不便，实属抱歉！",Result.REFUND_ERROR,null);//返回最上层[0]的错误信息
             }else{
-                message="订单异常，支付金额将退款失败，请联系管理员进行退款:806648324(qq),给您带来不便，实属抱歉！";
-                return ResultUtil.error(message,Result.REFUND_ERROR);//退款失败
+                return ResultUtil.error("订单异常，支付金额将退款失败，请联系管理员进行退款:806648324(qq),给您带来不便，实属抱歉！",Result.REFUND_ERROR,null);//退款失败
             }
         } else{//其他异常
             e.printStackTrace();

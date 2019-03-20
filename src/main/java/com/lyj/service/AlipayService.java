@@ -145,11 +145,11 @@ public class AlipayService {
             case SUCCESS:
                 return ResultUtil.success("支付宝退款成功");
             case FAILED:
-                return ResultUtil.success("支付宝退款成功");
+                return ResultUtil.error("支付宝退款失败");
             case UNKNOWN:
-                return ResultUtil.success("系统异常，订单退款状态未知!!!");
+                return ResultUtil.error("系统异常，订单退款状态未知!!!");
             default:
-                return ResultUtil.success("不支持的交易状态，交易返回异常!!!");
+                return ResultUtil.error("不支持的交易状态，交易返回异常!!!");
         }
     }
 
