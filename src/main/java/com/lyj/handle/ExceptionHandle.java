@@ -50,7 +50,6 @@ public class ExceptionHandle {
             return ResultUtil.error(e.getMessage(),e.getStackTrace()[0]);//返回最上层[0]的错误信息
         }else if(e instanceof AlipayException){//支付宝订单支付异常
             //出现异常后，先进行支付宝退款，然后再返回通知消息
-            //todo 支付宝退款
             Order order = (Order) ((AlipayException) e).getData();//获取order订单
             Result result = alipayService.refund(order, e.getMessage()==null?"无":e.getMessage());//进行退款
             if(result.getCode()==0){
