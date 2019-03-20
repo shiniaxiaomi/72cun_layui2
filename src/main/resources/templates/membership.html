@@ -112,6 +112,7 @@
                 <div class="dl_buy_box" style="padding: 0;">
                     <div class="vip_table_t" style="padding: 0 0 20px;">
                         <label><a href="javascript:;" class="redeem_url" id="getEwm"><em>生成支付二维码</em></a></label>
+                        <!--<label><a href="javascript:;" class="redeem_url" id="refuse"><em>退款</em></a></label>-->
                     </div>
                 </div>
             </div>
@@ -139,7 +140,7 @@
         orderId:undefined,
         price:undefined,
         title:undefined,
-        type:undefined
+        type:1
     };
 
     //生成二维码
@@ -170,7 +171,7 @@
         var buff=$(".super-vip").find('dd');
         var dd=$(buff).get($(buff).length-1);
         var title=$(".super-vip").find('dt').text();
-        var type=$(".super-vip").find('dt').attr("type");
+        var type=$(".super-vip").find('dt p').attr("type");
         var price=$(dd).text();
         price=price.substr(1,price.length-2);
 
@@ -223,18 +224,27 @@
             query_order_info();//生成并显示二维码
         })
 
+
         //轮询
         var timer = setInterval(function () {
             if(order.orderId==undefined){ return; }
             myUtil.ajax("/alipay/queryOrder",order,function (data) {
                 if(data.code==0){
-                    layer.msg("支付成功！");
                     order.orderId=undefined;
+                    layer.alert("支付成功，刷新页面即可！");
+                }else if(data.code==-1){
+                    layer.alert(data.message);
                 }
             },false)
         },3000);
 
-
+        //绑定回车搜索
+        $("#keywords").keyup(function(event){
+            if(event.keyCode==13){
+                window.location.href="/html/homePageSearch.html?search="+encodeURI($("#keywords")[0].value);
+                $('#keywords').val('');//清空搜索框
+            }
+        });
 
 
     })

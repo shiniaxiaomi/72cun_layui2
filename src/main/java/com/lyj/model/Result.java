@@ -20,6 +20,8 @@ public class Result<T> {
 
     public static Integer SUCCESS=0;
     public static Integer ERROR=1;
+    public static Integer REFUND_ERROR=-1;//支付宝退款失败
+
 
     //错误码
     private Integer code;
@@ -42,4 +44,5 @@ public class Result<T> {
                 ", data=" + data +
                 '}';
     }
+
 }

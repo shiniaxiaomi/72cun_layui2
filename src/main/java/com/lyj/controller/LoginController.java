@@ -57,21 +57,17 @@ public class LoginController {
     @RequestMapping("/homeLogin")
     @ResponseBody
     public Result homeLogin(User user, HttpSession session){
-        boolean seccessFlag = userService.login(user);
-        if(seccessFlag){
-            //更新session
-            session.setAttribute("user",user);
-        }else{
-            throw new MessageException("用户名或密码错误");
+        User sqlUser = userService.login(session,user);
+        if(sqlUser==null){
+            return ResultUtil.error("用户名或密码错误");
         }
 
         //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
-        if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<notice.getNoticeTime()){
-            return ResultUtil.success(Notice.AnnounceJs,user);//将公告通过ajax传回去，并使用js展示出来
+        if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
+            return ResultUtil.success(Notice.AnnounceJs,sqlUser);//将公告通过ajax传回去，并使用js展示出来
         }
 
-        return ResultUtil.success(null,user);
-
+        return ResultUtil.success(null,sqlUser);
     }
 
     /**
@@ -91,40 +87,31 @@ public class LoginController {
     //其他操作的登入请求
     @RequestMapping("/login")
     public ModelAndView login(User user,HttpSession session, HttpServletResponse response, ModelAndView mv){
-
+        User sqlUser=null;
         User sessionUser = (User) session.getAttribute("user");
 
-        boolean seccessFlag=false;//标记是否登入成功
-
-        if(sessionUser!=null){//用户已经存在
-            seccessFlag=true;
-        }else{
-            seccessFlag = userService.login(user);
-            if(seccessFlag){
-                //更新session
-                session.setAttribute("user",user);
-            }
+        if(sessionUser==null){
+            sqlUser =  userService.login(session,user);
         }
 
-        //根据不同的参数选择要返回的页面
-        if(seccessFlag){
-            Object type = session.getAttribute("type");
-            Object url = session.getAttribute("url");
-            if(type!=null && !"".equals((String)type)){
-                mv.setViewName("forward:/fast/open");
-            }else if(url!=null && !"".equals((String)url)){
-                mv.setViewName("forward:/fast/collection");
-            }else{
-                mv.setViewName("forward:/main");
-            }
-        }else {
+        if(sqlUser==null){
             throw new MessageException("用户名或密码错误");
         }
 
+        Object type = session.getAttribute("type");
+        Object url = session.getAttribute("url");
+        if(type!=null && !"".equals((String)type)){
+            mv.setViewName("forward:/fast/open");
+        }else if(url!=null && !"".equals((String)url)){
+            mv.setViewName("forward:/fast/collection");
+        }else{
+            mv.setViewName("forward:/main");
+        }
+
         //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
-       if(user.getLastLoginTime()==null || user.getLastLoginTime().getTime()<notice.getNoticeTime()){
+        if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
             mv.addObject("showNotice",Notice.AnnounceJs);
-       }
+        }
 
         return mv;
     }

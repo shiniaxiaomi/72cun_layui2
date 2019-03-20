@@ -10,8 +10,14 @@ package com.lyj.exception;
  */
 public class AlipayException extends RuntimeException {
 
-    public AlipayException(String message) {
+    private Object data;
+
+    public AlipayException(String message,Object data) {
         super(message);
+        this.data=data;
     }
 
+    public Object getData() {
+        return data;
+    }
 }

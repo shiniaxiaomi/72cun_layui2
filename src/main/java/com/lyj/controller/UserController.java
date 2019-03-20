@@ -225,4 +225,11 @@ public class UserController {
         return userService.getGoodUserOrder(page, size);
     }
 
+    //更新session中的user信息
+//    @RequestMapping("/updateSessionUser")
+//    public void updateSessionUser(User user,HttpSession session){
+//        User updateUser = userService.getUserByUserId(user);
+//        session.setAttribute("user",updateUser);
+//    }
+
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by Yingjie.Lu on 2019/3/19.
  */
@@ -24,11 +26,11 @@ public class OrderService {
 
 
     //添加支付成功订单，并将用户设置成会员
-    public void addOrder(Order order,User sessionUser) {
+    public void addOrder(HttpSession session, Order order, User sessionUser) {
         int i = orderDao.addOrder(order);
-        if(i!=1) throw new AlipayException(null);//退款
+        if(i!=1) throw new AlipayException(null,order);//退款
 
-        userService.addDeadline(order,sessionUser);//给用户开通会员
+        userService.addDeadline(session,order,sessionUser);//给用户开通会员
     }
 
 }

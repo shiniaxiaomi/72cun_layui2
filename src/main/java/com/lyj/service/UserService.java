@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,31 +74,26 @@ public class UserService {
     /**
      * 支持用户名登入和手机号登入
      */
-    public boolean login(User user){
-        if(user.getUserName()!=null && user.getPassword()!=null){
-            User one = userDao.getUserByUserName(user.getUserName());//先使用用户名查询
-            if(one==null){
-                one = userDao.getUserByPhoneNumber(user.getUserName());//如果查不到用户,则是使用手机号登入
-                if(one==null){
-                    return false;
-                }
-            }
+    public User login(HttpSession session, User user){
 
-            if(one.getPassword().equals(user.getPassword())){
-                user.setId(one.getId());
-                user.setUserName(one.getUserName());//重新更新用户名
-                user.setCustomFolderId(one.getCustomFolderId());
-                user.setCustomFolderName(one.getCustomFolderName());
-                user.setPhoneNumber(one.getPhoneNumber());
-                user.setRootFolderId(one.getRootFolderId());
-                user.setLastLoginTime(one.getLastLoginTime());
-
-                //记录用户的登入时间
-                userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
-                return true;
-            }
+        if(user.getUserName()==null || user.getPassword()==null){
+            return null;
         }
-        return false;
+
+        User one = userDao.getUserByUserName(user.getUserName());//先使用用户名查询
+        if(one==null){
+            one = userDao.getUserByPhoneNumber(user.getUserName());//如果查不到用户,则是使用手机号登入
+            if(one==null) return null;
+        }
+
+        if(one.getPassword().equals(user.getPassword())){
+            //记录用户的登入时间
+            userDao.updateLastLoginTime(new Timestamp(new Date().getTime()),one.getId());
+        }
+
+        session.setAttribute("user",one);//更新session
+
+        return one;
     }
 
 
@@ -245,7 +241,7 @@ public class UserService {
     }
 
     //添加会员过期日期
-    public void addDeadline(Order order,User sessionUser){
+    public void addDeadline(HttpSession session,Order order,User sessionUser){
         int months=0;
         switch(order.getType()){
             case 1://年卡
@@ -262,18 +258,26 @@ public class UserService {
         }
 
         User user = userDao.getUserByUserId(sessionUser);
-        if(user.getIsMembership()){//是会员
+        if(user.getDeadline().getTime()>new Date().getTime()){//是会员
             int i = userDao.addDeadline(true, months, sessionUser.getId());
             if(i!=1){
-                throw new AlipayException(null);//退款
+                throw new AlipayException(null,order);//退款
             }
         }else{//不是会员
-            int i = userDao.createDeadline(true, 1, sessionUser.getId());
+            int i = userDao.createDeadline(true, months, sessionUser.getId());
             if(i!=1){
-                throw new AlipayException(null);//退款
+                throw new AlipayException(null,order);//退款
             }
         }
 
+        updateSessionUser(session,user);//更新session中的user信息
+
+    }
+
+    //更新session中的user信息
+    public void updateSessionUser(HttpSession session,User user){
+        User updateUser = getUserByUserId(user);
+        session.setAttribute("user",updateUser);
     }
 
 

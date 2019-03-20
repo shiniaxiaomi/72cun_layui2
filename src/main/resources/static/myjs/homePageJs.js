@@ -19,19 +19,22 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
 
         //修改登入的状态
         changeLoginStatus:function (data) {
-            $("#userDiv").html(`
-                    <li style="float:right;margin-left: 10px"><a href="/exit">退出</a></li>
-                    <i class="layui-badge fly-badge-vip layui-hide-xs" style="float: right;margin-top: 19px">VIP</i>
-                    <div class="dropdown" style="float:right;margin-right: 10px">
-                        <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
-                        <div class="dropdown-content">
-                            <a class="subMenu" href="/main?home">后台管理</a>
-                            <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
-                            <a class="subMenu" href="/membership">会员</a>
-                        </div>
+            var html=`<li style="float:right;margin-left: 10px"><a href="/exit">退出</a></li>`;
+            if(data.deadline!=null && Date.parse(data.deadline)>new Date()){
+                html+=`<i class="layui-badge fly-badge-vip layui-hide-xs" style="float: right;margin-top: 19px">VIP</i>`;
+            }
+            html+=`
+                <div class="dropdown" style="float:right;margin-right: 10px">
+                    <a href="javascript:;" class="dropbtn">`+data.userName+`</a>
+                    <div class="dropdown-content">
+                        <a class="subMenu" href="/home/`+data.userName+`">个人首页</a>
+                        <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
+                        <a class="subMenu" href="/membership">会员</a>
                     </div>
-                    <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
-            `);
+                </div>
+                <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
+            `;
+            $("#userDiv").html(html);
         },
         //动态添加热点网址数据
         addUrlData:function (id, url, param, next) {
@@ -241,17 +244,6 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
         init:function () {
             //添加登入弹窗
             obj.addLoginDialog();
-
-            //绑定个人主页点击事件
-            $("#personalPage").click(function () {
-                if(user!=undefined){
-                    window.location.href="/home/"+user.userName;
-                }else{
-                    layer.prompt({title: '输入用户名就可以直接访问个人主页', formType: 0,maxlength: 15,shadeClose: true}, function(pass, index){
-                        window.location.href="/home/"+pass;
-                    });
-                }
-            })
 
             //查询是否已经登入
             myUtil.ajax("/getUserFromSession",{},function (data) {
