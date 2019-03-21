@@ -342,7 +342,7 @@
             var newWin = window.open('', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
             var formStr = '';
             var form = document.createElement('form');
-            form.action = '`+product_url+`/fast/saveAndLogin';
+            form.action = '`+product_url+`/fast/collection';
             form.method = 'post';
             var input = document.createElement('input');
             input.type = 'hidden';
@@ -364,7 +364,7 @@
     //快速打开
     var str2 = `
         javascript:(function (x, sc, width, height) {
-            window.open('`+product_url+`/fast/saveAndLogin?type=fastOpen', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
+            window.open('`+product_url+`/fast/open', '_blank', 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=' + width + ', height=' + height + ',left=' + (sc.width - width) / 2 + ',top=' + (sc.height - 50 - height) / 2);
         })(document, screen, 1420, 760);
     `;
     document.getElementById('open').href=middleTrim(str2);
