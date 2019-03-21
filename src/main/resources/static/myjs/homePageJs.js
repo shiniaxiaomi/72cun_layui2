@@ -29,10 +29,10 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                     <div class="dropdown-content">
                         <a class="subMenu" href="/home/`+data.userName+`">个人首页</a>
                         <a class="subMenu" href="/html/personalInfo.html">个人信息</a>
-                        <a class="subMenu" href="/membership">会员</a>
+                        <!--<a class="subMenu" href="/membership">会员</a>-->
                     </div>
                 </div>
-                <img src="/images/code.png" style="height: 40px;margin-top: 6px;float: right">
+                <img src="https://www.usetools.cn/images/code.png" style="height: 40px;margin-top: 6px;float: right">
             `;
             $("#userDiv").html(html);
         },
@@ -45,7 +45,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                 var lis = [];
                 var list=data.data;
                 for(var i = 0; i < list.length; i++){
-                    var shareTime=myUtil.beautify_time(list[i].shareTime);
+                    var shareTime=myUtil.beautifyTime(list[i].shareTime);
                     lis.push(`
                                 <ul class="feedlist_mod web" style="padding-top: 0px;">
                                     <li class="clearfix" urlId="`+list[i].id+`">
@@ -150,7 +150,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
                     lis.push(`
                          <a href="/home/`+userData[i].userName+`" class="layadmin-privateletterlist-item">
                             <div class="meida-left">
-                                <img src="/images/code.png">
+                                <img src="https://www.usetools.cn/images/code.png">
                             </div>
                             <div class="meida-right">
                                 <p>`+userData[i].userName+`</p>

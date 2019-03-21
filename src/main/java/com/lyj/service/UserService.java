@@ -288,7 +288,7 @@ public class UserService {
         //尝试使用cookie进行自动登入
         Cookie[] cookies = request.getCookies();
         for( Cookie cookie:cookies ){
-            if(cookie.getName().equals("urps") && cookie.getValue()!=null && !cookie.getValue().equals("")){
+            if(cookie!=null && cookie.getName()!=null && cookie.getName().equals("urps") && cookie.getValue()!=null && !cookie.getValue().equals("")){
                 try {
                     String[] split = BASE64Util.decryptBASE64(cookie.getValue()).split(",");
                     return login(request.getSession(), new User(split[0], split[1]));

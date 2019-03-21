@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://www.usetools.cn/css/global.css" media="all">
 
     <!-- 最后一个加载 -->
-    <link rel="stylesheet" href="/css/myStyle.css" media="all">
-    <link rel="stylesheet" href="/css/urlStyle.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/myStyle.css" media="all">
+    <link rel="stylesheet" href="https://www.usetools.cn/css/urlStyle.css" media="all">
 
 
 </head>
@@ -117,14 +117,9 @@
 <script src="https://www.usetools.cn/js/jquery.min.js"></script>
 <script>
 
-    layui.use(['layer','homePageJs','myUtil'], function() {
+    layui.use(['layer','homePageJs'], function() {
         var layer = layui.layer;
         var homePageJs=layui.homePageJs;
-        var myUtil=layui.myUtil;
-
-        var s=myUtil.beautify_time("2019-03-05 13:49:00");//时间转化工具
-        console.log(s);
-
 
         $(".subMenu").click(function () {
             $(".menu-header .dropdown .dropdown-content").hide();

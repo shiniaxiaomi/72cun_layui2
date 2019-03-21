@@ -20,7 +20,7 @@ public class PageController {
     MessageService messageService;
 
     //网站首页路由
-    @RequestMapping("/homePage")
+    @RequestMapping({"/homePage","/"})
     public ModelAndView homePage(ModelAndView mv, HttpSession session){
         User user = (User) session.getAttribute("user");
         mv.setViewName("homePage");
@@ -94,6 +94,10 @@ public class PageController {
 
 
 
+    @RequestMapping("/fast/saveAndLogin")
+    public String notice(){
+        return "notice";
+    }
 
 
 

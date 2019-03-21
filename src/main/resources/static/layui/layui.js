@@ -171,7 +171,7 @@
       //如果路径值是 {/} 开头，则模块路径即为后面紧跟的字符。
       //否则，则按照 base 参数拼接模块路径
       ,url = ( modules[item] ? (dir + 'lay/') 
-        : (/^\{\/\}/.test(that.modules[item]) ? '' : (config.extendDir+config.base || ''))
+        : (/^\{\/\}/.test(that.modules[item]) ? '' : (config.extendDir || ''))
       ) + (that.modules[item] || item) + '.js';//修改过的静态资源url加载前缀
 
       url = url.replace(/^\{\/\}/, '');

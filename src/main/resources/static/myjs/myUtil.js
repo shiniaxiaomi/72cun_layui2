@@ -99,7 +99,7 @@ layui.define(['layer'], function(exports){
             return obj.fn(data,0);
         },
         //时间转化工具
-        beautify_time:function (time) {
+        beautifyTime:function (time) {
             var d = new Date(time)
             var mistiming = Math.round((Date.now() - d.getTime(d)) / 1000);
             var arrr = ['年', '个月', '星期', '天', '小时', '分钟', '秒'];
