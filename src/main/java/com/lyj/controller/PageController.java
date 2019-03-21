@@ -66,7 +66,7 @@ public class PageController {
         if(session.getAttribute("user")!=null){
             return "forward:/main";
         }else{
-            return "/html/index.html";
+            return "forward:/toLogin";
         }
     }
 
@@ -83,11 +83,14 @@ public class PageController {
             int count = messageService.getMessagesCount(sessionUser);//获取所有用户未读信息的总数
             mv.addObject("count",count);//添加未处理消息的总数
         }
-
-
         return mv;
     }
 
+    //转发到登入页
+    @RequestMapping("/toLogin")
+    public String toLogin(){
+        return "/toLogin";
+    }
 
 
 

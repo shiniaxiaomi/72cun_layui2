@@ -40,37 +40,38 @@ public class WebConfig implements WebMvcConfigurer {
         InterceptorRegistration loginCheckInterceptor = registry.addInterceptor(loginInterceptor);//添加登入拦截器
         loginCheckInterceptor.addPathPatterns("/**")
                 .excludePathPatterns(//------以下请求不进行拦截
-                        "/",        //首页
-                        "/login",   //登入请求
-                        "/userHome",   //登入主页请求
-                        "/homeLogin",//从主页的登入请求
-                        "/user/add",//用户添加
-                        "/exit",    //退出
-                        "/fast/saveAndLogin",   //快捷工具登入
-                        "/admin",   //后台管理
-                        "/phone/isPhoneNumberExist",    //查看手机是否存在
-                        "/phone/sendCode",      //发送验证码
-                        "/user/updatePassword", //更新用户密码
-                        "/user/isUserNameExist",//查看用户名是否存在
-                        "/user/getShareUserOrder",//查询用户的分享排名
-                        "/user/getGoodUserOrder",//查询用户的获得点赞的排名
-                        "/hotUrl/incrClickNumber",//记录共享链接的点击量
-                        "/getUserFromSession",//询问是否已经登入
-                        "/hotUrl/getHotUrlByHot",//查询首页的热点排行
-                        "/test/**",//测试使用
-                        "/home/**"  //个人主页
+                        "/"        //首页
+                        ,"/login"  //登入请求
+                        ,"/userHome"  //登入主页请求
+                        ,"/homeLogin"//从主页的登入请求
+                        ,"/user/add"//用户添加
+                        ,"/exit"    //退出
+                        ,"/toLogin"   //请求登入页
+                        ,"/admin"   //后台管理
+                        ,"/phone/isPhoneNumberExist"    //查看手机是否存在
+                        ,"/phone/sendCode"      //发送验证码
+                        ,"/user/updatePassword" //更新用户密码
+                        ,"/user/isUserNameExist"//查看用户名是否存在
+                        ,"/user/getShareUserOrder"//查询用户的分享排名
+                        ,"/user/getGoodUserOrder"//查询用户的获得点赞的排名
+                        ,"/hotUrl/incrClickNumber"//记录共享链接的点击量
+                        ,"/hotUrl/getHotUrlByHot"//查询首页的热点排行
+                        ,"/test/**"//测试使用
+                        ,"/home/**"  //个人主页
+                        ,"/fast/collection"  //快速收藏
+                        ,"/fast/open"  //快速打开
                 );
 
         loginCheckInterceptor
                 .excludePathPatterns(
-                        "/css/**",
-                        "/icon/**",
-                        "/images/**",
-                        "/js/**",
-                        "/layui/**",
-                        "/myjs/**",
-                        "/html/**",
-                        "/gif/**"
+                        "/css/**"
+                        ,"/icon/**"
+                        ,"/images/**"
+                        ,"/js/**"
+                        ,"/layui/**"
+                        ,"/myjs/**"
+                        ,"/html/**"
+                        ,"/gif/**"
                 );//排除static下的静态文件(在本地访问的时候)
 
 

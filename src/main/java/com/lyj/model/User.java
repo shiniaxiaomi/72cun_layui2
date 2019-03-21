@@ -49,4 +49,8 @@ public class User implements Serializable {
 
     private Date deadline;//会员过期日期
 
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 }

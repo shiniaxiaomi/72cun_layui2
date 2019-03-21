@@ -245,7 +245,7 @@ layui.define(['flow','layer','util','element','form','myUtil'], function(exports
             //添加登入弹窗
             obj.addLoginDialog();
 
-            //查询是否已经登入
+            //查询是否已经登入，如果没有登入则尝试登入
             myUtil.ajax("/getUserFromSession",{},function (data) {
                 if(data.userName!=null){
                     user=data;//保存user的信息

@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -280,5 +282,22 @@ public class UserService {
         session.setAttribute("user",updateUser);
     }
 
+
+    //尝试使用cookie进行登入
+    public User tryLogin(HttpServletRequest request){
+        //尝试使用cookie进行自动登入
+        Cookie[] cookies = request.getCookies();
+        for( Cookie cookie:cookies ){
+            if(cookie.getName().equals("urps") && cookie.getValue()!=null && !cookie.getValue().equals("")){
+                try {
+                    String[] split = BASE64Util.decryptBASE64(cookie.getValue()).split(",");
+                    return login(request.getSession(), new User(split[0], split[1]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
 
 }

@@ -5,6 +5,7 @@ import com.lyj.model.Notice;
 import com.lyj.model.Result;
 import com.lyj.model.User;
 import com.lyj.service.UserService;
+import com.lyj.util.BASE64Util;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -13,12 +14,16 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -56,7 +61,7 @@ public class LoginController {
     //主页的登入请求
     @RequestMapping("/homeLogin")
     @ResponseBody
-    public Result homeLogin(User user, HttpSession session){
+    public Result homeLogin(User user, HttpSession session,HttpServletResponse response) throws Exception {
         User sqlUser = userService.login(session,user);
         if(sqlUser==null){
             return ResultUtil.error("用户名或密码错误");
@@ -66,6 +71,10 @@ public class LoginController {
         if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
             return ResultUtil.success(Notice.AnnounceJs,sqlUser);//将公告通过ajax传回去，并使用js展示出来
         }
+
+        //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
+        Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
+        response.addCookie(cookie);
 
         return ResultUtil.success(null,sqlUser);
     }
@@ -86,7 +95,10 @@ public class LoginController {
      */
     //其他操作的登入请求
     @RequestMapping("/login")
-    public ModelAndView login(User user,HttpSession session, HttpServletResponse response, ModelAndView mv){
+    public ModelAndView login(User user,HttpSession session, HttpServletResponse response, ModelAndView mv,
+                              @RequestParam(value = "url",required = false) String url,
+                              @RequestParam(value = "title",required = false) String title,
+                              @RequestParam(value = "type",required = false) String type) throws Exception {
         User sqlUser=null;
         User sessionUser = (User) session.getAttribute("user");
 
@@ -98,20 +110,21 @@ public class LoginController {
             throw new MessageException("用户名或密码错误");
         }
 
-        Object type = session.getAttribute("type");
-        Object url = session.getAttribute("url");
-        if(type!=null && !"".equals((String)type)){
-            mv.setViewName("forward:/fast/open");
-        }else if(url!=null && !"".equals((String)url)){
-            mv.setViewName("forward:/fast/collection");
-        }else{
+        if(type==null || type.equals("")){
             mv.setViewName("forward:/main");
+            //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
+            if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
+                mv.addObject("showNotice",Notice.AnnounceJs);
+            }
+        }else if(type.equals("open")){
+            mv.setViewName("forward:/fast/open");
+        }else if(type.equals("collection")){
+            mv.setViewName("forward:/fast/collection");
         }
 
-        //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
-        if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
-            mv.addObject("showNotice",Notice.AnnounceJs);
-        }
+        //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
+        Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
+        response.addCookie(cookie);
 
         return mv;
     }
@@ -122,8 +135,9 @@ public class LoginController {
      *      使用redirect进行重定向 : 网页进行重定向,直接让客户端重新发起/请求
      */
     @RequestMapping("/exit")
-    public String exit(HttpSession session){
+    public String exit(HttpSession session,HttpServletResponse response){
         session.removeAttribute("user");//删除用户
+        response.addCookie(new Cookie("urps",""));//清除客户端的用户信息的cookie
         return "redirect:/";
     }
 
