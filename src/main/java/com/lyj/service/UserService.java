@@ -285,7 +285,6 @@ public class UserService {
 
     //尝试使用cookie进行登入
     public User tryLogin(HttpServletRequest request){
-        //尝试使用cookie进行自动登入
         Cookie[] cookies = request.getCookies();
         if(cookies==null){
             return null;

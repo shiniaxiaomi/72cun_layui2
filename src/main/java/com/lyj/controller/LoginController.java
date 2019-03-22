@@ -124,6 +124,7 @@ public class LoginController {
 
         //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
         Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
+        cookie.setMaxAge(Integer.MAX_VALUE);//设置为永不过期
         response.addCookie(cookie);
 
         return mv;
