@@ -75,7 +75,7 @@ public class UserService {
 
 
     /**
-     * 支持用户名登入和手机号登入
+     * 支持用户名登入和手机号登入（核心方法）
      */
     public User login(HttpServletResponse response,HttpSession session, User user) throws Exception {
 
