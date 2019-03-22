@@ -287,6 +287,9 @@ public class UserService {
     public User tryLogin(HttpServletRequest request){
         //尝试使用cookie进行自动登入
         Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return null;
+        }
         for( Cookie cookie:cookies ){
             if(cookie!=null && cookie.getName()!=null && cookie.getName().equals("urps") && cookie.getValue()!=null && !cookie.getValue().equals("")){
                 try {

@@ -32,7 +32,7 @@ layui.define([], function(exports){
                 <div id="location_add" class="layui-input-block">
                     <input id="folderName_add" class="layui-input layui-input-inline selectTree" lay-verify="required" type="text" name="pidName" placeholder="请选择文件夹" readonly="readonly">
                     <button class="layui-btn layui-btn-primary selectTree" >选择</button>
-                    <button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>
+                    <!--<button class="layui-btn layui-btn-primary customFolderSetting">自定义</button>-->
                     <input id="folderId_add" class="layui-input hide" lay-verify="required" type="text" name="pid"   style="" >
                 </div>
             </div>
@@ -67,14 +67,25 @@ layui.define([], function(exports){
                 });
 
                 //查询默认文件夹id
-                myUtil.ajax("/user/getRootFolderId",[],function (data) {
-                    //清空表单
-                    form.val("addText", {
-                        "label": "",
-                        "url": "",
-                        "pidName": "默认文件夹",
-                        "pid": data
-                    })
+                myUtil.ajax("/user/getCustomFolder",[],function (data) {
+                    if(data.code==0){
+                        //清空表单
+                        form.val("addText", {
+                            "label": "",
+                            "url": "",
+                            "pidName": data.data.customFolderName,
+                            "pid": data.data.customFolderId
+                        })
+                    }else{
+                        //清空表单
+                        form.val("addText", {
+                            "label": "",
+                            "url": "",
+                            "pidName": "默认文件夹",
+                            "pid": data.data.rootFolderId
+                        })
+                    }
+
                 })
             })
 

@@ -181,10 +181,10 @@ public class UserController {
 
         User user1=userService.getCustomFolder(sessionUser.getId());
 
-        if(user1.getCustomFolderName()!=null){
+        if(user1.getCustomFolderName()!=null && !user1.getCustomFolderName().equals("") && user1.getCustomFolderId()!=0){
             return ResultUtil.success(user1);
         }else{
-            return ResultUtil.error("你还没有自定文件夹",user1);
+            return ResultUtil.error("没有自定文件夹,使用默认文件夹",user1);
         }
     }
 

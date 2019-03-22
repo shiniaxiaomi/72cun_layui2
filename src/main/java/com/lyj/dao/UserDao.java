@@ -55,7 +55,7 @@ public interface UserDao{
     @Select("select * from user where phoneNumber=#{phoneNumber}")
     User getUserByPhoneNumber(String phoneNumber);
 
-    @Select("select customFolderId,customFolderName from user where id=#{userId}")
+    @Select("select customFolderId,customFolderName,rootFolderId from user where id=#{userId}")
     User getCustomFolder(Integer userId);
 
     @Select("select * from user where id=#{id}")

@@ -110,16 +110,16 @@ public class LoginController {
             throw new MessageException("用户名或密码错误");
         }
 
-        if(type==null || type.equals("")){
+        if(type.equals("open")){
+            mv.setViewName("forward:/fast/open");
+        }else if(type.equals("collection")){
+            mv.setViewName("forward:/fast/collection");
+        }else if(type.equals("main")){
             mv.setViewName("forward:/main");
             //根据用户上一次的登入时间和发布公告的时间来判断是否显示公告(如果登入时间为空,则直接显示公告)
             if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
                 mv.addObject("showNotice",Notice.AnnounceJs);
             }
-        }else if(type.equals("open")){
-            mv.setViewName("forward:/fast/open");
-        }else if(type.equals("collection")){
-            mv.setViewName("forward:/fast/collection");
         }
 
         //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
