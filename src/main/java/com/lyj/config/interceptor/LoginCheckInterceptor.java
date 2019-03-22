@@ -45,7 +45,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         if(user==null){
             //尝试使用cookie进行登入
-            user = userService.tryLogin(request);
+            user = userService.tryLogin(request,response);
         }
 
         //如果还是没有user,则返回登入页面

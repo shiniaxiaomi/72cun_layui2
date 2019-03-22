@@ -5,13 +5,8 @@ import com.lyj.model.Notice;
 import com.lyj.model.Result;
 import com.lyj.model.User;
 import com.lyj.service.UserService;
-import com.lyj.util.BASE64Util;
 import com.lyj.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,12 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
 
 /**
  * Created by 陆英杰
@@ -62,7 +53,7 @@ public class LoginController {
     @RequestMapping("/homeLogin")
     @ResponseBody
     public Result homeLogin(User user, HttpSession session,HttpServletResponse response) throws Exception {
-        User sqlUser = userService.login(session,user);
+        User sqlUser = userService.login(response,session,user);
         if(sqlUser==null){
             return ResultUtil.error("用户名或密码错误");
         }
@@ -71,10 +62,6 @@ public class LoginController {
         if(sqlUser.getLastLoginTime()==null || sqlUser.getLastLoginTime().getTime()<notice.getNoticeTime()){
             return ResultUtil.success(Notice.AnnounceJs,sqlUser);//将公告通过ajax传回去，并使用js展示出来
         }
-
-        //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
-        Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
-        response.addCookie(cookie);
 
         return ResultUtil.success(null,sqlUser);
     }
@@ -103,7 +90,7 @@ public class LoginController {
         User sessionUser = (User) session.getAttribute("user");
 
         if(sessionUser==null){
-            sqlUser =  userService.login(session,user);
+            sqlUser =  userService.login(response,session,user);
         }
 
         if(sqlUser==null){
@@ -121,11 +108,6 @@ public class LoginController {
                 mv.addObject("showNotice",Notice.AnnounceJs);
             }
         }
-
-        //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
-        Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
-        cookie.setMaxAge(Integer.MAX_VALUE);//设置为永不过期
-        response.addCookie(cookie);
 
         return mv;
     }

@@ -40,7 +40,7 @@ public class FastController {
 
     //快速收藏
     @RequestMapping("/collection")
-    public ModelAndView collection( HttpSession session,HttpServletRequest request,
+    public ModelAndView collection( HttpSession session,HttpServletRequest request,HttpServletResponse response,
                                     @RequestParam(value = "url",required = false) String url,
                                     @RequestParam(value = "title",required = false) String title) throws UnsupportedEncodingException {
 
@@ -48,7 +48,7 @@ public class FastController {
 
         User user = (User) session.getAttribute("user");
         if(user==null){
-            user = userService.tryLogin(request);
+            user = userService.tryLogin(request,response);
         }
 
         if(user==null){
@@ -67,12 +67,12 @@ public class FastController {
 
     //快速打开
     @RequestMapping("/open")
-    public ModelAndView open(HttpSession session,HttpServletRequest request){
+    public ModelAndView open(HttpSession session,HttpServletRequest request,HttpServletResponse response){
         ModelAndView mv=new ModelAndView();
 
         User user = (User) session.getAttribute("user");
         if(user==null){
-            user = userService.tryLogin(request);
+            user = userService.tryLogin(request,response);
         }
         if(user==null){
             mv.setViewName("toLogin");

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class UserService {
     /**
      * 支持用户名登入和手机号登入
      */
-    public User login(HttpSession session, User user){
+    public User login(HttpServletResponse response,HttpSession session, User user) throws Exception {
 
         if(user.getUserName()==null || user.getPassword()==null){
             return null;
@@ -94,6 +95,11 @@ public class UserService {
         }
 
         session.setAttribute("user",one);//更新session
+
+        //添加用户的cookie，方便下次登入不需要用户名和密码即可登入
+        Cookie cookie=new Cookie("urps", BASE64Util.encryptBASE64(user.getUserName()+","+user.getPassword()));//urps是user和password
+        cookie.setMaxAge(Integer.MAX_VALUE);
+        response.addCookie(cookie);
 
         return one;
     }
@@ -284,7 +290,7 @@ public class UserService {
 
 
     //尝试使用cookie进行登入
-    public User tryLogin(HttpServletRequest request){
+    public User tryLogin(HttpServletRequest request,HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
         if(cookies==null){
             return null;
@@ -293,7 +299,7 @@ public class UserService {
             if(cookie!=null && cookie.getName()!=null && cookie.getName().equals("urps") && cookie.getValue()!=null && !cookie.getValue().equals("")){
                 try {
                     String[] split = BASE64Util.decryptBASE64(cookie.getValue()).split(",");
-                    return login(request.getSession(), new User(split[0], split[1]));
+                    return login(response,request.getSession(), new User(split[0], split[1]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
